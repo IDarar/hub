@@ -52,7 +52,6 @@ import (
 	"context"
 	"database/sql"
 	"database/sql/driver"
-	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -61,6 +60,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	errors "golang.org/x/xerrors"
 
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgtype"
@@ -307,7 +308,7 @@ func (c *Conn) BeginTx(ctx context.Context, opts driver.TxOptions) (driver.Tx, e
 	case sql.LevelSerializable:
 		pgxOpts.IsoLevel = pgx.Serializable
 	default:
-		return nil, fmt.Errorf("unsupported isolation: %v", opts.Isolation)
+		return nil, errors.Errorf("unsupported isolation: %v", opts.Isolation)
 	}
 
 	if opts.ReadOnly {
@@ -513,7 +514,7 @@ func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 
 func (r *Rows) Close() error {
 	r.rows.Close()
-	return r.rows.Err()
+	return nil
 }
 
 func (r *Rows) Next(dest []driver.Value) error {
@@ -778,7 +779,7 @@ func ReleaseConn(db *sql.DB, conn *pgx.Conn) error {
 		fakeTxMutex.Unlock()
 	} else {
 		fakeTxMutex.Unlock()
-		return fmt.Errorf("can't release conn that is not acquired")
+		return errors.Errorf("can't release conn that is not acquired")
 	}
 
 	return tx.Rollback()

@@ -3,6 +3,8 @@ package server
 import (
 	"log"
 	"net/http"
+
+	"github.com/IDarar/hub/internal/config"
 )
 
 //30.27 another
@@ -11,12 +13,14 @@ type Server struct {
 }
 
 //TODO make config to server 29.51 another
-func NewServer( /*cfg *config.Config*/ handler http.Handler) *Server {
+func NewServer(cfg *config.Config, handler http.Handler) *Server {
 	return &Server{
 		httpServer: &http.Server{
-			Addr:    ":8080",
-			Handler: handler,
-			//TODO add left fields with config
+			Addr:           ":" + cfg.HTTP.Port,
+			Handler:        handler,
+			ReadTimeout:    cfg.HTTP.ReadTimeout,
+			WriteTimeout:   cfg.HTTP.WriteTimeout,
+			MaxHeaderBytes: cfg.HTTP.MaxHeaderMegabytes << 20,
 		},
 	}
 }

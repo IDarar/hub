@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"hub/internal/service"
+	"github.com/IDarar/hub/internal/service"
 
 	"github.com/gin-gonic/gin"
 )

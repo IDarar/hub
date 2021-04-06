@@ -2,9 +2,10 @@ package pgx
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
+
+	errors "golang.org/x/xerrors"
 
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgproto3/v2"
@@ -196,12 +197,12 @@ func (rows *connRows) Scan(dest ...interface{}) error {
 	values := rows.values
 
 	if len(fieldDescriptions) != len(values) {
-		err := fmt.Errorf("number of field descriptions must equal number of values, got %d and %d", len(fieldDescriptions), len(values))
+		err := errors.Errorf("number of field descriptions must equal number of values, got %d and %d", len(fieldDescriptions), len(values))
 		rows.fatal(err)
 		return err
 	}
 	if len(fieldDescriptions) != len(dest) {
-		err := fmt.Errorf("number of field descriptions must equal number of destinations, got %d and %d", len(fieldDescriptions), len(dest))
+		err := errors.Errorf("number of field descriptions must equal number of destinations, got %d and %d", len(fieldDescriptions), len(dest))
 		rows.fatal(err)
 		return err
 	}
@@ -220,7 +221,7 @@ func (rows *connRows) Scan(dest ...interface{}) error {
 
 		err := rows.scanPlans[i].Scan(ci, fieldDescriptions[i].DataTypeOID, fieldDescriptions[i].Format, values[i], dst)
 		if err != nil {
-			err = ScanArgError{ColumnIndex: i, Err: err}
+			err = scanArgError{col: i, err: err}
 			rows.fatal(err)
 			return err
 		}
@@ -305,17 +306,13 @@ func (rows *connRows) RawValues() [][]byte {
 	return rows.values
 }
 
-type ScanArgError struct {
-	ColumnIndex int
-	Err         error
+type scanArgError struct {
+	col int
+	err error
 }
 
-func (e ScanArgError) Error() string {
-	return fmt.Sprintf("can't scan into dest[%d]: %v", e.ColumnIndex, e.Err)
-}
-
-func (e ScanArgError) Unwrap() error {
-	return e.Err
+func (e scanArgError) Error() string {
+	return fmt.Sprintf("can't scan into dest[%d]: %v", e.col, e.err)
 }
 
 // ScanRow decodes raw row data into dest. It can be used to scan rows read from the lower level pgconn interface.
@@ -326,10 +323,10 @@ func (e ScanArgError) Unwrap() error {
 // dest - the destination that values will be decoded into
 func ScanRow(connInfo *pgtype.ConnInfo, fieldDescriptions []pgproto3.FieldDescription, values [][]byte, dest ...interface{}) error {
 	if len(fieldDescriptions) != len(values) {
-		return fmt.Errorf("number of field descriptions must equal number of values, got %d and %d", len(fieldDescriptions), len(values))
+		return errors.Errorf("number of field descriptions must equal number of values, got %d and %d", len(fieldDescriptions), len(values))
 	}
 	if len(fieldDescriptions) != len(dest) {
-		return fmt.Errorf("number of field descriptions must equal number of destinations, got %d and %d", len(fieldDescriptions), len(dest))
+		return errors.Errorf("number of field descriptions must equal number of destinations, got %d and %d", len(fieldDescriptions), len(dest))
 	}
 
 	for i, d := range dest {
@@ -339,7 +336,7 @@ func ScanRow(connInfo *pgtype.ConnInfo, fieldDescriptions []pgproto3.FieldDescri
 
 		err := connInfo.Scan(fieldDescriptions[i].DataTypeOID, fieldDescriptions[i].Format, values[i], d)
 		if err != nil {
-			return ScanArgError{ColumnIndex: i, Err: err}
+			return scanArgError{col: i, err: err}
 		}
 	}
 

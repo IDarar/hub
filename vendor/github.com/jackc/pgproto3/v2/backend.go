@@ -16,8 +16,6 @@ type Backend struct {
 	cancelRequest   CancelRequest
 	_close          Close
 	copyFail        CopyFail
-	copyData        CopyData
-	copyDone        CopyDone
 	describe        Describe
 	execute         Execute
 	flush           Flush
@@ -118,10 +116,6 @@ func (b *Backend) Receive() (FrontendMessage, error) {
 		msg = &b.execute
 	case 'f':
 		msg = &b.copyFail
-	case 'd':
-		msg = &b.copyData
-	case 'c':
-		msg = &b.copyDone
 	case 'H':
 		msg = &b.flush
 	case 'P':

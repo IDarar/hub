@@ -1,6 +1,6 @@
 package repository
 
-import "hub/internal/domain"
+import "github.com/IDarar/hub/internal/domain"
 
 //all db interfaces there are described 44.20
 //and struct repositories named with all interfaces in the end defined

@@ -1,8 +1,10 @@
 package main
 
-import "hub/internal/app"
+import (
+	"github.com/IDarar/hub/internal/app"
+)
 
-const configPath = "/123"
+const configPath = "configs/main"
 
 func main() {
 	app.Run(configPath)

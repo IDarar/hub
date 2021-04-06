@@ -2,12 +2,13 @@ package pgconn
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"net/url"
 	"regexp"
 	"strings"
+
+	errors "golang.org/x/xerrors"
 )
 
 // SafeToRetry checks if the err is guaranteed to have occurred before sending any data to the server.
@@ -177,8 +178,6 @@ func redactPW(connString string) string {
 	connString = quotedDSN.ReplaceAllLiteralString(connString, "password=xxxxx")
 	plainDSN := regexp.MustCompile(`password=[^ ]*`)
 	connString = plainDSN.ReplaceAllLiteralString(connString, "password=xxxxx")
-	brokenURL := regexp.MustCompile(`:[^:@]+?@`)
-	connString = brokenURL.ReplaceAllLiteralString(connString, ":xxxxxx@")
 	return connString
 }
 

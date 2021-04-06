@@ -1,8 +1,8 @@
 package http
 
 import (
-	"hub/internal/service"
-	v1 "hub/internal/transport/http/v1"
+	"github.com/IDarar/hub/internal/service"
+	v1 "github.com/IDarar/hub/internal/transport/http/v1"
 
 	"github.com/gin-gonic/gin"
 )

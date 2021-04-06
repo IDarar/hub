@@ -1,8 +1,8 @@
 package service
 
 import (
-	"hub/internal/domain"
-	"hub/internal/repository"
+	"github.com/IDarar/hub/internal/domain"
+	"github.com/IDarar/hub/internal/repository"
 )
 
 //39.58
@@ -14,6 +14,7 @@ func NewAdminsService(repo repository.Users) *Users {
 	return &Users{
 		repo: repo,
 	}
+
 }
 
 //TODO think about passing User's modls or IDs, know what context is used for

@@ -1,7 +1,7 @@
 package postgres
 
 import (
-	"hub/internal/domain"
+	"github.com/IDarar/hub/internal/domain"
 
 	"gorm.io/gorm"
 )

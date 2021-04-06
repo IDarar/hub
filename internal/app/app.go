@@ -1,16 +1,23 @@
 package app
 
 import (
-	"hub/internal/server"
-	"hub/internal/service"
-	"hub/internal/transport/http"
+	"fmt"
+
+	"github.com/IDarar/hub/internal/config"
+	"github.com/IDarar/hub/internal/server"
+	"github.com/IDarar/hub/internal/service"
+	"github.com/IDarar/hub/internal/transport/http"
 )
 
-//53.43 31.45(another)
 func Run(configPath string) {
-	//TODO services := service.NewServices()
+	cfg, err := config.Init(configPath)
+	if err != nil {
+		fmt.Println("Could not init cfg ... ", err)
+		return
+	}
+
 	handlers := http.NewHandler(service.Users{}, service.Admins{})
-	srv := server.NewServer(handlers.Init())
+	srv := server.NewServer(cfg, handlers.Init())
 
 	srv.Run()
 }

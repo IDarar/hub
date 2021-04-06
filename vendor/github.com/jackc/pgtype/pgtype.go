@@ -3,12 +3,13 @@ package pgtype
 import (
 	"database/sql"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"math"
 	"net"
 	"reflect"
 	"time"
+
+	errors "golang.org/x/xerrors"
 )
 
 // PostgreSQL oids for common types
@@ -76,9 +77,7 @@ const (
 	Int4rangeOID        = 3904
 	NumrangeOID         = 3906
 	TsrangeOID          = 3908
-	TsrangeArrayOID     = 3909
 	TstzrangeOID        = 3910
-	TstzrangeArrayOID   = 3911
 	Int8rangeOID        = 3926
 )
 
@@ -310,9 +309,7 @@ func NewConnInfo() *ConnInfo {
 	ci.RegisterDataType(DataType{Value: &Timestamp{}, Name: "timestamp", OID: TimestampOID})
 	ci.RegisterDataType(DataType{Value: &Timestamptz{}, Name: "timestamptz", OID: TimestamptzOID})
 	ci.RegisterDataType(DataType{Value: &Tsrange{}, Name: "tsrange", OID: TsrangeOID})
-	ci.RegisterDataType(DataType{Value: &TsrangeArray{}, Name: "_tsrange", OID: TsrangeArrayOID})
 	ci.RegisterDataType(DataType{Value: &Tstzrange{}, Name: "tstzrange", OID: TstzrangeOID})
-	ci.RegisterDataType(DataType{Value: &TstzrangeArray{}, Name: "_tstzrange", OID: TstzrangeArrayOID})
 	ci.RegisterDataType(DataType{Value: &Unknown{}, Name: "unknown", OID: UnknownOID})
 	ci.RegisterDataType(DataType{Value: &UUID{}, Name: "uuid", OID: UUIDOID})
 	ci.RegisterDataType(DataType{Value: &Varbit{}, Name: "varbit", OID: VarbitOID})
@@ -624,11 +621,11 @@ type scanPlanBinaryInt16 struct{}
 
 func (scanPlanBinaryInt16) Scan(ci *ConnInfo, oid uint32, formatCode int16, src []byte, dst interface{}) error {
 	if src == nil {
-		return fmt.Errorf("cannot scan null into %T", dst)
+		return errors.Errorf("cannot scan null into %T", dst)
 	}
 
 	if len(src) != 2 {
-		return fmt.Errorf("invalid length for int2: %v", len(src))
+		return errors.Errorf("invalid length for int2: %v", len(src))
 	}
 
 	if p, ok := (dst).(*int16); ok {
@@ -644,11 +641,11 @@ type scanPlanBinaryInt32 struct{}
 
 func (scanPlanBinaryInt32) Scan(ci *ConnInfo, oid uint32, formatCode int16, src []byte, dst interface{}) error {
 	if src == nil {
-		return fmt.Errorf("cannot scan null into %T", dst)
+		return errors.Errorf("cannot scan null into %T", dst)
 	}
 
 	if len(src) != 4 {
-		return fmt.Errorf("invalid length for int4: %v", len(src))
+		return errors.Errorf("invalid length for int4: %v", len(src))
 	}
 
 	if p, ok := (dst).(*int32); ok {
@@ -664,11 +661,11 @@ type scanPlanBinaryInt64 struct{}
 
 func (scanPlanBinaryInt64) Scan(ci *ConnInfo, oid uint32, formatCode int16, src []byte, dst interface{}) error {
 	if src == nil {
-		return fmt.Errorf("cannot scan null into %T", dst)
+		return errors.Errorf("cannot scan null into %T", dst)
 	}
 
 	if len(src) != 8 {
-		return fmt.Errorf("invalid length for int8: %v", len(src))
+		return errors.Errorf("invalid length for int8: %v", len(src))
 	}
 
 	if p, ok := (dst).(*int64); ok {
@@ -684,11 +681,11 @@ type scanPlanBinaryFloat32 struct{}
 
 func (scanPlanBinaryFloat32) Scan(ci *ConnInfo, oid uint32, formatCode int16, src []byte, dst interface{}) error {
 	if src == nil {
-		return fmt.Errorf("cannot scan null into %T", dst)
+		return errors.Errorf("cannot scan null into %T", dst)
 	}
 
 	if len(src) != 4 {
-		return fmt.Errorf("invalid length for int4: %v", len(src))
+		return errors.Errorf("invalid length for int4: %v", len(src))
 	}
 
 	if p, ok := (dst).(*float32); ok {
@@ -705,11 +702,11 @@ type scanPlanBinaryFloat64 struct{}
 
 func (scanPlanBinaryFloat64) Scan(ci *ConnInfo, oid uint32, formatCode int16, src []byte, dst interface{}) error {
 	if src == nil {
-		return fmt.Errorf("cannot scan null into %T", dst)
+		return errors.Errorf("cannot scan null into %T", dst)
 	}
 
 	if len(src) != 8 {
-		return fmt.Errorf("invalid length for int8: %v", len(src))
+		return errors.Errorf("invalid length for int8: %v", len(src))
 	}
 
 	if p, ok := (dst).(*float64); ok {
@@ -738,7 +735,7 @@ type scanPlanString struct{}
 
 func (scanPlanString) Scan(ci *ConnInfo, oid uint32, formatCode int16, src []byte, dst interface{}) error {
 	if src == nil {
-		return fmt.Errorf("cannot scan null into %T", dst)
+		return errors.Errorf("cannot scan null into %T", dst)
 	}
 
 	if p, ok := (dst).(*string); ok {
@@ -840,7 +837,7 @@ func scanUnknownType(oid uint32, formatCode int16, buf []byte, dest interface{})
 	switch dest := dest.(type) {
 	case *string:
 		if formatCode == BinaryFormatCode {
-			return fmt.Errorf("unknown oid %d in binary format cannot be scanned into %T", oid, dest)
+			return errors.Errorf("unknown oid %d in binary format cannot be scanned into %T", oid, dest)
 		}
 		*dest = string(buf)
 		return nil
@@ -851,7 +848,7 @@ func scanUnknownType(oid uint32, formatCode int16, buf []byte, dest interface{})
 		if nextDst, retry := GetAssignToDstType(dest); retry {
 			return scanUnknownType(oid, formatCode, buf, nextDst)
 		}
-		return fmt.Errorf("unknown oid %d cannot be scanned into %T", oid, dest)
+		return errors.Errorf("unknown oid %d cannot be scanned into %T", oid, dest)
 	}
 }
 
@@ -927,9 +924,7 @@ func init() {
 		"timestamp":    &Timestamp{},
 		"timestamptz":  &Timestamptz{},
 		"tsrange":      &Tsrange{},
-		"_tsrange":     &TsrangeArray{},
 		"tstzrange":    &Tstzrange{},
-		"_tstzrange":   &TstzrangeArray{},
 		"unknown":      &Unknown{},
 		"uuid":         &UUID{},
 		"varbit":       &Varbit{},

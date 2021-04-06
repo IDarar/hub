@@ -1,6 +1,6 @@
 package service
 
-import "hub/internal/domain"
+import "github.com/IDarar/hub/internal/domain"
 
 //all interfaces there are described
 type UserActions interface {
