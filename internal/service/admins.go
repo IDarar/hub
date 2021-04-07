@@ -6,12 +6,12 @@ import (
 )
 
 //39.58
-type Admins struct {
+type AdminsService struct {
 	repo repository.Admins
 }
 
-func NewAdminsService(repo repository.Users) *Users {
-	return &Users{
+func NewAdminsService(repo repository.Admins) *AdminsService {
+	return &AdminsService{
 		repo: repo,
 	}
 
@@ -19,11 +19,11 @@ func NewAdminsService(repo repository.Users) *Users {
 
 //TODO think about passing User's modls or IDs, know what context is used for
 //TODO know should service methods and repo ones have identic description (what vars they get)
-func (u *Users) grantRole(user *domain.User, role string) error {
+func (u *AdminsService) grantRole(user *domain.User, role string) error {
 
 	return nil
 }
-func (u *Users) revokeRole(user *domain.User, role string) error {
+func (u *AdminsService) revokeRole(user *domain.User, role string) error {
 
 	return nil
 }

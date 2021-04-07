@@ -2,27 +2,27 @@ package v1
 
 import (
 	"github.com/IDarar/hub/internal/service"
+	"github.com/IDarar/hub/pkg/auth"
 
 	"github.com/gin-gonic/gin"
 )
 
-//51.13 31.43
 type Handler struct {
-	usersService  service.Users
-	adminsService service.Admins
+	services     *service.Services
+	tokenManager auth.TokenManager
 }
 
-func NewHandler(usersService service.Users, adminsService service.Admins) *Handler {
-	return &Handler{usersService: usersService, adminsService: adminsService}
+func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
+	return &Handler{
+		services:     services,
+		tokenManager: tokenManager,
+	}
 }
+
 func (h *Handler) Init(api *gin.RouterGroup) {
 	v1 := api.Group("/v1")
 	{
 		h.initUsersRoutes(v1)
 		h.initAdminsRoutes(v1)
 	}
-}
-func newResponse(c *gin.Context, code int, message interface{}) {
-	c.String(code, "text", message)
-
 }

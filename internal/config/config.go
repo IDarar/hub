@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -23,7 +25,7 @@ type (
 	Config struct {
 		Postgres PostgresConfig
 		HTTP     HTTPConfig
-
+		Auth     AuthConfig
 		CacheTTL time.Duration `mapstructure:"ttl"`
 	}
 
@@ -39,6 +41,17 @@ type (
 		User     string
 		Password string
 		Sslmode  string
+	}
+	AuthConfig struct {
+		JWT                    JWTConfig
+		PasswordSalt           string
+		VerificationCodeLength int `mapstructure:"verificationCodeLength"`
+	}
+
+	JWTConfig struct {
+		AccessTokenTTL  time.Duration `mapstructure:"accessTokenTTL"`
+		RefreshTokenTTL time.Duration `mapstructure:"refreshTokenTTL"`
+		SigningKey      string
 	}
 )
 
@@ -59,7 +72,7 @@ func Init(path string) (*Config, error) {
 	}
 
 	setFromEnv(&cfg)
-
+	fmt.Println(cfg.Postgres)
 	return &cfg, nil
 }
 
@@ -73,12 +86,6 @@ func unmarshal(cfg *Config) error {
 	}
 
 	return nil
-}
-
-func setFromEnv(cfg *Config) {
-
-	cfg.HTTP.Host = viper.GetString("host")
-
 }
 
 func parseConfigFile(filepath string) error {
@@ -109,23 +116,35 @@ func parseEnv() error {
 	}
 	return nil
 }
+func setFromEnv(cfg *Config) {
+	cfg.Postgres.DBname = viper.GetString("dbname")
+	cfg.Postgres.User = viper.GetString("user")
+	cfg.Postgres.Password = viper.GetString("password")
+	cfg.Postgres.Sslmode = viper.GetString("sslmode")
+	fmt.Println(cfg.Postgres)
 
+}
 func parsePostgresEnvVariables() error {
+
+	os.Setenv("POSTGRES_USER", "postgres")
+	os.Setenv("POSTGRES_DBNAME", "hub")
+
+	os.Setenv("POSTGRES_PASSWORD", "123")
+
+	os.Setenv("POSTGRES_SSLMODE", "disabled")
+
 	viper.SetEnvPrefix("postgres")
 	if err := viper.BindEnv("user"); err != nil {
 		return err
 	}
 
-	if err := viper.BindEnv("name"); err != nil {
+	if err := viper.BindEnv("dbname"); err != nil {
 		return err
 	}
 	if err := viper.BindEnv("password"); err != nil {
 		return err
 	}
+	fmt.Println(os.Getenv("POSTGRES_PASSWORD"), "111111111111")
 	return viper.BindEnv("sslmode")
-}
 
-func parseHostFromEnv() error {
-	viper.SetEnvPrefix("http")
-	return viper.BindEnv("host")
 }

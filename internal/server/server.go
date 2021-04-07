@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -14,6 +15,7 @@ type Server struct {
 
 //TODO make config to server 29.51 another
 func NewServer(cfg *config.Config, handler http.Handler) *Server {
+	fmt.Println(cfg.HTTP.Port, "15215")
 	return &Server{
 		httpServer: &http.Server{
 			Addr:           ":" + cfg.HTTP.Port,

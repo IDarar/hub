@@ -1,6 +1,8 @@
 package postgres
 
 import (
+	"context"
+
 	"github.com/IDarar/hub/internal/domain"
 
 	"gorm.io/gorm"
@@ -16,10 +18,17 @@ func NewUserRepo(db *gorm.DB) *UsersRepo {
 		db: db,
 	}
 }
-func GetUserByID(int) (*domain.User, error) {
+func (r *UsersRepo) Create(ctx context.Context, user domain.User) error {
+	err := r.db.Create(&user).Error
+
+	return err
+}
+
+func (r *UsersRepo) GetUserByID(int) (*domain.User, error) {
 	return &domain.User{}, nil
 }
-func (u *UsersRepo) CreateMark(domain.UserProposition, [3]interface{}) error {
+
+/* TODO func (u *UsersRepo) CreateMark(domain.UserProposition, [3]interface{}) error {
 
 	return nil
-}
+}*/

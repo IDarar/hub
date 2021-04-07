@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/IDarar/hub/internal/service"
 	v1 "github.com/IDarar/hub/internal/transport/http/v1"
+	"github.com/IDarar/hub/pkg/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,18 +11,20 @@ import (
 //1.06 21.13(another)
 //Struct Hanlder takes all interfaces of service
 type Handler struct {
-	usersService  service.Users
-	adminsService service.Admins
+	usersService  service.User
+	adminsService service.Admin
+	services      *service.Services
+	tokenManager  auth.TokenManager
 }
 
-func NewHandler(usersService service.Users, adminsService service.Admins) *Handler {
+func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		usersService:  usersService,
-		adminsService: adminsService,
+		services:     services,
+		tokenManager: tokenManager,
 	}
 }
-func (h *Handler) Init() *gin.Engine {
 
+func (h *Handler) Init() *gin.Engine {
 	router := gin.Default()
 
 	router.Use(gin.Recovery(), gin.Logger())
@@ -33,7 +36,7 @@ func (h *Handler) Init() *gin.Engine {
 	return router
 }
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.usersService, h.adminsService)
+	handlerV1 := v1.NewHandler(h.services, h.tokenManager)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)

@@ -1,15 +1,20 @@
 package domain
 
+import "time"
+
 type Role string
 
 type User struct {
-	ID       string
-	Name     string
-	Password string
-	Role     UserRole //admin, SuperModerator, ContentModerator, ForumModerator
+	//TODO last proposition opened
+	ID           uint
+	Name         string
+	Email        string
+	Password     string
+	RegisteredAt time.Time
+	LastVisitAt  time.Time
+	Role         UserRole //admin, SuperModerator, ContentModerator, ForumModerator
 
 	EncryptedPassword string
-	Email             string
 	OnlineChan        chan int
 	IsOnline          bool
 

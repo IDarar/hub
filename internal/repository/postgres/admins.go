@@ -4,21 +4,19 @@ import (
 	"gorm.io/gorm"
 )
 
-//44.41
 type AdminsRepo struct {
 	db *gorm.DB
 }
 
-func NewAdminsRepo(db *gorm.DB) *UsersRepo {
-	return &UsersRepo{
+func NewAdminsRepo(db *gorm.DB) *AdminsRepo {
+	return &AdminsRepo{
 		db: db,
 	}
 }
 
 //TODO
-func (a *AdminsRepo) grantRole() {
-
+func (r *AdminsRepo) GrantRole(id int) {
 }
-func (a *AdminsRepo) revokeRole() {
+func (r *AdminsRepo) RevokeRole(id int) {
 
 }

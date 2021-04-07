@@ -1,17 +1,25 @@
 package repository
 
-import "github.com/IDarar/hub/internal/domain"
+import (
+	"context"
+
+	"github.com/IDarar/hub/internal/domain"
+	"github.com/IDarar/hub/internal/repository/postgres"
+
+	"gorm.io/gorm"
+)
 
 //all db interfaces there are described 44.20
 //and struct repositories named with all interfaces in the end defined
 type Users interface {
+	Create(ctx context.Context, student domain.User) error
 	GetUserByID(int) (*domain.User, error)
-	CreateMark(map[int]int)
+	//TODO CreateMark(map[int]int)
 }
 type Admins interface {
-	//TODO
-	grantRole()
-	revokeRole()
+	GrantRole(id int)
+
+	RevokeRole(id int)
 }
 type Content interface {
 }
@@ -19,4 +27,11 @@ type Content interface {
 type Repositories struct {
 	Users  Users
 	Admins Admins
+}
+
+func NewRepositories(db *gorm.DB) *Repositories {
+	return &Repositories{
+		Users:  postgres.NewUserRepo(db),
+		Admins: postgres.NewAdminsRepo(db),
+	}
 }

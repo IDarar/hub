@@ -28,12 +28,23 @@ type signInInput struct {
 
 //25.45
 func (h *Handler) userSignUp(c *gin.Context) {
-	var inp signInInput
+	var inp signUpInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	newResponse(c, 200, "works")
+
+	/*if err := h.services.Admin.SignUp(c.Request.Context(), service.StudentSignUpInput{
+		Name:     inp.Name,
+		Email:    inp.Email,
+		Password: inp.Password,
+		SchoolID: school.ID,
+	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}*/
+
+	c.Status(http.StatusCreated)
 }
 
 func (h *Handler) userSignIn(c *gin.Context) {
