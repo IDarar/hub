@@ -1,11 +1,13 @@
 package http
 
 import (
+	_ "github.com/IDarar/hub/cmd/hub/docs"
 	"github.com/IDarar/hub/internal/service"
 	v1 "github.com/IDarar/hub/internal/transport/http/v1"
 	"github.com/IDarar/hub/pkg/auth"
-
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 //1.06 21.13(another)
@@ -32,6 +34,8 @@ func (h *Handler) Init() *gin.Engine {
 		c.String(200, "pong")
 
 	})
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	h.initAPI(router)
 	return router
 }
