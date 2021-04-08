@@ -84,7 +84,9 @@ func unmarshal(cfg *Config) error {
 	if err := viper.UnmarshalKey("http", &cfg.HTTP); err != nil {
 		return err
 	}
-
+	if err := viper.UnmarshalKey("auth", &cfg.Auth.JWT); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -114,13 +116,19 @@ func parseEnv() error {
 	if err := parsePostgresEnvVariables(); err != nil {
 		return err
 	}
-	return nil
+	if err := parseJWTFromEnv(); err != nil {
+		return err
+	}
+	return parsePasswordFromEnv()
 }
 func setFromEnv(cfg *Config) {
 	cfg.Postgres.DBname = viper.GetString("dbname")
 	cfg.Postgres.User = viper.GetString("user")
 	cfg.Postgres.Password = viper.GetString("password")
 	cfg.Postgres.Sslmode = viper.GetString("sslmode")
+	cfg.Auth.PasswordSalt = viper.GetString("salt")
+	cfg.Auth.JWT.SigningKey = viper.GetString("signingkey")
+
 	fmt.Println(cfg.Postgres)
 
 }
@@ -147,4 +155,16 @@ func parsePostgresEnvVariables() error {
 	fmt.Println(os.Getenv("POSTGRES_PASSWORD"), "111111111111")
 	return viper.BindEnv("sslmode")
 
+}
+func parsePasswordFromEnv() error {
+	os.Setenv("PASSWORD_SALT", "1234")
+
+	viper.SetEnvPrefix("password")
+	return viper.BindEnv("salt")
+}
+func parseJWTFromEnv() error {
+	os.Setenv("JWT_SIGNINGKEY", "signing_key")
+
+	viper.SetEnvPrefix("jwt")
+	return viper.BindEnv("signingkey")
 }

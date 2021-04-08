@@ -1,17 +1,21 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	_ "gorm.io/gorm"
+)
 
 type Role string
 
 type User struct {
-	//TODO last proposition opened
-	ID           uint
+	ID           int `gorm:"primaryKey"`
 	Name         string
 	Email        string
-	Password     string `gorm:"-"`
+	Password     string
 	RegisteredAt time.Time
 	LastVisitAt  time.Time
+	Session      Session
 	Role         UserRole `gorm:"-"` //admin, SuperModerator, ContentModerator, ForumModerator
 
 	EncryptedPassword string   `gorm:"-"`

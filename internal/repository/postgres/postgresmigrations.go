@@ -2,8 +2,6 @@ package postgres
 
 import (
 	"time"
-
-	_ "gorm.io/gorm"
 )
 
 type Hub struct {
@@ -133,12 +131,13 @@ type Role string
 
 type User struct {
 	//TODO last proposition opened
-	ID           uint   `gorm:"primaryKey"`
+	ID           int    `gorm:"primaryKey"`
 	Name         string `gorm:"uniqueIndex"`
 	Email        string `gorm:"uniqueIndex"`
 	Password     string
 	RegisteredAt time.Time
 	LastVisitAt  time.Time
+	Session      Session
 	Role         UserRole `gorm:"-"` //admin, SuperModerator, ContentModerator, ForumModerator
 
 	EncryptedPassword string   `gorm:"-"`
@@ -147,14 +146,20 @@ type User struct {
 
 	UserListID int        `gorm:"-"`
 	UserLists  *UserLists `gorm:"-"`
-
-	Articles []*Article `gorm:"-"`
-	Comments []*Comment `gorm:"-"`
+	Articles   []*Article `gorm:"-"`
+	Comments   []*Comment `gorm:"-"`
 
 	Notifications []*Notification `gorm:"-"` //new articles, news, replyes etc
 
 	Chats []*Chat `gorm:"-"`
 }
+
+type Session struct {
+	UserID       int       `gorm:"primaryKey"`
+	RefreshToken string    `json:"refreshToken" bson:"refreshToken"`
+	ExpiresAt    time.Time `json:"expiresAt" bson:"expiresAt"`
+}
+
 type UserRole struct {
 	UsersIDs string
 	Role     Role

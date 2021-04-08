@@ -8,7 +8,9 @@ import (
 	"github.com/IDarar/hub/internal/service"
 	"github.com/IDarar/hub/internal/transport/http"
 	"github.com/IDarar/hub/pkg/auth"
+	"github.com/IDarar/hub/pkg/hash"
 	"github.com/IDarar/hub/pkg/logger"
+	"github.com/sirupsen/logrus"
 )
 
 func Run(configPath string) {
@@ -17,7 +19,8 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
-	tokenManager, err := auth.NewManager("cfg.Auth.JWT.SigningKey")
+	logrus.Info("rqwrqwrq", cfg.Auth.JWT)
+	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
 		return
@@ -27,9 +30,12 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
+	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
+
 	repos := repository.NewRepositories(db)
 	services := service.NewServices(service.Deps{
-		Repos: repos,
+		Repos:  repos,
+		Hasher: hasher,
 	})
 	handlers := http.NewHandler(services, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init())

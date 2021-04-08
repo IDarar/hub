@@ -27,7 +27,6 @@ type signInInput struct {
 	Password string `json:"password,omitempty" binding:"required,min=4,max=64"`
 }
 
-//25.45
 func (h *Handler) userSignUp(c *gin.Context) {
 	var inp signUpInput
 	if err := c.BindJSON(&inp); err != nil {
@@ -35,9 +34,9 @@ func (h *Handler) userSignUp(c *gin.Context) {
 		return
 	}
 	if err := h.services.User.SignUp(c.Request.Context(), service.SignUpInput{
-		Name:  inp.Name,
-		Email: inp.Email,
-		//Password: inp.Password,
+		Name:     inp.Name,
+		Email:    inp.Email,
+		Password: inp.Password,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -46,12 +45,68 @@ func (h *Handler) userSignUp(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-func (h *Handler) userSignIn(c *gin.Context) {
+type tokenResponse struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
 
+func (h *Handler) userSignIn(c *gin.Context) {
 	var inp signInInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	//further logik
+
+	res, err := h.services.User.SignIn(c.Request.Context(), service.SignInInput{
+		Name:     inp.Name,
+		Password: inp.Password,
+	})
+	if err != nil {
+		if err == service.ErrUserNotFound {
+			newResponse(c, http.StatusBadRequest, err.Error())
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, tokenResponse{
+		AccessToken:  res.AccessToken,
+		RefreshToken: res.RefreshToken,
+	})
+}
+
+type refreshInput struct {
+	Token string `json:"token" binding:"required"`
+}
+
+// @Summary Student Refresh Tokens
+// @Tags students-auth
+// @Description student refresh tokens
+// @Accept  json
+// @Produce  json
+// @Param input body refreshInput true "sign up info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /students/auth/refresh [post]
+func (h *Handler) userRefresh(c *gin.Context) {
+	var inp refreshInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	/*res, err := h.services.User.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, tokenResponse{
+		AccessToken:  res.AccessToken,
+		RefreshToken: res.RefreshToken,
+	})*/
 }
