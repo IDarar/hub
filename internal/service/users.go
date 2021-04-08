@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/IDarar/hub/internal/domain"
@@ -72,7 +73,7 @@ func (s *UserService) createSession(userId int) (Tokens, error) {
 		err error
 	)
 
-	res.AccessToken, err = s.tokenManager.NewJWT(string(userId), s.accessTokenTTL)
+	res.AccessToken, err = s.tokenManager.NewJWT(fmt.Sprint(userId), s.accessTokenTTL)
 	if err != nil {
 		return res, err
 	}

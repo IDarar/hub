@@ -40,9 +40,9 @@ func (r *UsersRepo) GetUserByID(int) (*domain.User, error) {
 	return &domain.User{}, nil
 }
 func (r *UsersRepo) SetSession(userId int, session domain.Session) error {
-	/*Db.Model(&User{}).Where("id = ?", studentId).Update("avatar", "https://forumwebappdeploytest.herokuapp.com/profileimages/"+s+".jpg")
-	return err*/
-	return nil
+	//"refresh_token", session.RefreshToken
+	err := r.db.Model(&Session{}).Where("user_id = ?", userId).Updates(domain.Session{RefreshToken: session.RefreshToken, ExpiresAt: session.ExpiresAt}).Error
+	return err
 }
 
 /* TODO func (u *UsersRepo) CreateMark(domain.UserProposition, [3]interface{}) error {

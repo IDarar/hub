@@ -34,8 +34,11 @@ func Run(configPath string) {
 
 	repos := repository.NewRepositories(db)
 	services := service.NewServices(service.Deps{
-		Repos:  repos,
-		Hasher: hasher,
+		Repos:           repos,
+		Hasher:          hasher,
+		AccessTokenTTL:  cfg.Auth.JWT.AccessTokenTTL,
+		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
+		TokenManager:    tokenManager,
 	})
 	handlers := http.NewHandler(services, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init())
