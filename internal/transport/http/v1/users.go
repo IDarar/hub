@@ -3,11 +3,12 @@ package v1
 import (
 	"net/http"
 
+	"github.com/IDarar/hub/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
-	users := api.Group("/users") //51.23
+	users := api.Group("/users")
 	{
 		users.POST("/sign-up", h.userSignUp)
 
@@ -33,16 +34,14 @@ func (h *Handler) userSignUp(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-
-	/*if err := h.services.Admin.SignUp(c.Request.Context(), service.StudentSignUpInput{
-		Name:     inp.Name,
-		Email:    inp.Email,
-		Password: inp.Password,
-		SchoolID: school.ID,
+	if err := h.services.User.SignUp(c.Request.Context(), service.SignUpInput{
+		Name:  inp.Name,
+		Email: inp.Email,
+		//Password: inp.Password,
 	}); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
-	}*/
+	}
 
 	c.Status(http.StatusCreated)
 }

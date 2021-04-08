@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"log"
 
 	"github.com/IDarar/hub/internal/domain"
 
@@ -19,6 +20,7 @@ func NewUserRepo(db *gorm.DB) *UsersRepo {
 	}
 }
 func (r *UsersRepo) Create(ctx context.Context, user domain.User) error {
+	log.Println("go to create")
 	err := r.db.Create(&user).Error
 
 	return err

@@ -9,24 +9,24 @@ type User struct {
 	ID           uint
 	Name         string
 	Email        string
-	Password     string
+	Password     string `gorm:"-"`
 	RegisteredAt time.Time
 	LastVisitAt  time.Time
-	Role         UserRole //admin, SuperModerator, ContentModerator, ForumModerator
+	Role         UserRole `gorm:"-"` //admin, SuperModerator, ContentModerator, ForumModerator
 
-	EncryptedPassword string
-	OnlineChan        chan int
-	IsOnline          bool
+	EncryptedPassword string   `gorm:"-"`
+	OnlineChan        chan int `gorm:"-"`
+	IsOnline          bool     `gorm:"-"`
 
-	UserListID int
-	UserLists  *UserLists
+	UserListID int        `gorm:"-"`
+	UserLists  *UserLists `gorm:"-"`
 
-	Articles []*Article
-	Comments []*Comment
+	Articles []*Article `gorm:"-"`
+	Comments []*Comment `gorm:"-"`
 
-	Notifications []*Notification //new articles, news, replyes etc
+	Notifications []*Notification `gorm:"-"` //new articles, news, replyes etc
 
-	Chats []*Chat
+	Chats []*Chat `gorm:"-"`
 }
 type UserRole struct {
 	UsersIDs string

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/IDarar/hub/internal/config"
+	"github.com/IDarar/hub/pkg/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -43,4 +44,6 @@ func InitialiseTables(db *gorm.DB) {
 	if err != nil {
 		return
 	}
+	logger.Info("migrated succsessfully")
+
 }

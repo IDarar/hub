@@ -7,7 +7,7 @@ import (
 	"github.com/IDarar/hub/internal/repository"
 )
 
-type UserSignUpInput struct {
+type SignUpInput struct {
 	Name     string
 	Email    string
 	Password string
@@ -15,7 +15,7 @@ type UserSignUpInput struct {
 
 //all interfaces there are described
 type User interface {
-	SignUp(ctx context.Context, input UserSignUpInput) error
+	SignUp(ctx context.Context, input SignUpInput) error
 
 	CreateMark(domain.UserProposition, [3]interface{}) error
 }

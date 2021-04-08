@@ -18,7 +18,7 @@ func NewUsersService(repo repository.Users) *UserService {
 		repo: repo,
 	}
 }
-func (s *UserService) SignUp(ctx context.Context, input UserSignUpInput) error {
+func (s *UserService) SignUp(ctx context.Context, input SignUpInput) error {
 	user := domain.User{
 		Name: input.Name,
 		//Password:     s.hasher.Hash(input.Password),
