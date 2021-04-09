@@ -24,6 +24,9 @@ func (u *AdminsService) GrantRole(name, role string, roles interface{}) error {
 	switch true {
 	case FindRole(roles.([]string), "admin"):
 	case FindRole(roles.([]string), "SuperModerator"):
+		if role == "admin" || role == "SuperModerator" {
+			return errors.New("Don't have enough rights")
+		}
 	default:
 		return errors.New("Don't have enough rights")
 	}
