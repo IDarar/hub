@@ -27,7 +27,6 @@ func (h *Handler) adminIdentity(c *gin.Context) {
 	}
 	c.Set(userCtx, id)
 	c.Set(roleCtx, role)
-
 }
 func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {
 	header := c.GetHeader(authorizationHeader)

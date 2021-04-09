@@ -1,5 +1,15 @@
 basePath: /api/v1/
 definitions:
+  v1.grantRoleInput:
+    properties:
+      role:
+        type: string
+      username:
+        type: string
+    required:
+    - role
+    - username
+    type: object
   v1.response:
     properties:
       message:
@@ -42,6 +52,46 @@ info:
   title: Hub
   version: "0.001"
 paths:
+  /admins/roles/grant-role:
+    post:
+      consumes:
+      - application/json
+      description: admin-grantrole
+      parameters:
+      - description: role granting info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.grantRoleInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: admin GrantRole
+      tags:
+      - roles
   /users/sign-in:
     post:
       consumes:

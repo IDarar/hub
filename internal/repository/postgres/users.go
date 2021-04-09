@@ -35,7 +35,17 @@ func (r *UsersRepo) GetByCredentials(ctx context.Context, name, password string)
 
 	return user, nil
 }
+func (r *UsersRepo) GetByName(name string) (domain.User, error) {
+	var user domain.User
+	err := r.db.Where(&domain.User{Name: name}).First(&user).Error
+	if err != nil {
+		logger.Warn("Not found user ", err)
+		return domain.User{}, err
 
+	}
+
+	return user, nil
+}
 func (r *UsersRepo) GetUserByID(int) (*domain.User, error) {
 	return &domain.User{}, nil
 }

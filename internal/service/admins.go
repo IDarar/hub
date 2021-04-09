@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 )
@@ -17,13 +19,28 @@ func NewAdminsService(repo repository.Admins) *AdminsService {
 
 }
 
-//TODO think about passing User's modls or IDs, know what context is used for
-//TODO know should service methods and repo ones have identic description (what vars they get)
-func (u *AdminsService) grantRole(user *domain.User, role string) error {
+func (u *AdminsService) GrantRole(name, role string, roles interface{}) error {
 
-	return nil
+	switch true {
+	case FindRole(roles.([]string), "admin"):
+	case FindRole(roles.([]string), "SuperModerator"):
+	default:
+		return errors.New("Don't have enough rights")
+	}
+
+	return u.repo.GrantRole(name, role)
 }
-func (u *AdminsService) revokeRole(user *domain.User, role string) error {
+
+func FindRole(roles []string, val string) bool {
+	for _, item := range roles {
+		if item == val {
+			return true
+		}
+	}
+	return false
+}
+
+func (u *AdminsService) RevokeRole(user *domain.User, role string) error {
 
 	return nil
 }

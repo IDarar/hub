@@ -20,7 +20,7 @@ type Users interface {
 	//TODO CreateMark(map[int]int)
 }
 type Admins interface {
-	GrantRole(id int)
+	GrantRole(name, role string) error
 
 	RevokeRole(id int)
 }

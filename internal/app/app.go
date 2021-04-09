@@ -10,7 +10,6 @@ import (
 	"github.com/IDarar/hub/pkg/auth"
 	"github.com/IDarar/hub/pkg/hash"
 	"github.com/IDarar/hub/pkg/logger"
-	"github.com/sirupsen/logrus"
 )
 
 // @title Hub
@@ -33,7 +32,6 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
-	logrus.Info("rqwrqwrq", cfg.Auth.JWT)
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
@@ -54,8 +52,6 @@ func Run(configPath string) {
 		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
 		TokenManager:    tokenManager,
 	})
-	repos.Users.GetRoleByID(20)
-	repos.Users.GetRoleByID(3)
 
 	handlers := http.NewHandler(services, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init())
@@ -67,4 +63,14 @@ func Run(configPath string) {
 db.Create(&role)
 role = domain.Role{Role: "SuperModerator", Users: []domain.User{{ID: 1}, {ID: 2}}}
 
-db.Model(&role).Association("Users").Append([]domain.User{})*/
+db.Model(&role).Association("Users").Append([]domain.User{})
+
+repos.Users.GetRoleByID(20)
+repos.Users.GetRoleByID(3)
+
+role := domain.Role{Role: "ContentModerator"}
+role2 := domain.Role{Role: "ForumModerator"}
+
+db.Create(&role)
+db.Create(&role2)
+*/

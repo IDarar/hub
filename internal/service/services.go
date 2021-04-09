@@ -33,8 +33,8 @@ type User interface {
 	CreateMark(domain.UserProposition, [3]interface{}) error
 }
 type Admin interface {
-	grantRole(user *domain.User, role string) error
-	revokeRole(user *domain.User, role string) error
+	GrantRole(name, role string, roles interface{}) error
+	RevokeRole(user *domain.User, role string) error
 }
 type Services struct {
 	User  User
