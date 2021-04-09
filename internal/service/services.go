@@ -29,6 +29,7 @@ type Tokens struct {
 type User interface {
 	SignUp(ctx context.Context, input SignUpInput) error
 	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
+	GetRoleById(id int) ([]string, error)
 	CreateMark(domain.UserProposition, [3]interface{}) error
 }
 type Admin interface {

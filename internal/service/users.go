@@ -91,3 +91,10 @@ func (s *UserService) createSession(userId int) (Tokens, error) {
 	err = s.repo.SetSession(userId, session)
 	return res, err
 }
+func (s *UserService) GetRoleById(Userid int) ([]string, error) {
+	roles, err := s.repo.GetRoleByID(Userid)
+	if err != nil {
+		return roles, err
+	}
+	return roles, nil
+}

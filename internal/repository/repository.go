@@ -13,7 +13,7 @@ import (
 //and struct repositories named with all interfaces in the end defined
 type Users interface {
 	Create(ctx context.Context, user domain.User) error
-	GetUserByID(int) (*domain.User, error)
+	GetRoleByID(id int) ([]string, error)
 	GetByCredentials(ctx context.Context, name, password string) (domain.User, error)
 	SetSession(userId int, session domain.Session) error
 

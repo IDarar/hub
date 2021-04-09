@@ -11,7 +11,6 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 	users := api.Group("/users")
 	{
 		users.POST("/sign-up", h.userSignUp)
-
 		users.POST("/sign-in", h.userSignIn)
 
 	}

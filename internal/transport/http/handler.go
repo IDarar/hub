@@ -1,7 +1,7 @@
 package http
 
 import (
-	_ "github.com/IDarar/hub/cmd/hub/docs"
+	_ "github.com/IDarar/hub/docs"
 	"github.com/IDarar/hub/internal/service"
 	v1 "github.com/IDarar/hub/internal/transport/http/v1"
 	"github.com/IDarar/hub/pkg/auth"

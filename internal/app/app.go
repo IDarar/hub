@@ -13,6 +13,20 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// @title Hub
+// @version 0.001
+// @description Hub for specified topics
+
+// @host localhost:8080
+// @BasePath /api/v1/
+
+// @securityDefinitions.apikey AdminAuth
+// @in header
+// @name Authorization
+
+// @securityDefinitions.apikey StudentsAuth
+// @in header
+// @name Authorization
 func Run(configPath string) {
 	cfg, err := config.Init(configPath)
 	if err != nil {
@@ -40,8 +54,17 @@ func Run(configPath string) {
 		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
 		TokenManager:    tokenManager,
 	})
+	repos.Users.GetRoleByID(20)
+	repos.Users.GetRoleByID(3)
+
 	handlers := http.NewHandler(services, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init())
 
 	srv.Run()
 }
+
+/*role := domain.Role{Role: "SuperModerator"}
+db.Create(&role)
+role = domain.Role{Role: "SuperModerator", Users: []domain.User{{ID: 1}, {ID: 2}}}
+
+db.Model(&role).Association("Users").Append([]domain.User{})*/

@@ -6,17 +6,16 @@ import (
 	_ "gorm.io/gorm"
 )
 
-type Role string
-
 type User struct {
-	ID           int `gorm:"primaryKey"`
-	Name         string
-	Email        string
+	//TODO last proposition opened
+	ID           int    `gorm:"primaryKey"`
+	Name         string `gorm:"uniqueIndex"`
+	Email        string `gorm:"uniqueIndex"`
 	Password     string
 	RegisteredAt time.Time
 	LastVisitAt  time.Time
 	Session      Session
-	Role         UserRole `gorm:"-"` //admin, SuperModerator, ContentModerator, ForumModerator
+	Roles        []Role `gorm:"many2many:user_role;"` //admin, SuperModerator, ContentModerator, ForumModerator
 
 	EncryptedPassword string   `gorm:"-"`
 	OnlineChan        chan int `gorm:"-"`
@@ -24,15 +23,15 @@ type User struct {
 
 	UserListID int        `gorm:"-"`
 	UserLists  *UserLists `gorm:"-"`
-
-	Articles []*Article `gorm:"-"`
-	Comments []*Comment `gorm:"-"`
+	Articles   []*Article `gorm:"-"`
+	Comments   []*Comment `gorm:"-"`
 
 	Notifications []*Notification `gorm:"-"` //new articles, news, replyes etc
 
 	Chats []*Chat `gorm:"-"`
 }
-type UserRole struct {
-	UsersIDs string
-	Role     Role
+
+type Role struct {
+	Role  string `gorm:"primaryKey"`
+	Users []User `gorm:"many2many:user_role;"`
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/IDarar/hub/internal/config"
+	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/pkg/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -40,7 +41,7 @@ func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
 	return db, nil
 }
 func InitialiseTables(db *gorm.DB) {
-	err := db.AutoMigrate(&User{}, &Session{})
+	err := db.AutoMigrate(&domain.User{}, &domain.Session{}, &domain.Role{})
 	if err != nil {
 		return
 	}
