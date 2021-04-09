@@ -16,6 +16,12 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 			roles.POST("/grant-role", h.grantRole)
 			roles.POST("/revoke-role", h.revokeRole)
 		}
+		content := admins.Group("/content")
+		{
+			content.POST("/create-treatise", h.createTreatise)
+			content.POST("/update-treatise", h.updateTreatise)
+			content.POST("/delete-treatise", h.deleteTreatise)
+		}
 
 	}
 
@@ -65,4 +71,13 @@ func (h *Handler) grantRole(c *gin.Context) {
 }
 
 func (h *Handler) revokeRole(c *gin.Context) {
+}
+func (h *Handler) createTreatise(c *gin.Context) {
+
+}
+func (h *Handler) updateTreatise(c *gin.Context) {
+
+}
+func (h *Handler) deleteTreatise(c *gin.Context) {
+
 }
