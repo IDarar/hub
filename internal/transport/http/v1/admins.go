@@ -29,9 +29,9 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 		}
 		parts := content.Group("/parts")
 		{
-			parts.POST("/:id")
+			/*parts.POST("/:id")
 			parts.PUT("/:id")
-			parts.PUT("/:id")
+			parts.PUT("/:id")*/
 			//For treatises divided into parts
 			parts.POST("/:id/proposition", h.createProposition)
 		} /*

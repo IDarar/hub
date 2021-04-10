@@ -53,8 +53,27 @@ func Run(configPath string) {
 		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
 		TokenManager:    tokenManager,
 	})
-	prop := &domain.Proposition{ID: "TPXVI", TargetID: "123"}
+	treatise := &domain.Treatise{ID: "E"}
+	/*err = db.Create(&treatise).Error
+	if err != nil {
+		logger.Error(err)
+		return
+
+	}*/
+	prop := &domain.Proposition{ID: "14EXVI", TargetID: "E3"}
 	err = db.Create(&prop).Error
+	if err != nil {
+		logger.Error(err)
+		return
+
+	}
+	err = db.Model(&treatise).Association("Propositions").Append(prop)
+	if err != nil {
+		logger.Error(err)
+		return
+
+	}
+	err = db.Model(&prop).Association("Propositafafions").Append([]domain.Treatise{})
 	if err != nil {
 		logger.Error(err)
 		return

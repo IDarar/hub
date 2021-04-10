@@ -25,10 +25,10 @@ type Treatise struct {
 	Description  string
 	Date         string
 	CreatedAt    time.Time
-	Parts        []*Part        `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
-	Propositions []*Proposition `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
+	Parts        []Part        `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
+	Propositions []Proposition `gorm:"many2many:treatise_propositions;constraint:OnDelete:CASCADE"`
 
-	Literature []*Literature `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
+	Literature []*Literature `gorm:"-"` //`gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
 
 	Difficulty    int `gorm:"-"`
 	Importance    int `gorm:"-"`
@@ -49,8 +49,8 @@ type Part struct {
 	Name         string
 	FullName     string
 	Description  string
-	Propositions []*Proposition `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
-	Literature   []*Literature  `gorm:"-"`
+	Propositions []Proposition `gorm:"many2many:part_propositions;constraint:OnDelete:CASCADE"`
+	Literature   []Literature  `gorm:"-"`
 
 	Difficulty    int `gorm:"-"`
 	Importance    int `gorm:"-"`

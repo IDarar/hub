@@ -16,7 +16,6 @@ func NewAdminsRepo(db *gorm.DB) *AdminsRepo {
 	}
 }
 
-//TODO
 func (r *AdminsRepo) GrantRole(name, role string) error {
 
 	user, err := r.GetByName(name)
