@@ -1,5 +1,23 @@
 basePath: /api/v1/
 definitions:
+  v1.createPartInput:
+    properties:
+      description:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      targetID:
+        type: string
+    required:
+    - description
+    - full_name
+    - id
+    - name
+    type: object
   v1.grantRoleInput:
     properties:
       role:
@@ -155,6 +173,46 @@ paths:
       summary: admin DeleteTreatise
       tags:
       - content
+  /admins/content/{id}/parts:
+    post:
+      consumes:
+      - application/json
+      description: createPart
+      parameters:
+      - description: part info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createPartInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: admin createPart
+      tags:
+      - parts
   /admins/roles/grant-role:
     post:
       consumes:

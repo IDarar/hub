@@ -59,7 +59,16 @@ func Run(configPath string) {
 	srv.Run()
 }
 
-/*role := domain.Role{Role: "SuperModerator"}
+/*
+treatise := &domain.Treatise{ID: part.TargetID}
+	toin := &domain.Part{Name: part.Name, ID: part.ID}
+	err = db.Model(&treatise).Association("Parts").Append(&toin)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	//err := r.db.Model(&domain.Part{}).Where("target_id = ?", part.TargetID).Updates(domain.Part{ID: part.ID, Name: part.Name}).Error
+role := domain.Role{Role: "SuperModerator"}
 db.Create(&role)
 role = domain.Role{Role: "SuperModerator", Users: []domain.User{{ID: 1}, {ID: 2}}}
 

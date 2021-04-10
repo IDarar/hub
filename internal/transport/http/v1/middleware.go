@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/IDarar/hub/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,9 +22,14 @@ func (h *Handler) adminIdentity(c *gin.Context) {
 		newResponse(c, http.StatusUnauthorized, err.Error())
 	}
 	id, err := strconv.Atoi(idS)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
 	role, err := h.services.User.GetRoleById(id)
 	if err != nil {
 		newResponse(c, http.StatusUnauthorized, err.Error())
+		return
 	}
 	c.Set(userCtx, id)
 	c.Set(roleCtx, role)

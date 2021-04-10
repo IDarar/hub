@@ -50,7 +50,7 @@ type Part struct {
 	FullName     string
 	Description  string
 	Propositions []*Proposition `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
-	Literature   []*Literature  `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
+	Literature   []*Literature  `gorm:"-"`
 
 	Difficulty    int `gorm:"-"`
 	Importance    int `gorm:"-"`

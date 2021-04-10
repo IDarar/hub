@@ -38,12 +38,17 @@ type Admin interface {
 }
 type Content interface {
 	Create(id, title, date, description string, roles interface{}) error
-	Delete(id, title string, roles interface{}) error
+	Delete(id string, roles interface{}) error
+}
+type Part interface {
+	Create(id, TargetID, name, fullname, description string, roles interface{}) error
+	Delete(id string, roles interface{}) error
 }
 type Services struct {
 	User    User
 	Admin   Admin
 	Content Content
+	Part    Part
 }
 type Deps struct {
 	Repos                  *repository.Repositories
@@ -61,5 +66,6 @@ func NewServices(deps Deps) *Services {
 		deps.TokenManager, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.VerificationCodeLength)
 	adminService := NewAdminsService(deps.Repos.Admins)
 	contentService := NewContentService(deps.Repos.Content)
-	return &Services{User: userService, Admin: adminService, Content: contentService}
+	partsService := NewPartsService(deps.Repos.Parts)
+	return &Services{User: userService, Admin: adminService, Content: contentService, Part: partsService}
 }

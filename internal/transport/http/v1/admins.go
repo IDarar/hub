@@ -24,7 +24,7 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 			content.DELETE("/:id", h.deleteTreatise)
 			content.POST("/:id/parts", h.createPart)
 			//For treatises without parts division
-			content.POST("/:id/proposition", h.createPart)
+			content.POST("/:id/proposition", h.createProposition)
 
 		}
 		/*parts := content.Group("/parts")
@@ -176,7 +176,7 @@ func (h *Handler) deleteTreatise(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Content.Delete(idParam, inp.Title, roles)
+	err := h.services.Content.Delete(idParam, roles)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -184,5 +184,54 @@ func (h *Handler) deleteTreatise(c *gin.Context) {
 
 	c.Status(http.StatusCreated)
 }
+
+type createPartInput struct {
+	ID          string `json:"id"  binding:"required"`
+	TargetID    string
+	Name        string `json:"name" binding:"required"`
+	FullName    string `json:"full_name" binding:"required"`
+	Description string `json:"description"  binding:"required"`
+}
+
+// @Summary	admin createPart
+// @Security AdminAuth
+// @Tags parts
+// @Description createPart
+// @ModuleID createPart
+// @Accept  json
+// @Produce  json
+// @Param input body createPartInput true "part info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/content/{id}/parts [post]
 func (h *Handler) createPart(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+	var inp createPartInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	roles, ex := c.Get(roleCtx)
+	if !ex {
+		newResponse(c, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	err := h.services.Part.Create(inp.ID, idParam, inp.Name, inp.FullName, inp.Description, roles)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+func (h *Handler) createProposition(c *gin.Context) {
 }

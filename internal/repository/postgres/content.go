@@ -25,9 +25,9 @@ func (r *ContentRepo) Delete(treatise domain.Treatise) error {
 	logger.Info(treatise)
 	check := r.db.Delete(&treatise).RowsAffected
 	if check == 0 {
-		logger.Info("Could not delete")
+		logger.Info("could not delete")
 
-		return errors.New("Could not delete")
+		return errors.New("could not delete")
 	}
 	return nil
 }

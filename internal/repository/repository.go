@@ -28,10 +28,15 @@ type Content interface {
 	Create(treatise domain.Treatise) error
 	Delete(treatise domain.Treatise) error
 }
+type Parts interface {
+	Create(part domain.Part) error
+	Delete(part domain.Part) error
+}
 type Repositories struct {
 	Users   Users
 	Admins  Admins
 	Content Content
+	Parts   Parts
 }
 
 func NewRepositories(db *gorm.DB) *Repositories {
@@ -39,5 +44,6 @@ func NewRepositories(db *gorm.DB) *Repositories {
 		Users:   postgres.NewUserRepo(db),
 		Admins:  postgres.NewAdminsRepo(db),
 		Content: postgres.NewContentRepo(db),
+		Parts:   postgres.NewPartsRepo(db),
 	}
 }

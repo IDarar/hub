@@ -150,6 +150,69 @@ var doc = `{
                 }
             }
         },
+        "/admins/content/{id}/parts": {
+            "post": {
+                "security": [
+                    {
+                        "AdminAuth": []
+                    }
+                ],
+                "description": "createPart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "parts"
+                ],
+                "summary": "admin createPart",
+                "parameters": [
+                    {
+                        "description": "part info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.createPartInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/roles/grant-role": {
             "post": {
                 "security": [
@@ -331,6 +394,32 @@ var doc = `{
         }
     },
     "definitions": {
+        "v1.createPartInput": {
+            "type": "object",
+            "required": [
+                "description",
+                "full_name",
+                "id",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "targetID": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.grantRoleInput": {
             "type": "object",
             "required": [

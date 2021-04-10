@@ -30,12 +30,12 @@ func (s *ContentService) Create(id, title, date, description string, roles inter
 	}
 	return nil
 }
-func (s *ContentService) Delete(id, title string, roles interface{}) error {
+func (s *ContentService) Delete(id string, roles interface{}) error {
 	if err := checkRigths(roles, "admin"); err != nil {
 		logger.Error(err)
 		return err
 	}
-	treatise := domain.Treatise{ID: strings.ToUpper(id), Title: title}
+	treatise := domain.Treatise{ID: strings.ToUpper(id)}
 	if err := s.repo.Delete(treatise); err != nil {
 		logger.Error(err)
 		return err
