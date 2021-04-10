@@ -19,31 +19,41 @@ func NewAdminsService(repo repository.Admins) *AdminsService {
 
 }
 
-func (u *AdminsService) GrantRole(name, role string, roles interface{}) error {
+//Roles should be passed by rights desc
+func checkRigths(roles interface{}, enoughRole ...string) error {
 
-	switch true {
-	case FindRole(roles.([]string), "admin"):
-	case FindRole(roles.([]string), "SuperModerator"):
-		if role == "admin" || role == "SuperModerator" {
-			return errors.New("Don't have enough rights")
+	for i := range enoughRole {
+		if FindRole(roles.([]string), enoughRole[i]) {
+			return nil
 		}
-	default:
-		return errors.New("Don't have enough rights")
 	}
 
-	return u.repo.GrantRole(name, role)
+	return errors.New("don't have enough rights")
 }
-
 func FindRole(roles []string, val string) bool {
 	for _, item := range roles {
 		if item == val {
+
 			return true
 		}
 	}
 	return false
 }
 
-func (u *AdminsService) RevokeRole(user *domain.User, role string) error {
+func (s *AdminsService) GrantRole(name, role string, roles interface{}) error {
+	switch true {
+	case FindRole(roles.([]string), "admin"):
+	case FindRole(roles.([]string), "SuperModerator"):
+		if role == "admin" || role == "SuperModerator" {
+			return errors.New("don't have enough rights")
+		}
+	default:
+		return errors.New("don't have enough rights")
+	}
 
+	return s.repo.GrantRole(name, role)
+}
+
+func (s *AdminsService) RevokeRole(user *domain.User, role string) error {
 	return nil
 }

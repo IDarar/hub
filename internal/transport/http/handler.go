@@ -13,10 +13,11 @@ import (
 //1.06 21.13(another)
 //Struct Hanlder takes all interfaces of service
 type Handler struct {
-	usersService  service.User
-	adminsService service.Admin
-	services      *service.Services
-	tokenManager  auth.TokenManager
+	usersService   service.User
+	adminsService  service.Admin
+	contentService service.Content
+	services       *service.Services
+	tokenManager   auth.TokenManager
 }
 
 func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {

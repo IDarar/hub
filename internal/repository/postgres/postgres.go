@@ -17,18 +17,6 @@ type PostgresConfig struct {
 	Sslmode  string
 }
 
-/*type Config struct {
-	Host     string
-	Port     string
-	Username string
-	Password string
-	DBName   string
-
-	user=postgres dbname=forum password=123 sslmode=disabled
-
-	SSLMode  string
-}*/
-
 func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
 	fmt.Println("user=" + cfg.Postgres.User + " " + "dbname=" + cfg.Postgres.DBname + " " + "password=" + cfg.Postgres.Password + " " + "sslmode=" + cfg.Postgres.Sslmode)
 	db, err := gorm.Open(postgres.Open("user="+cfg.Postgres.User+" "+"dbname="+cfg.Postgres.DBname+" "+"password="+cfg.Postgres.Password+" "+"sslmode="+cfg.Postgres.Sslmode), &gorm.Config{})
@@ -41,7 +29,7 @@ func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
 	return db, nil
 }
 func InitialiseTables(db *gorm.DB) {
-	err := db.AutoMigrate(&domain.User{}, &domain.Session{}, &domain.Role{})
+	err := db.AutoMigrate(&domain.User{}, &domain.Session{}, &domain.Role{}, &domain.Treatise{}, &domain.Part{}, &domain.Proposition{})
 	if err != nil {
 		return
 	}

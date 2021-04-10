@@ -36,9 +36,14 @@ type Admin interface {
 	GrantRole(name, role string, roles interface{}) error
 	RevokeRole(user *domain.User, role string) error
 }
+type Content interface {
+	Create(id, title, date, description string, roles interface{}) error
+	Delete(id, title string, roles interface{}) error
+}
 type Services struct {
-	User  User
-	Admin Admin
+	User    User
+	Admin   Admin
+	Content Content
 }
 type Deps struct {
 	Repos                  *repository.Repositories
@@ -54,5 +59,7 @@ type Deps struct {
 func NewServices(deps Deps) *Services {
 	userService := NewUsersService(deps.Repos.Users, deps.Hasher,
 		deps.TokenManager, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.VerificationCodeLength)
-	return &Services{User: userService, Admin: NewAdminsService(deps.Repos.Admins)}
+	adminService := NewAdminsService(deps.Repos.Admins)
+	contentService := NewContentService(deps.Repos.Content)
+	return &Services{User: userService, Admin: adminService, Content: contentService}
 }

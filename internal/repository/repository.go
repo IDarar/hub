@@ -25,16 +25,19 @@ type Admins interface {
 	RevokeRole(id int)
 }
 type Content interface {
+	Create(treatise domain.Treatise) error
+	Delete(treatise domain.Treatise) error
 }
-
 type Repositories struct {
-	Users  Users
-	Admins Admins
+	Users   Users
+	Admins  Admins
+	Content Content
 }
 
 func NewRepositories(db *gorm.DB) *Repositories {
 	return &Repositories{
-		Users:  postgres.NewUserRepo(db),
-		Admins: postgres.NewAdminsRepo(db),
+		Users:   postgres.NewUserRepo(db),
+		Admins:  postgres.NewAdminsRepo(db),
+		Content: postgres.NewContentRepo(db),
 	}
 }

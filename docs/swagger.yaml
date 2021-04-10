@@ -45,6 +45,29 @@ definitions:
       refreshToken:
         type: string
     type: object
+  v1.treatiseCreateInput:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    required:
+    - date
+    - description
+    - id
+    - title
+    type: object
+  v1.treatiseDeleteInput:
+    properties:
+      title:
+        type: string
+    required:
+    - title
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -52,6 +75,86 @@ info:
   title: Hub
   version: "0.001"
 paths:
+  /admins/content:
+    post:
+      consumes:
+      - application/json
+      description: CreateTreatise
+      parameters:
+      - description: treatise info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.treatiseCreateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: admin CreateTreatise
+      tags:
+      - content
+  /admins/content/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: DeleteTreatise
+      parameters:
+      - description: treatise info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.treatiseDeleteInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: admin DeleteTreatise
+      tags:
+      - content
   /admins/roles/grant-role:
     post:
       consumes:

@@ -4,6 +4,7 @@ type Rate struct {
 	UserID int
 	Target string
 	Type   string
+	Value  int
 }
 
 type Comment struct {
