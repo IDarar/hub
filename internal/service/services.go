@@ -45,9 +45,10 @@ type Part interface {
 	Delete(id string, roles interface{}) error
 }
 type Propositions interface {
-	Create(id, TargetID, name, fullname, description string, roles interface{}) error
+	Create(id, TargetID, name, description, explanation, text string, roles interface{}) error
 	Delete(id string, roles interface{}) error
 }
+
 type Services struct {
 	User         User
 	Admin        Admin

@@ -27,7 +27,7 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 			content.POST("/:id/proposition", h.createProposition)
 
 		}
-		parts := content.Group("/parts")
+		parts := admins.Group("/parts")
 		{
 			/*parts.POST("/:id")
 			parts.PUT("/:id")
@@ -233,5 +233,55 @@ func (h *Handler) createPart(c *gin.Context) {
 
 	c.Status(http.StatusCreated)
 }
+
+type createPropositionInput struct {
+	ID          string `json:"id"  binding:"required"`
+	TargetID    string
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description"  binding:"required"`
+	Explanation string `json:"explanation"  binding:"required"`
+	Text        string `json:"text"  binding:"required"`
+}
+
+// @Summary	admin createProposition
+// @Security createProposition
+// @Tags propositions
+// @Description createProposition
+// @ModuleID createProposition
+// @Accept  json
+// @Produce  json
+// @Param input body createPropositionInput true "proposition info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/content/{id}/proposition/ [post]
 func (h *Handler) createProposition(c *gin.Context) {
+	idParam := c.Param("id")
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+	var inp createPropositionInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	roles, ex := c.Get(roleCtx)
+	if !ex {
+		newResponse(c, http.StatusUnauthorized, "Unauthorized")
+		return
+	}
+
+	err := h.services.Propositions.Create(inp.ID, idParam, inp.Name, inp.Description, inp.Explanation, inp.Text, roles)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+func (h *Handler) updateProposition(c *gin.Context) {
 }

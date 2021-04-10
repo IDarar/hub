@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/IDarar/hub/internal/config"
-	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/server"
@@ -53,32 +52,15 @@ func Run(configPath string) {
 		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
 		TokenManager:    tokenManager,
 	})
-	treatise := &domain.Treatise{ID: "E"}
-	/*err = db.Create(&treatise).Error
-	if err != nil {
-		logger.Error(err)
-		return
+	/*treatise := &domain.Treatise{ID: "E"}
 
-	}*/
-	prop := &domain.Proposition{ID: "14EXVI", TargetID: "E3"}
-	err = db.Create(&prop).Error
+	err = db.First(&treatise).Error
 	if err != nil {
 		logger.Error(err)
 		return
 
 	}
-	err = db.Model(&treatise).Association("Propositions").Append(prop)
-	if err != nil {
-		logger.Error(err)
-		return
-
-	}
-	err = db.Model(&prop).Association("Propositafafions").Append([]domain.Treatise{})
-	if err != nil {
-		logger.Error(err)
-		return
-
-	}
+	logger.Info(treatise)*/
 	handlers := http.NewHandler(services, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init())
 
@@ -86,6 +68,12 @@ func Run(configPath string) {
 }
 
 /*
+err := r.db.Save(&prop).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+
+	}
 treatise := &domain.Treatise{ID: part.TargetID}
 	toin := &domain.Part{Name: part.Name, ID: part.ID}
 	err = db.Model(&treatise).Association("Parts").Append(&toin)

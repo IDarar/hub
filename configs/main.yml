@@ -8,6 +8,6 @@ cache:
   ttl: 60s
 
 auth:
-  accessTokenTTL: 120m
+  accessTokenTTL: 43200m
   refreshTokenTTL: 43200m #30 days
   verificationCodeLength: 8

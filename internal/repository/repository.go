@@ -33,8 +33,8 @@ type Parts interface {
 	Delete(part domain.Part) error
 }
 type Propositions interface {
-	Create(part domain.Part) error
-	Delete(part domain.Part) error
+	Create(proposition domain.Proposition) error
+	Delete(proposition domain.Proposition) error
 }
 type Repositories struct {
 	Users        Users
@@ -46,9 +46,10 @@ type Repositories struct {
 
 func NewRepositories(db *gorm.DB) *Repositories {
 	return &Repositories{
-		Users:   postgres.NewUserRepo(db),
-		Admins:  postgres.NewAdminsRepo(db),
-		Content: postgres.NewContentRepo(db),
-		Parts:   postgres.NewPartsRepo(db),
+		Users:        postgres.NewUserRepo(db),
+		Admins:       postgres.NewAdminsRepo(db),
+		Content:      postgres.NewContentRepo(db),
+		Parts:        postgres.NewPartsRepo(db),
+		Propositions: postgres.NewPropositionsRepo(db),
 	}
 }

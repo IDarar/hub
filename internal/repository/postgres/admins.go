@@ -25,7 +25,7 @@ func (r *AdminsRepo) GrantRole(name, role string) error {
 	}
 	roleStruct := domain.Role{Role: role, Users: []domain.User{{ID: user.ID}}}
 
-	return r.db.Model(&roleStruct).Association("Users").Append([]domain.User{})
+	return AssociationCreate(r.db, roleStruct, "Users", []domain.User{})
 
 }
 func (r *AdminsRepo) RevokeRole(id int) {

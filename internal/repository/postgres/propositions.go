@@ -24,25 +24,46 @@ if err != nil {
 	return err
 
 }*/
-func (r *PropositionsRepo) Create(part domain.Proposition) error {
-	logger.Error(part.TargetID)
+func (r *PropositionsRepo) Create(proposition domain.Proposition) error {
+	err := r.db.Model(proposition).First(&proposition).Error
+	if err == nil {
+		logger.Error("found")
+		return errors.New("proposition already exists")
+	}
+	treatise := &domain.Treatise{ID: proposition.TargetID}
 
-	err := r.db.Create(&part).Error
+	err = r.db.Model(&treatise).Association("Propositions").Append(&proposition)
+	if err == nil {
+		logger.Error(err)
+		return err
+	}
+	err = r.db.Model(proposition).First(&proposition).Error
+	if err == nil {
+		logger.Info("found")
+		return nil
+	}
+	part := &domain.Part{ID: proposition.TargetID}
+	err = r.db.Model(&part).Association("Propositions").Append(&proposition)
 	if err != nil {
 		logger.Error(err)
 		return err
-
 	}
-
+	err = r.db.Model(proposition).First(&proposition).Error
+	if err != nil {
+		logger.Error("found")
+		return err
+	}
 	return nil
 }
-func (r *PropositionsRepo) Delete(part domain.Proposition) error {
-	logger.Info(part)
-	check := r.db.Delete(&part).RowsAffected
+
+func (r *PropositionsRepo) Delete(proposition domain.Proposition) error {
+	logger.Info(proposition)
+	check := r.db.Delete(&proposition).RowsAffected
 	if check == 0 {
 		logger.Info("could not delete")
 
 		return errors.New("could not delete")
 	}
+
 	return nil
 }

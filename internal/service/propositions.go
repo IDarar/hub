@@ -9,7 +9,7 @@ import (
 )
 
 type PropositionsService struct {
-	repo repository.Parts
+	repo repository.Propositions
 }
 
 func NewPropositionsService(repo repository.Propositions) *PropositionsService {
@@ -18,13 +18,14 @@ func NewPropositionsService(repo repository.Propositions) *PropositionsService {
 	}
 
 }
-func (s *PropositionsService) Create(id, TargetID, name, fullname, description string, roles interface{}) error {
+func (s *PropositionsService) Create(id, TargetID, name, description, explanation, text string, roles interface{}) error {
 	if err := checkRigths(roles, "admin"); err != nil {
 		logger.Error(err)
 		return err
 	}
-	part := domain.Part{ID: id, TargetID: strings.ToUpper(TargetID), Name: name, FullName: fullname, Description: description}
-	if err := s.repo.Create(part); err != nil {
+
+	proposition := domain.Proposition{ID: id, TargetID: strings.ToUpper(TargetID), Name: name, Explanation: explanation, Text: text, Description: description}
+	if err := s.repo.Create(proposition); err != nil {
 		logger.Error(err)
 		return err
 	}

@@ -36,3 +36,21 @@ func InitialiseTables(db *gorm.DB) {
 	logger.Info("migrated succsessfully")
 
 }
+
+func AssociationCreate(db *gorm.DB, str interface{}, association string, toAppend interface{}) error {
+	err := db.Model(&str).Association("Propositions").Append(&toAppend)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	return nil
+}
+func CheckExByID(db *gorm.DB, toCheck interface{}, condID ...interface{}) error {
+	err := db.Model(toCheck).First(&toCheck).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
