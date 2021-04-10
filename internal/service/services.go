@@ -44,11 +44,16 @@ type Part interface {
 	Create(id, TargetID, name, fullname, description string, roles interface{}) error
 	Delete(id string, roles interface{}) error
 }
+type Propositions interface {
+	Create(id, TargetID, name, fullname, description string, roles interface{}) error
+	Delete(id string, roles interface{}) error
+}
 type Services struct {
-	User    User
-	Admin   Admin
-	Content Content
-	Part    Part
+	User         User
+	Admin        Admin
+	Content      Content
+	Part         Part
+	Propositions Propositions
 }
 type Deps struct {
 	Repos                  *repository.Repositories
@@ -67,5 +72,11 @@ func NewServices(deps Deps) *Services {
 	adminService := NewAdminsService(deps.Repos.Admins)
 	contentService := NewContentService(deps.Repos.Content)
 	partsService := NewPartsService(deps.Repos.Parts)
-	return &Services{User: userService, Admin: adminService, Content: contentService, Part: partsService}
+	propositionsService := NewPropositionsService(deps.Repos.Propositions)
+	return &Services{
+		User:         userService,
+		Admin:        adminService,
+		Content:      contentService,
+		Part:         partsService,
+		Propositions: propositionsService}
 }

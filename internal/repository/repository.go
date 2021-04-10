@@ -32,11 +32,16 @@ type Parts interface {
 	Create(part domain.Part) error
 	Delete(part domain.Part) error
 }
+type Propositions interface {
+	Create(part domain.Part) error
+	Delete(part domain.Part) error
+}
 type Repositories struct {
-	Users   Users
-	Admins  Admins
-	Content Content
-	Parts   Parts
+	Users        Users
+	Admins       Admins
+	Content      Content
+	Parts        Parts
+	Propositions Propositions
 }
 
 func NewRepositories(db *gorm.DB) *Repositories {

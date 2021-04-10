@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/IDarar/hub/internal/config"
+	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/server"
@@ -52,7 +53,13 @@ func Run(configPath string) {
 		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
 		TokenManager:    tokenManager,
 	})
+	prop := &domain.Proposition{ID: "TPXVI", TargetID: "123"}
+	err = db.Create(&prop).Error
+	if err != nil {
+		logger.Error(err)
+		return
 
+	}
 	handlers := http.NewHandler(services, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init())
 

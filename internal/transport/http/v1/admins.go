@@ -27,20 +27,20 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 			content.POST("/:id/proposition", h.createProposition)
 
 		}
-		/*parts := content.Group("/parts")
+		parts := content.Group("/parts")
 		{
 			parts.POST("/:id")
 			parts.PUT("/:id")
 			parts.PUT("/:id")
 			//For treatises divided into parts
-			parts.POST("/:id/proposition")
-		}
-		propositions := content.Group("/propositions")
-		{
-			propositions.POST("/:id")
-			propositions.PUT("/:id")
-			propositions.PUT("/:id")
-		}*/
+			parts.POST("/:id/proposition", h.createProposition)
+		} /*
+			propositions := content.Group("/propositions")
+			{
+				propositions.POST("/:id")
+				propositions.PUT("/:id")
+				propositions.PUT("/:id")
+			}*/
 
 	}
 
