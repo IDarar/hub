@@ -196,6 +196,20 @@ func (mr *MockContentMockRecorder) Delete(id, roles interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockContent)(nil).Delete), id, roles)
 }
 
+// Update mocks base method.
+func (m *MockContent) Update(inp service.TreatiseUpdateInput, roles interface{}) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Update", inp, roles)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Update indicates an expected call of Update.
+func (mr *MockContentMockRecorder) Update(inp, roles interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockContent)(nil).Update), inp, roles)
+}
+
 // MockPart is a mock of Part interface.
 type MockPart struct {
 	ctrl     *gomock.Controller

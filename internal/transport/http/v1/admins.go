@@ -129,7 +129,6 @@ func (h *Handler) createTreatise(c *gin.Context) {
 }
 
 type treatiseUpdateInput struct {
-	ID          string
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Date        string `json:"date"`
@@ -324,6 +323,4 @@ func (h *Handler) createProposition(c *gin.Context) {
 	}
 
 	c.Status(http.StatusCreated)
-}
-func (h *Handler) updateProposition(c *gin.Context) {
 }

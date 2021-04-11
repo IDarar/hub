@@ -23,41 +23,13 @@ func (r *ContentRepo) Create(treatise domain.Treatise) error {
 }
 func (r *ContentRepo) Update(treatise domain.Treatise) error {
 	logger.Info(treatise)
-	//c := r.db.Save(&treatise).RowsAffected
+
 	err := r.db.Model(&treatise).Updates(&treatise).Error
 	if err != nil {
 		logger.Error(err)
 		return err
 	}
-	/*logger.Error("COUNT ")
 
-	err = r.db.Save(&treatise).Error
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
-
-
-
-
-
-
-
-
-		err := r.db.Model(&treatise).Updates(domain.Treatise{
-		Date:        treatise.Date,
-		Description: treatise.Description,
-		Title:       treatise.Title,
-	}).Error
-	if err != nil {
-		logger.Error(err)
-		return err
-	}
-
-
-
-
-	*/
 	return nil
 }
 func (r *ContentRepo) Delete(treatise domain.Treatise) error {
