@@ -100,6 +100,19 @@ func TestHandler_updateTreatise(t *testing.T) {
 			},
 			expectedStatusCode: 201,
 		},
+		{
+			name:      "invalid data",
+			userID:    "1",
+			idParam:   "TP",
+			inputBody: `{"descrip": "NOTLASTFORVER"}`,
+			inputTreat: service.TreatiseUpdateInput{
+				ID: "TP",
+			},
+			mockBehavior: func(s *mocks.MockContent, input service.TreatiseUpdateInput, userID string) {
+				s.EXPECT().Update(input, userID)
+			},
+			expectedStatusCode: 400,
+		},
 	}
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {

@@ -163,6 +163,10 @@ func (h *Handler) updateTreatise(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
+	if inp.Title == "" && inp.Date == "" && inp.Description == "" {
+		newResponse(c, http.StatusBadRequest, "nil values, nothing to update")
+		return
+	}
 
 	err := h.services.Content.Update(service.TreatiseUpdateInput{
 		ID:          idParam,
