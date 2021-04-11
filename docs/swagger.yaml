@@ -1,5 +1,15 @@
 basePath: /api/v1/
 definitions:
+  v1.RoleInput:
+    properties:
+      role:
+        type: string
+      username:
+        type: string
+    required:
+    - role
+    - username
+    type: object
   v1.createPartInput:
     properties:
       description:
@@ -38,16 +48,6 @@ definitions:
     - id
     - name
     - text
-    type: object
-  v1.grantRoleInput:
-    properties:
-      role:
-        type: string
-      username:
-        type: string
-    required:
-    - role
-    - username
     type: object
   v1.response:
     properties:
@@ -107,6 +107,17 @@ definitions:
     required:
     - title
     type: object
+  v1.treatiseUpdateInput:
+    properties:
+      date:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -154,46 +165,6 @@ paths:
       summary: admin CreateTreatise
       tags:
       - content
-  /admins/content/:id/proposition/:
-    post:
-      consumes:
-      - application/json
-      description: createProposition
-      parameters:
-      - description: proposition info
-        in: body
-        name: input
-        required: true
-        schema:
-          $ref: '#/definitions/v1.createPropositionInput'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/v1.tokenResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "404":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/v1.response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/v1.response'
-        default:
-          description: ""
-          schema:
-            $ref: '#/definitions/v1.response'
-      security:
-      - createProposition: []
-      summary: admin createProposition
-      tags:
-      - propositions
   /admins/content/{id}:
     delete:
       consumes:
@@ -232,6 +203,45 @@ paths:
       security:
       - AdminAuth: []
       summary: admin DeleteTreatise
+      tags:
+      - content
+    put:
+      consumes:
+      - application/json
+      description: updateTreatise
+      parameters:
+      - description: treatise update info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.treatiseUpdateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: admin updateTreatise
       tags:
       - content
   /admins/content/{id}/parts:
@@ -274,6 +284,46 @@ paths:
       summary: admin createPart
       tags:
       - parts
+  /admins/content/{id}/proposition/:
+    post:
+      consumes:
+      - application/json
+      description: createProposition
+      parameters:
+      - description: proposition info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.createPropositionInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - createProposition: []
+      summary: admin createProposition
+      tags:
+      - propositions
   /admins/roles/grant-role:
     post:
       consumes:
@@ -285,7 +335,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/v1.grantRoleInput'
+          $ref: '#/definitions/v1.RoleInput'
       produces:
       - application/json
       responses:

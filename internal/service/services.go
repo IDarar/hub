@@ -47,9 +47,16 @@ type Admin interface {
 	RevokeRole(user *domain.User, role string) error
 }
 
+type TreatiseUpdateInput struct {
+	ID          string
+	Title       string
+	Description string
+	Date        string
+}
 type Content interface {
 	Create(id, title, date, description string, roles interface{}) error
 	Delete(id string, roles interface{}) error
+	Update(inp TreatiseUpdateInput, roles interface{}) error
 }
 
 type Part interface {

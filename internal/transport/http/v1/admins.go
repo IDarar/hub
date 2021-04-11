@@ -59,7 +59,7 @@ type RoleInput struct {
 // @ModuleID admin
 // @Accept  json
 // @Produce  json
-// @Param input body grantRoleInput true "role granting info"
+// @Param input body RoleInput true "role granting info"
 // @Success 200 {object} tokenResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
@@ -127,8 +127,57 @@ func (h *Handler) createTreatise(c *gin.Context) {
 
 	c.Status(http.StatusCreated)
 }
-func (h *Handler) updateTreatise(c *gin.Context) {
 
+type treatiseUpdateInput struct {
+	ID          string
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Date        string `json:"date"`
+}
+
+// @Summary	admin updateTreatise
+// @Security AdminAuth
+// @Tags content
+// @Description updateTreatise
+// @ModuleID updateTreatise
+// @Accept  json
+// @Produce  json
+// @Param input body treatiseUpdateInput true "treatise update info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/content/{id} [put]
+func (h *Handler) updateTreatise(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	idParam := c.Param("id")
+
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+	var inp treatiseUpdateInput
+
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.services.Content.Update(service.TreatiseUpdateInput{
+		ID:          idParam,
+		Date:        inp.Date,
+		Title:       inp.Title,
+		Description: inp.Description,
+	},
+		userID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
 }
 
 type treatiseDeleteInput struct {
@@ -149,8 +198,9 @@ type treatiseDeleteInput struct {
 // @Failure default {object} response
 // @Router /admins/content/{id} [delete]
 func (h *Handler) deleteTreatise(c *gin.Context) {
-	idParam := c.Param("id")
 	userID, _ := c.Get(userCtx)
+
+	idParam := c.Param("id")
 
 	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")

@@ -26,6 +26,7 @@ type Admins interface {
 }
 type Content interface {
 	Create(treatise domain.Treatise) error
+	Update(treatise domain.Treatise) error
 	Delete(treatise domain.Treatise) error
 }
 type Parts interface {

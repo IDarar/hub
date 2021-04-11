@@ -87,14 +87,14 @@ var doc = `{
                 }
             }
         },
-        "/admins/content/:id/proposition/": {
-            "post": {
+        "/admins/content/{id}": {
+            "put": {
                 "security": [
                     {
-                        "createProposition": []
+                        "AdminAuth": []
                     }
                 ],
-                "description": "createProposition",
+                "description": "updateTreatise",
                 "consumes": [
                     "application/json"
                 ],
@@ -102,17 +102,17 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "propositions"
+                    "content"
                 ],
-                "summary": "admin createProposition",
+                "summary": "admin updateTreatise",
                 "parameters": [
                     {
-                        "description": "proposition info",
+                        "description": "treatise update info",
                         "name": "input",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.createPropositionInput"
+                            "$ref": "#/definitions/v1.treatiseUpdateInput"
                         }
                     }
                 ],
@@ -148,9 +148,7 @@ var doc = `{
                         }
                     }
                 }
-            }
-        },
-        "/admins/content/{id}": {
+            },
             "delete": {
                 "security": [
                     {
@@ -276,6 +274,69 @@ var doc = `{
                 }
             }
         },
+        "/admins/content/{id}/proposition/": {
+            "post": {
+                "security": [
+                    {
+                        "createProposition": []
+                    }
+                ],
+                "description": "createProposition",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "propositions"
+                ],
+                "summary": "admin createProposition",
+                "parameters": [
+                    {
+                        "description": "proposition info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.createPropositionInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/roles/grant-role": {
             "post": {
                 "security": [
@@ -301,7 +362,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/v1.grantRoleInput"
+                            "$ref": "#/definitions/v1.RoleInput"
                         }
                     }
                 ],
@@ -457,6 +518,21 @@ var doc = `{
         }
     },
     "definitions": {
+        "v1.RoleInput": {
+            "type": "object",
+            "required": [
+                "role",
+                "username"
+            ],
+            "properties": {
+                "role": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.createPartInput": {
             "type": "object",
             "required": [
@@ -509,21 +585,6 @@ var doc = `{
                     "type": "string"
                 },
                 "text": {
-                    "type": "string"
-                }
-            }
-        },
-        "v1.grantRoleInput": {
-            "type": "object",
-            "required": [
-                "role",
-                "username"
-            ],
-            "properties": {
-                "role": {
-                    "type": "string"
-                },
-                "username": {
                     "type": "string"
                 }
             }
@@ -610,6 +671,23 @@ var doc = `{
                 "title"
             ],
             "properties": {
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.treatiseUpdateInput": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
                 "title": {
                     "type": "string"
                 }

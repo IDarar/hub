@@ -38,6 +38,25 @@ func (s *ContentService) Create(id, title, date, description string, roles inter
 	}
 	return nil
 }
+
+func (s *ContentService) Update(inp TreatiseUpdateInput, roles interface{}) error {
+	roles, err := s.users.GetRoleById(roles.(int))
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	if err := checkRigths(roles, "admin"); err != nil {
+		logger.Error(err)
+		return err
+	}
+	treatise := domain.Treatise{ID: inp.ID, Title: inp.Title, Date: inp.Date, Description: inp.Description}
+	if err := s.repo.Update(treatise); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
 func (s *ContentService) Delete(id string, roles interface{}) error {
 	roles, err := s.users.GetRoleById(roles.(int))
 	if err != nil {
