@@ -52,15 +52,7 @@ func Run(configPath string) {
 		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
 		TokenManager:    tokenManager,
 	})
-	/*treatise := &domain.Treatise{ID: "E"}
 
-	err = db.First(&treatise).Error
-	if err != nil {
-		logger.Error(err)
-		return
-
-	}
-	logger.Info(treatise)*/
 	handlers := http.NewHandler(services, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init())
 

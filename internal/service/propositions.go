@@ -18,13 +18,19 @@ func NewPropositionsService(repo repository.Propositions) *PropositionsService {
 	}
 
 }
-func (s *PropositionsService) Create(id, TargetID, name, description, explanation, text string, roles interface{}) error {
+func (s *PropositionsService) Create(prop CreateProposition, roles interface{}) error {
 	if err := checkRigths(roles, "admin"); err != nil {
 		logger.Error(err)
 		return err
 	}
 
-	proposition := domain.Proposition{ID: id, TargetID: strings.ToUpper(TargetID), Name: name, Explanation: explanation, Text: text, Description: description}
+	proposition := domain.Proposition{
+		ID:          prop.ID,
+		TargetID:    strings.ToUpper(prop.TargetID),
+		Name:        prop.Name,
+		Description: prop.Description,
+		Explanation: prop.Explanation,
+		Text:        prop.Text}
 	if err := s.repo.Create(proposition); err != nil {
 		logger.Error(err)
 		return err

@@ -4,11 +4,15 @@ import (
 	"context"
 	"time"
 
+	_ "github.com/golang/mock/mockgen/model"
+
 	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/pkg/auth"
 	"github.com/IDarar/hub/pkg/hash"
 )
+
+//go:generate go run -mod=mod github.com/golang/mock/mockgen -package mocks -destination=mocks/mock.go -source=services.go -build_flags=-mod=mod
 
 type SignUpInput struct {
 	Name     string
@@ -26,26 +30,42 @@ type Tokens struct {
 }
 
 //all interfaces there are described
+
 type User interface {
 	SignUp(ctx context.Context, input SignUpInput) error
 	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
 	GetRoleById(id int) ([]string, error)
 	CreateMark(domain.UserProposition, [3]interface{}) error
 }
+
+type RoleInput struct {
+	UserName string
+	Role     string
+}
 type Admin interface {
 	GrantRole(name, role string, roles interface{}) error
 	RevokeRole(user *domain.User, role string) error
 }
+
 type Content interface {
 	Create(id, title, date, description string, roles interface{}) error
 	Delete(id string, roles interface{}) error
 }
+
 type Part interface {
 	Create(id, TargetID, name, fullname, description string, roles interface{}) error
 	Delete(id string, roles interface{}) error
 }
+type CreateProposition struct {
+	ID          string
+	TargetID    string
+	Name        string
+	Description string
+	Explanation string
+	Text        string
+}
 type Propositions interface {
-	Create(id, TargetID, name, description, explanation, text string, roles interface{}) error
+	Create(prop CreateProposition, roles interface{}) error
 	Delete(id string, roles interface{}) error
 }
 
