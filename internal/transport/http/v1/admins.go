@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 
+	"github.com/IDarar/hub/internal/service"
 	"github.com/IDarar/hub/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -46,7 +47,7 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 
 }
 
-type grantRoleInput struct {
+type RoleInput struct {
 	UserName string `json:"username"  binding:"required,min=2,max=64"`
 	Role     string `json:"role"  binding:"required,min=5,max=64"`
 }
@@ -70,7 +71,7 @@ func (h *Handler) grantRole(c *gin.Context) {
 		newResponse(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
-	var inp grantRoleInput
+	var inp RoleInput
 
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
@@ -87,10 +88,6 @@ func (h *Handler) grantRole(c *gin.Context) {
 }
 
 //TODO
-type revokeRoleInput struct {
-	UserName string `json:"username"  binding:"required,min=2,max=64"`
-	Role     string `json:"role"  binding:"required,min=5,max=64"`
-}
 
 func (h *Handler) revokeRole(c *gin.Context) {
 }
@@ -264,6 +261,8 @@ func (h *Handler) createProposition(c *gin.Context) {
 
 		return
 	}
+	c.Set(roleCtx, []string{"admin"})
+
 	var inp createPropositionInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
@@ -275,7 +274,15 @@ func (h *Handler) createProposition(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Propositions.Create(inp.ID, idParam, inp.Name, inp.Description, inp.Explanation, inp.Text, roles)
+	err := h.services.Propositions.Create(service.CreateProposition{
+		ID:          inp.ID,
+		TargetID:    idParam,
+		Name:        inp.Name,
+		Description: inp.Description,
+		Explanation: inp.Explanation,
+		Text:        inp.Text},
+		roles)
+
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

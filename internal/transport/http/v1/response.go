@@ -5,11 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type dataResponse struct {
+type DataResponse struct {
 	Data interface{} `json:"data"`
 }
 
-type idResponse struct {
+type IdResponse struct {
 	ID interface{} `json:"id"`
 }
 
