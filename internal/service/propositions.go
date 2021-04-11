@@ -9,21 +9,28 @@ import (
 )
 
 type PropositionsService struct {
-	repo repository.Propositions
+	repo  repository.Propositions
+	users User
 }
 
-func NewPropositionsService(repo repository.Propositions) *PropositionsService {
+func NewPropositionsService(repo repository.Propositions, users User) *PropositionsService {
 	return &PropositionsService{
-		repo: repo,
+		repo:  repo,
+		users: users,
 	}
 
 }
 func (s *PropositionsService) Create(prop CreateProposition, roles interface{}) error {
-	if err := checkRigths(roles, "admin"); err != nil {
+	roles, err := s.users.GetRoleById(roles.(int))
+	if err != nil {
 		logger.Error(err)
 		return err
 	}
 
+	if err := checkRigths(roles, "admin"); err != nil {
+		logger.Error(err)
+		return err
+	}
 	proposition := domain.Proposition{
 		ID:          prop.ID,
 		TargetID:    strings.ToUpper(prop.TargetID),

@@ -66,11 +66,8 @@ type RoleInput struct {
 // @Failure default {object} response
 // @Router /admins/roles/grant-role [post]
 func (h *Handler) grantRole(c *gin.Context) {
-	roles, ex := c.Get(roleCtx)
-	if !ex {
-		newResponse(c, http.StatusUnauthorized, "Unauthorized")
-		return
-	}
+	userID := c.Param(userCtx)
+
 	var inp RoleInput
 
 	if err := c.BindJSON(&inp); err != nil {
@@ -78,7 +75,7 @@ func (h *Handler) grantRole(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Admin.GrantRole(inp.UserName, inp.Role, roles)
+	err := h.services.Admin.GrantRole(inp.UserName, inp.Role, userID)
 	if err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -113,18 +110,16 @@ type treatiseCreateInput struct {
 // @Failure default {object} response
 // @Router /admins/content [post]
 func (h *Handler) createTreatise(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+
 	var inp treatiseCreateInput
+
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	roles, ex := c.Get(roleCtx)
-	if !ex {
-		newResponse(c, http.StatusUnauthorized, "Unauthorized")
-		return
-	}
 
-	err := h.services.Content.Create(inp.ID, inp.Title, inp.Date, inp.Description, roles)
+	err := h.services.Content.Create(inp.ID, inp.Title, inp.Date, inp.Description, userID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -155,6 +150,8 @@ type treatiseDeleteInput struct {
 // @Router /admins/content/{id} [delete]
 func (h *Handler) deleteTreatise(c *gin.Context) {
 	idParam := c.Param("id")
+	userID, _ := c.Get(userCtx)
+
 	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
 		logger.Info(idParam)
@@ -167,13 +164,8 @@ func (h *Handler) deleteTreatise(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	roles, ex := c.Get(roleCtx)
-	if !ex {
-		newResponse(c, http.StatusUnauthorized, "Unauthorized")
-		return
-	}
 
-	err := h.services.Content.Delete(idParam, roles)
+	err := h.services.Content.Delete(idParam, userID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -205,6 +197,8 @@ type createPartInput struct {
 // @Router /admins/content/{id}/parts [post]
 func (h *Handler) createPart(c *gin.Context) {
 	idParam := c.Param("id")
+	userID, _ := c.Get(userCtx)
+
 	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
 		logger.Info(idParam)
@@ -216,13 +210,8 @@ func (h *Handler) createPart(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	roles, ex := c.Get(roleCtx)
-	if !ex {
-		newResponse(c, http.StatusUnauthorized, "Unauthorized")
-		return
-	}
 
-	err := h.services.Part.Create(inp.ID, idParam, inp.Name, inp.FullName, inp.Description, roles)
+	err := h.services.Part.Create(inp.ID, idParam, inp.Name, inp.FullName, inp.Description, userID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -255,22 +244,18 @@ type createPropositionInput struct {
 // @Router /admins/content/{id}/proposition/ [post]
 func (h *Handler) createProposition(c *gin.Context) {
 	idParam := c.Param("id")
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
 	if idParam == "" {
 		newResponse(c, http.StatusBadRequest, "empty id param")
 		logger.Info(idParam)
 
 		return
 	}
-	c.Set(roleCtx, []string{"admin"})
 
 	var inp createPropositionInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
-		return
-	}
-	roles, ex := c.Get(roleCtx)
-	if !ex {
-		newResponse(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
@@ -281,7 +266,7 @@ func (h *Handler) createProposition(c *gin.Context) {
 		Description: inp.Description,
 		Explanation: inp.Explanation,
 		Text:        inp.Text},
-		roles)
+		userID)
 
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())

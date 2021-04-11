@@ -90,10 +90,10 @@ type Deps struct {
 func NewServices(deps Deps) *Services {
 	userService := NewUsersService(deps.Repos.Users, deps.Hasher,
 		deps.TokenManager, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.VerificationCodeLength)
-	adminService := NewAdminsService(deps.Repos.Admins)
-	contentService := NewContentService(deps.Repos.Content)
-	partsService := NewPartsService(deps.Repos.Parts)
-	propositionsService := NewPropositionsService(deps.Repos.Propositions)
+	adminService := NewAdminsService(deps.Repos.Admins, userService)
+	contentService := NewContentService(deps.Repos.Content, userService)
+	partsService := NewPartsService(deps.Repos.Parts, userService)
+	propositionsService := NewPropositionsService(deps.Repos.Propositions, userService)
 	return &Services{
 		User:         userService,
 		Admin:        adminService,

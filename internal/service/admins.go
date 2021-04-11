@@ -5,16 +5,19 @@ import (
 
 	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
+	"github.com/IDarar/hub/pkg/logger"
 )
 
 //39.58
 type AdminsService struct {
-	repo repository.Admins
+	repo  repository.Admins
+	users User
 }
 
-func NewAdminsService(repo repository.Admins) *AdminsService {
+func NewAdminsService(repo repository.Admins, users User) *AdminsService {
 	return &AdminsService{
-		repo: repo,
+		repo:  repo,
+		users: users,
 	}
 
 }
@@ -41,6 +44,12 @@ func FindRole(roles []string, val string) bool {
 }
 
 func (s *AdminsService) GrantRole(name, role string, roles interface{}) error {
+	roles, err := s.users.GetRoleById(roles.(int))
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
 	switch true {
 	case FindRole(roles.([]string), "admin"):
 	case FindRole(roles.([]string), "SuperModerator"):

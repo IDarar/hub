@@ -9,16 +9,24 @@ import (
 )
 
 type ContentService struct {
-	repo repository.Content
+	repo  repository.Content
+	users User
 }
 
-func NewContentService(repo repository.Content) *ContentService {
+func NewContentService(repo repository.Content, users User) *ContentService {
 	return &ContentService{
-		repo: repo,
+		repo:  repo,
+		users: users,
 	}
 
 }
 func (s *ContentService) Create(id, title, date, description string, roles interface{}) error {
+	roles, err := s.users.GetRoleById(roles.(int))
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
 	if err := checkRigths(roles, "admin"); err != nil {
 		logger.Error(err)
 		return err
@@ -31,6 +39,12 @@ func (s *ContentService) Create(id, title, date, description string, roles inter
 	return nil
 }
 func (s *ContentService) Delete(id string, roles interface{}) error {
+	roles, err := s.users.GetRoleById(roles.(int))
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
 	if err := checkRigths(roles, "admin"); err != nil {
 		logger.Error(err)
 		return err

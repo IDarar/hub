@@ -13,7 +13,6 @@ import (
 const (
 	authorizationHeader = "Authorization"
 	userCtx             = "userId"
-	roleCtx             = "role"
 )
 
 func (h *Handler) adminIdentity(c *gin.Context) {
@@ -21,19 +20,17 @@ func (h *Handler) adminIdentity(c *gin.Context) {
 	if err != nil {
 		newResponse(c, http.StatusUnauthorized, err.Error())
 	}
+	logger.Info(idS)
 	id, err := strconv.Atoi(idS)
 	if err != nil {
 		logger.Error(err)
 		return
 	}
-	role, err := h.services.User.GetRoleById(id)
-	if err != nil {
-		newResponse(c, http.StatusUnauthorized, err.Error())
-		return
-	}
+	logger.Info(id)
+
 	c.Set(userCtx, id)
-	c.Set(roleCtx, role)
 }
+
 func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -94,7 +95,7 @@ func (s *UserService) createSession(userId int) (Tokens, error) {
 func (s *UserService) GetRoleById(Userid int) ([]string, error) {
 	roles, err := s.repo.GetRoleByID(Userid)
 	if err != nil {
-		return roles, err
+		return roles, errors.New("dont have enough rights")
 	}
 	return roles, nil
 }
