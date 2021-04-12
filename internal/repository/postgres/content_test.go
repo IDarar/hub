@@ -15,8 +15,8 @@ func TestContent_Create(t *testing.T) {
 	}
 	contentRepo := NewContentRepo(db)
 
-	defer truncate("part_propositions", "treatise_propositions", "propositions", "treatises", "parts")
-	id := "string"
+	defer truncate("treatises", "part_propositions", "treatise_propositions", "propositions", "parts")
+	id := "TR"
 
 	err := contentRepo.Create(domain.Treatise{ID: id})
 	assert.Error(t, err)
