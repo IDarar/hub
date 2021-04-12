@@ -27,6 +27,7 @@ type (
 		HTTP     HTTPConfig
 		Auth     AuthConfig
 		CacheTTL time.Duration `mapstructure:"ttl"`
+		TestPostgresConfig
 	}
 
 	HTTPConfig struct {
@@ -41,6 +42,9 @@ type (
 		User     string
 		Password string
 		Sslmode  string
+	}
+	TestPostgresConfig struct {
+		URL string
 	}
 	AuthConfig struct {
 		JWT                    JWTConfig
@@ -126,6 +130,8 @@ func setFromEnv(cfg *Config) {
 	cfg.Postgres.User = viper.GetString("user")
 	cfg.Postgres.Password = viper.GetString("password")
 	cfg.Postgres.Sslmode = viper.GetString("sslmode")
+	cfg.TestPostgresConfig.URL = viper.GetString("url")
+
 	cfg.Auth.PasswordSalt = viper.GetString("salt")
 	cfg.Auth.JWT.SigningKey = viper.GetString("signingkey")
 
@@ -141,6 +147,8 @@ func parsePostgresEnvVariables() error {
 
 	os.Setenv("POSTGRES_SSLMODE", "disabled")
 
+	os.Setenv("DATABASE_URL", "user=postgres dbname=hub_tests password=123 sslmode=disabled")
+
 	viper.SetEnvPrefix("postgres")
 	if err := viper.BindEnv("user"); err != nil {
 		return err
@@ -153,7 +161,14 @@ func parsePostgresEnvVariables() error {
 		return err
 	}
 	fmt.Println(os.Getenv("POSTGRES_PASSWORD"), "111111111111")
-	return viper.BindEnv("sslmode")
+
+	viper.BindEnv("sslmode")
+
+	viper.SetEnvPrefix("database")
+	if err := viper.BindEnv("url"); err != nil {
+		return err
+	}
+	return nil
 
 }
 func parsePasswordFromEnv() error {

@@ -42,6 +42,12 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
+
+	if err != nil {
+		logger.Error(err)
+		return
+
+	}
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
 	repos := repository.NewRepositories(db)
@@ -60,20 +66,29 @@ func Run(configPath string) {
 }
 
 /*
-err := r.db.Save(&prop).Error
-	if err != nil {
-		logger.Error(err)
-		return err
 
-	}
+tr, err := repos.Content.GetByID("ERRRR")
+if err != nil {
+logger.Error(err)
+return
+
+}
+logger.Info(tr)
+
+err := r.db.Save(&prop).Error
+if err != nil {
+logger.Error(err)
+return err
+
+}
 treatise := &domain.Treatise{ID: part.TargetID}
-	toin := &domain.Part{Name: part.Name, ID: part.ID}
-	err = db.Model(&treatise).Association("Parts").Append(&toin)
-	if err != nil {
-		logger.Error(err)
-		return
-	}
-	//err := r.db.Model(&domain.Part{}).Where("target_id = ?", part.TargetID).Updates(domain.Part{ID: part.ID, Name: part.Name}).Error
+toin := &domain.Part{Name: part.Name, ID: part.ID}
+err = db.Model(&treatise).Association("Parts").Append(&toin)
+if err != nil {
+logger.Error(err)
+return
+}
+//err := r.db.Model(&domain.Part{}).Where("target_id = ?", part.TargetID).Updates(domain.Part{ID: part.ID, Name: part.Name}).Error
 role := domain.Role{Role: "SuperModerator"}
 db.Create(&role)
 role = domain.Role{Role: "SuperModerator", Users: []domain.User{{ID: 1}, {ID: 2}}}

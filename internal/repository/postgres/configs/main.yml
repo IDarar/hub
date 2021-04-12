@@ -1,0 +1,13 @@
+http:
+  port: 8080
+  maxHeaderBytes: 1
+  readTimeout: 10s
+  writeTimeout: 10s
+
+cache:
+  ttl: 60s
+
+auth:
+  accessTokenTTL: 43200m
+  refreshTokenTTL: 43200m #30 days
+  verificationCodeLength: 8

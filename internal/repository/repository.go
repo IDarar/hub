@@ -28,6 +28,7 @@ type Content interface {
 	Create(treatise domain.Treatise) error
 	Update(treatise domain.Treatise) error
 	Delete(treatise domain.Treatise) error
+	GetByID(id string) (domain.Treatise, error)
 }
 type Parts interface {
 	Create(part domain.Part) error
