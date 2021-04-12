@@ -35,14 +35,11 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 			parts.PUT("/:id")*/
 			//For treatises divided into parts
 			parts.POST("/:id/proposition", h.createProposition)
-		} /*
-			propositions := content.Group("/propositions")
-			{
-				propositions.POST("/:id")
-				propositions.PUT("/:id")
-				propositions.PUT("/:id")
-			}*/
-
+		}
+		propositions := admins.Group("/propositions")
+		{
+			propositions.PUT("/:id", h.updateProposition)
+		}
 	}
 
 }
@@ -327,4 +324,50 @@ func (h *Handler) createProposition(c *gin.Context) {
 	}
 
 	c.Status(http.StatusCreated)
+}
+
+type updatePropositionInput struct {
+	ID               string
+	TargetID         string   `json:"target_id"`
+	Name             string   `json:"name,omitempty"`
+	Description      string   `json:"description,omitempty"`
+	Explanation      string   `json:"explanation,omitempty"`
+	Text             string   `json:"text,omitempty"`
+	CreateReferences []string `json:"create_references"`
+	DeleteReferences []string `json:"delete_references"`
+}
+
+func (h *Handler) updateProposition(c *gin.Context) {
+	idParam := c.Param("id")
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+	var inp updatePropositionInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.services.Propositions.Update(service.UpdatePropositionInput{
+		ID:               idParam,
+		TargetID:         inp.TargetID,
+		Name:             inp.Name,
+		Description:      inp.Description,
+		Explanation:      inp.Explanation,
+		Text:             inp.Text,
+		CreateReferences: inp.CreateReferences,
+		DeleteReferences: inp.DeleteReferences},
+		userID)
+
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusOK)
 }

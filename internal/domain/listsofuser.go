@@ -34,7 +34,7 @@ type UserProposition struct {
 	LocalText         string         //with notes, underlines etc
 	Marks             [3]interface{} //first two are indexes, third is format type
 	TargetProposition string         //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
-	Status            string
+	Status            string         //complete, unknow, in proccess etc
 	DifficultyRate    int8
 	ImportanceRate    int8
 	InconsistencyRate int8

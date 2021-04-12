@@ -71,9 +71,20 @@ type CreateProposition struct {
 	Explanation string
 	Text        string
 }
+type UpdatePropositionInput struct {
+	ID               string
+	TargetID         string
+	Name             string
+	Description      string
+	Explanation      string
+	Text             string
+	CreateReferences []string
+	DeleteReferences []string
+}
 type Propositions interface {
 	Create(prop CreateProposition, roles interface{}) error
 	Delete(id string, roles interface{}) error
+	Update(inp UpdatePropositionInput, roles interface{}) error
 }
 
 type Services struct {

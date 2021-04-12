@@ -36,7 +36,9 @@ type Parts interface {
 }
 type Propositions interface {
 	Create(proposition domain.Proposition) error
+	Update(treatise domain.Proposition, createReferences, deleteReferences []string) error
 	Delete(proposition domain.Proposition) error
+	GetByID(id string) (domain.Proposition, error)
 }
 type Repositories struct {
 	Users        Users

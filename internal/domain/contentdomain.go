@@ -15,9 +15,10 @@ type Master struct {
 	Description string
 	LifeSpans   []*Part
 	Literature  []string
-
-	Articles []*Article
-	Comments []*Comment
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
+	Articles    []*Article
+	Comments    []*Comment
 }
 type Treatise struct {
 	ID           string `gorm:"primaryKey"` //E (Ethics), L (letters), TTP (Tractatus Theologico-Politicus) etc
@@ -25,6 +26,7 @@ type Treatise struct {
 	Description  string
 	Date         string
 	CreatedAt    time.Time
+	UpdatedAt    time.Time
 	Parts        []Part        `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
 	Propositions []Proposition `gorm:"many2many:treatise_propositions;constraint:OnDelete:CASCADE"`
 
@@ -43,9 +45,10 @@ type Treatise struct {
 }
 
 type Part struct {
-	ID       string `gorm:"primaryKey"` //EV (Ethics 5 part), TPI (Tractatus Politicus, First chapter) etc
-	TargetID string
-
+	ID           string `gorm:"primaryKey"` //EV (Ethics 5 part), TPI (Tractatus Politicus, First chapter) etc
+	TargetID     string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 	Name         string
 	FullName     string
 	Description  string
@@ -63,13 +66,15 @@ type Part struct {
 type Proposition struct {
 	ID          string `gorm:"primaryKey"` //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
 	TargetID    string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 	Name        string
 	Description string
 	Text        string
 
 	Explanation string
 
-	References []*Reference `gorm:"-"`
+	References []*Reference `gorm:"foreignKey:Target;constraint:OnDelete:CASCADE"`
 
 	Difficulty    int `gorm:"-"`
 	Importance    int `gorm:"-"`
@@ -87,11 +92,11 @@ type Note struct {
 	Treatise    *Treatise
 	Proposition *Proposition
 
-	Type string //original, publisher
+	Type string //original, publisher, my etc
 	Text string
 }
 type Reference struct {
-	Target            string
-	TargetProposition string
-	Text              string
+	ID                int    `gorm:"primaryKey"`
+	Target            string //ID of proposition
+	TargetProposition string //To which references
 }

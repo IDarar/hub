@@ -29,7 +29,7 @@ func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
 	return db, nil
 }
 func InitialiseTables(db *gorm.DB) {
-	err := db.AutoMigrate(&domain.User{}, &domain.Session{}, &domain.Role{}, &domain.Treatise{}, &domain.Part{}, &domain.Proposition{})
+	err := db.AutoMigrate(&domain.User{}, &domain.Session{}, &domain.Role{}, &domain.Treatise{}, &domain.Part{}, &domain.Proposition{}, &domain.Reference{})
 	if err != nil {
 		return
 	}

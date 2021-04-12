@@ -48,3 +48,34 @@ func (s *PropositionsService) Create(prop CreateProposition, roles interface{}) 
 func (s *PropositionsService) Delete(id string, roles interface{}) error {
 	return nil
 }
+func (s *PropositionsService) Update(inp UpdatePropositionInput, roles interface{}) error {
+	roles, err := s.users.GetRoleById(roles.(int))
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	if err := checkRigths(roles, "admin"); err != nil {
+		logger.Error(err)
+		return err
+	}
+	proposition := domain.Proposition{
+		ID:          inp.ID,
+		TargetID:    strings.ToUpper(inp.TargetID),
+		Name:        inp.Name,
+		Description: inp.Description,
+		Explanation: inp.Explanation,
+		Text:        inp.Text,
+	}
+
+	if err := s.repo.Update(proposition, inp.CreateReferences, inp.DeleteReferences); err != nil {
+		logger.Error(err)
+		return err
+	}
+	/*if len(inp.CreateReferences) == 0 && len(inp.DeleteReferences) == 0 {
+		logger.Info("no references to update, retunr nil err")
+		return nil
+	}*/
+
+	return nil
+}

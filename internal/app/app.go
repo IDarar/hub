@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/IDarar/hub/internal/config"
+	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/server"
@@ -51,6 +52,47 @@ func Run(configPath string) {
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
 	repos := repository.NewRepositories(db)
+
+	//	createReferences := []string{"Third", "SECOND"}
+	deleteReferences := []string{"EGQ", "LPE"}
+	/*if len(createReferences) != 0 {
+
+		for _, v := range createReferences {
+			ref := domain.Reference{}
+			err = db.Where(&domain.Reference{Target: "ACPWT", TargetProposition: v}).First(&ref).Error
+			if err == nil {
+				logger.Error("ref already exists")
+				return //erros.New("ref already exists")
+			}
+			ref.Target = "ACPWT"
+			ref.TargetProposition = v
+
+			err = db.Create(&ref).Error
+			if err != nil {
+				logger.Error(err)
+				return
+			}
+		}
+	}*/
+	if len(deleteReferences) != 0 {
+
+		for _, v := range deleteReferences {
+			ref := domain.Reference{}
+			err = db.Where(&domain.Reference{Target: "EXVI", TargetProposition: v}).First(&ref).Error
+			if err != nil {
+				logger.Error("ref don't exist")
+				return //erros.New("ref don't exist")
+			}
+			ref.Target = "EXVI"
+			ref.TargetProposition = v
+
+			count := db.Delete(&ref).RowsAffected
+			if count == 0 {
+				logger.Error("didn't deleted")
+				return
+			}
+		}
+	}
 	services := service.NewServices(service.Deps{
 		Repos:           repos,
 		Hasher:          hasher,
@@ -66,6 +108,17 @@ func Run(configPath string) {
 }
 
 /*
+pr, err := repos.Propositions.GetByID("ACPWT")
+	if err != nil {
+		logger.Error(err)
+		return
+
+	}
+	res := strings.Contains(pr.Text, "xxvi")
+	fmt.Println(res) // true
+
+	i := strings.Index(pr.Text, "xxvi")
+	fmt.Println(i)
 
 tr, err := repos.Content.GetByID("ERRRR")
 if err != nil {
@@ -81,6 +134,7 @@ logger.Error(err)
 return err
 
 }
+
 treatise := &domain.Treatise{ID: part.TargetID}
 toin := &domain.Part{Name: part.Name, ID: part.ID}
 err = db.Model(&treatise).Association("Parts").Append(&toin)

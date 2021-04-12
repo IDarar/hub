@@ -67,3 +67,35 @@ func (r *PropositionsRepo) Delete(proposition domain.Proposition) error {
 
 	return nil
 }
+
+func (r *PropositionsRepo) GetByID(id string) (domain.Proposition, error) {
+	var pr domain.Proposition
+	err := r.db.Where(&domain.Proposition{ID: id}).First(&pr).Error
+	if err != nil {
+		logger.Warn("not found proposition ", err)
+		return domain.Proposition{}, err
+
+	}
+
+	return pr, nil
+}
+func (r *PropositionsRepo) Update(prop domain.Proposition, createReferences, deleteReferences []string) error {
+	logger.Info(prop)
+
+	err := r.db.Model(&prop).Updates(&prop).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	ref := domain.Reference{}
+	if len(createReferences) != 0 {
+
+		for _, v := range createReferences {
+			r.db.Where(&domain.Reference{Target: prop.ID}).First(&ref)
+			ref.TargetProposition = v
+			r.db.Create(&ref)
+		}
+	}
+
+	return nil
+}
