@@ -337,6 +337,69 @@ var doc = `{
                 }
             }
         },
+        "/admins/propositions/{id}/": {
+            "put": {
+                "security": [
+                    {
+                        "updateProposition": []
+                    }
+                ],
+                "description": "updateProposition",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "propositions"
+                ],
+                "summary": "admin updateProposition",
+                "parameters": [
+                    {
+                        "description": "proposition info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.updatePropositionInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.tokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/admins/roles/grant-role": {
             "post": {
                 "security": [
@@ -685,10 +748,42 @@ var doc = `{
                 "description": {
                     "type": "string"
                 },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.updatePropositionInput": {
+            "type": "object",
+            "properties": {
+                "create_references": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "delete_references": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "description": {
+                    "type": "string"
+                },
+                "explanation": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string"
                 },
-                "title": {
+                "name": {
+                    "type": "string"
+                },
+                "target_id": {
+                    "type": "string"
+                },
+                "text": {
                     "type": "string"
                 }
             }

@@ -87,15 +87,43 @@ func (r *PropositionsRepo) Update(prop domain.Proposition, createReferences, del
 		logger.Error(err)
 		return err
 	}
-	ref := domain.Reference{}
 	if len(createReferences) != 0 {
 
 		for _, v := range createReferences {
-			r.db.Where(&domain.Reference{Target: prop.ID}).First(&ref)
+			ref := domain.Reference{}
+			err = r.db.Where(&domain.Reference{Target: prop.ID, TargetProposition: v}).First(&ref).Error
+			if err == nil {
+				logger.Error("ref already exists")
+				return errors.New("ref already exists")
+			}
+			ref.Target = prop.ID
 			ref.TargetProposition = v
-			r.db.Create(&ref)
+
+			err = r.db.Create(&ref).Error
+			if err != nil {
+				logger.Error(err)
+				return errors.New("could not create")
+			}
 		}
 	}
+	if len(deleteReferences) != 0 {
 
+		for _, v := range deleteReferences {
+			ref := domain.Reference{}
+			err = r.db.Where(&domain.Reference{Target: prop.ID, TargetProposition: v}).First(&ref).Error
+			if err != nil {
+				logger.Error("ref don't exist")
+				return errors.New("ref don't exist")
+			}
+			ref.Target = prop.ID
+			ref.TargetProposition = v
+
+			count := r.db.Delete(&ref).RowsAffected
+			if count == 0 {
+				logger.Error("could not delete")
+				return errors.New("could not delete")
+			}
+		}
+	}
 	return nil
 }

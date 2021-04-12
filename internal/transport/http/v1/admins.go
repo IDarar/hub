@@ -337,6 +337,19 @@ type updatePropositionInput struct {
 	DeleteReferences []string `json:"delete_references"`
 }
 
+// @Summary	admin updateProposition
+// @Security updateProposition
+// @Tags propositions
+// @Description updateProposition
+// @ModuleID updateProposition
+// @Accept  json
+// @Produce  json
+// @Param input body updatePropositionInput true "proposition info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/propositions/{id}/ [put]
 func (h *Handler) updateProposition(c *gin.Context) {
 	idParam := c.Param("id")
 	userID, _ := c.Get(userCtx)

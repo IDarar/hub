@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/IDarar/hub/internal/config"
-	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/server"
@@ -53,9 +52,25 @@ func Run(configPath string) {
 
 	repos := repository.NewRepositories(db)
 
-	//	createReferences := []string{"Third", "SECOND"}
+	services := service.NewServices(service.Deps{
+		Repos:           repos,
+		Hasher:          hasher,
+		AccessTokenTTL:  cfg.Auth.JWT.AccessTokenTTL,
+		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
+		TokenManager:    tokenManager,
+	})
+
+	handlers := http.NewHandler(services, tokenManager)
+	srv := server.NewServer(cfg, handlers.Init())
+
+	srv.Run()
+}
+
+/*
+
+	createReferences := []string{"Third", "SECOND"}
 	deleteReferences := []string{"EGQ", "LPE"}
-	/*if len(createReferences) != 0 {
+	if len(createReferences) != 0 {
 
 		for _, v := range createReferences {
 			ref := domain.Reference{}
@@ -73,7 +88,7 @@ func Run(configPath string) {
 				return
 			}
 		}
-	}*/
+	}
 	if len(deleteReferences) != 0 {
 
 		for _, v := range deleteReferences {
@@ -93,21 +108,6 @@ func Run(configPath string) {
 			}
 		}
 	}
-	services := service.NewServices(service.Deps{
-		Repos:           repos,
-		Hasher:          hasher,
-		AccessTokenTTL:  cfg.Auth.JWT.AccessTokenTTL,
-		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
-		TokenManager:    tokenManager,
-	})
-
-	handlers := http.NewHandler(services, tokenManager)
-	srv := server.NewServer(cfg, handlers.Init())
-
-	srv.Run()
-}
-
-/*
 pr, err := repos.Propositions.GetByID("ACPWT")
 	if err != nil {
 		logger.Error(err)
