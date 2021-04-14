@@ -16,12 +16,12 @@ const (
 )
 
 func (h *Handler) adminIdentity(c *gin.Context) {
-	idS, err := h.parseAuthHeader(c)
+	idStr, err := h.parseAuthHeader(c)
 	if err != nil {
 		newResponse(c, http.StatusUnauthorized, err.Error())
 	}
-	logger.Info(idS)
-	id, err := strconv.Atoi(idS)
+	logger.Info(idStr)
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		logger.Error(err)
 		return

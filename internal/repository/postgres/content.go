@@ -21,7 +21,7 @@ func (r *ContentRepo) Create(treatise domain.Treatise) error {
 	err := r.db.Model(treatise).First(&treatise).Error
 	if err == nil {
 		logger.Error("found")
-		return errors.New("proposition already exists")
+		return errors.New("treatise already exists")
 	}
 	return r.db.Create(&treatise).Error
 
