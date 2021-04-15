@@ -771,6 +771,10 @@ var doc = `{
                 "id": {
                     "type": "integer"
                 },
+                "index": {
+                    "description": "palce of note",
+                    "type": "integer"
+                },
                 "target": {
                     "description": "to which belongs",
                     "type": "string"

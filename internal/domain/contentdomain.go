@@ -68,6 +68,8 @@ type Proposition struct {
 	Notes      []*Note      `gorm:"foreignKey:Target;constraint:OnDelete:CASCADE"`
 	References []*Reference `gorm:"foreignKey:Target;constraint:OnDelete:CASCADE"`
 
+	//TODO rate system
+	//Rates []*Rates
 	Difficulty    int `gorm:"-"`
 	Importance    int `gorm:"-"`
 	Inconsistency int `gorm:"-"`
@@ -84,6 +86,7 @@ type Note struct {
 	ID         int    `gorm:"primaryKey"`
 	TreatiseID string `json:"treatise_id,omitempty"` //will be taken through prop/part-prop target
 	Target     string `json:"target"`                //to which belongs
+	Index      int    //palce of note
 
 	Type string `json:"type"` //original, publisher, my etc
 	Text string `json:"text,omitempty"`

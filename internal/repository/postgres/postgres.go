@@ -37,7 +37,8 @@ func InitialiseTables(db *gorm.DB) {
 		&domain.Proposition{},
 		&domain.Reference{},
 		&domain.Literature{},
-		&domain.Note{})
+		&domain.Note{},
+		&domain.Rate{})
 	if err != nil {
 		return
 	}
