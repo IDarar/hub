@@ -131,7 +131,7 @@ func (r *PropositionsRepo) Update(prop domain.Proposition,
 
 		for _, v := range createNotes {
 			note := domain.Note{}
-			err = r.db.Where(&domain.Note{Target: prop.ID, TreatiseID: prop.TargetID}).First(&note).Error
+			err = r.db.Where(&domain.Note{Target: prop.ID, Text: v.Text}).First(&note).Error
 			if err == nil {
 				logger.Error("note already exists")
 				return errors.New("note already exists")
@@ -149,9 +149,9 @@ func (r *PropositionsRepo) Update(prop domain.Proposition,
 	}
 	if len(deleteNotes) != 0 {
 
-		for range deleteNotes {
+		for _, v := range deleteNotes {
 			note := domain.Note{}
-			err = r.db.Where(&domain.Note{Target: prop.ID, TreatiseID: prop.TargetID}).First(&note).Error
+			err = r.db.Where(&domain.Note{Target: prop.ID, Text: v.Text}).First(&note).Error
 			if err != nil {
 				logger.Error("note don't exist")
 				return errors.New("note don't exist")
