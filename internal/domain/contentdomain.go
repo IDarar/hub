@@ -23,6 +23,7 @@ type Treatise struct {
 
 	//TODO maybe not to add it to treatises
 	Literature []*Literature `gorm:"-"` //`gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
+	Rates      []*Rate       `gorm:"many2many:treatise_rates;constraint:OnDelete:CASCADE"`
 
 	Difficulty    int `gorm:"-"`
 	Importance    int `gorm:"-"`
@@ -46,6 +47,7 @@ type Part struct {
 	Description  string
 	Propositions []Proposition `gorm:"many2many:part_propositions;constraint:OnDelete:CASCADE"`
 	Literature   []Literature  `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
+	Rates        []*Rate       `gorm:"many2many:part_rates;constraint:OnDelete:CASCADE"`
 
 	Difficulty    int `gorm:"-"`
 	Importance    int `gorm:"-"`
@@ -69,10 +71,10 @@ type Proposition struct {
 	References []*Reference `gorm:"foreignKey:Target;constraint:OnDelete:CASCADE"`
 
 	//TODO rate system
-	//Rates []*Rates
-	Difficulty    int `gorm:"-"`
-	Importance    int `gorm:"-"`
-	Inconsistency int `gorm:"-"`
+	Rates         []*Rate `gorm:"many2many:proposition_rates;constraint:OnDelete:CASCADE"`
+	Difficulty    int     `gorm:"-"`
+	Importance    int     `gorm:"-"`
+	Inconsistency int     `gorm:"-"`
 
 	Articles []*Article `gorm:"-"`
 	Comments []*Comment `gorm:"-"`

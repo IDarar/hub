@@ -5,12 +5,12 @@ import (
 )
 
 type UserLists struct {
-	UserID int
+	UserID int `gorm:"primaryKey"`
 
 	UserTreatises    []*UserTreatise    `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 	UserParts        []*UserPart        `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 	UserPropositions []*UserProposition `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
-	Rates            []*Rate            `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	Rates            []*Rate            `gorm:"many2many:userlists_rates;constraint:OnDelete:CASCADE"`
 }
 
 //how will it work
@@ -25,9 +25,9 @@ type UserTreatise struct {
 	TargetTreatise string //E (Ethics), L (letters), TTP (Tractatus Theologico-Politicus) etc
 	Status         string
 
-	DifficultyRate    Rate
-	ImportanceRate    Rate
-	InconsistencyRate Rate
+	DifficultyRate    Rate `gorm:"-"` //`gorm:"many2many:usertreatise_rates;constraint:OnDelete:CASCADE"`
+	ImportanceRate    Rate `gorm:"-"` //`gorm:"many2many:usertreatise_rates;constraint:OnDelete:CASCADE"`
+	InconsistencyRate Rate `gorm:"-"` //`gorm:"many2many:usertreatise_rates;constraint:OnDelete:CASCADE"`
 	Progress          int
 }
 
@@ -38,9 +38,9 @@ type UserPart struct {
 	TargetPart string //EV (Ethics 5 part), TPI (Tractatus Politicus, First chapter) etc
 
 	Status            string
-	DifficultyRate    Rate
-	ImportanceRate    Rate
-	InconsistencyRate Rate
+	DifficultyRate    Rate `gorm:"-"` //`gorm:"many2many:userpart_rates;constraint:OnDelete:CASCADE"`
+	ImportanceRate    Rate `gorm:"-"` //`gorm:"many2many:userpart_rates;constraint:OnDelete:CASCADE"`
+	InconsistencyRate Rate `gorm:"-"` //`gorm:"many2many:userpart_rates;constraint:OnDelete:CASCADE"`
 
 	Progress int //all props of part / completed
 }
@@ -54,11 +54,11 @@ type UserProposition struct {
 	//Marks             [3]interface{} //first two are indexes, third is format type
 	TargetProposition string //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
 	Status            string //complete, unknow, in proccess etc
-	DifficultyRate    Rate
-	ImportanceRate    Rate
-	InconsistencyRate Rate
+	DifficultyRate    Rate   `gorm:"-"` //`gorm:"many2many:userproposition_rates;constraint:OnDelete:CASCADE"`
+	ImportanceRate    Rate   `gorm:"-"` //`gorm:"many2many:userproposition_rates;constraint:OnDelete:CASCADE"`
+	InconsistencyRate Rate   `gorm:"-"` //`gorm:"many2many:userproposition_rates;constraint:OnDelete:CASCADE"`
 
-	UserNotes []*UserNote
+	UserNotes []*UserNote `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 }
 
 //on get append it to original prop's notes
