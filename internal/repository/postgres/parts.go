@@ -92,12 +92,13 @@ func (r *PartsRepo) Delete(part domain.Part) error {
 
 	r.db.Model(&part).Association("Propositions").Find(&props)
 	logger.Info("props ", props)
-	err := r.db.Delete(&part).Error
 
-	if err != nil {
-		logger.Info("could not delete")
-
-		return errors.New("could not delete")
+	r.db.Delete(&props)
+	result := r.db.Delete(&part).RowsAffected
+	if result == 0 {
+		logger.Error("not deleted ", result)
+		return errors.New("not deleted part, probably it does not exist")
 	}
+
 	return nil
 }

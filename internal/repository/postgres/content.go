@@ -38,38 +38,23 @@ func (r *ContentRepo) Update(treatise domain.Treatise) error {
 	return nil
 }
 func (r *ContentRepo) Delete(treatise domain.Treatise) error {
-	//this
+
 	logger.Info(treatise)
 
-	err := r.db.Where("target_id = ?", treatise.ID).Delete(&domain.Proposition{TargetID: treatise.ID}).Error
-	if err != nil {
-		logger.Error("deleting treatise's props", err)
-	}
-
 	parts := []*domain.Part{}
-
 	props := []*domain.Proposition{}
-
 	propsToDel := []*domain.Proposition{}
 
-	err = r.db.Model(&treatise).Association("Parts").Find(&parts)
-
+	err := r.db.Model(&treatise).Association("Parts").Find(&parts)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
 	for i := 0; i < len(parts); i++ {
 		err = r.db.Model(&parts[i]).Association("Propositions").Find(&props)
 		for i := 0; i < len(props); i++ {
 			propsToDel = append(propsToDel, props[i])
-			logger.Info("PROPS  ", props[i].ID)
 		}
-	}
-	logger.Info("propsToDel", propsToDel)
-	for i := 0; i < len(props); i++ {
-		logger.Info("PROPS  ", props[i].ID)
-	}
-	//logger.Info("PROPS  ", props)
-
-	if err != nil {
-		logger.Error(err)
-		return err
 	}
 
 	err = r.db.Where("target_id = ?", treatise.ID).Delete(&domain.Proposition{TargetID: treatise.ID}).Error

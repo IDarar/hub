@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/IDarar/hub/internal/config"
-	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/repository/redisdb"
@@ -63,16 +62,6 @@ func Run(configPath string) {
 
 	repos := repository.NewRepositories(db, rdb, cfg)
 
-	props := []*domain.Proposition{{
-		ID: "12",
-	}, {
-		ID: "13",
-	},
-		{
-			ID: "1twmqyopmy",
-		}}
-
-	db.Delete(&props)
 	services := service.NewServices(service.Deps{
 		Repos:           repos,
 		Hasher:          hasher,
