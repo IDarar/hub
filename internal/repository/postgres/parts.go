@@ -88,8 +88,13 @@ func (r *PartsRepo) Update(part domain.Part, createLiterature, deleteLiterature 
 
 func (r *PartsRepo) Delete(part domain.Part) error {
 	logger.Info(part)
-	check := r.db.Delete(&part).RowsAffected
-	if check == 0 {
+	props := []*domain.Proposition{}
+
+	r.db.Model(&part).Association("Propositions").Find(&props)
+	logger.Info("props ", props)
+	err := r.db.Delete(&part).Error
+
+	if err != nil {
 		logger.Info("could not delete")
 
 		return errors.New("could not delete")

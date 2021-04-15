@@ -70,5 +70,20 @@ func (s *PartsService) Update(inp PartUpdateInput, roles interface{}) error {
 }
 
 func (s *PartsService) Delete(id string, roles interface{}) error {
+	roles, err := s.users.GetRoleById(roles.(int))
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	if err := checkRigths(roles, "admin"); err != nil {
+		logger.Error(err)
+		return err
+	}
+	part := domain.Part{ID: strings.ToUpper(id)}
+	if err := s.repo.Delete(part); err != nil {
+		logger.Error(err)
+		return err
+	}
 	return nil
 }

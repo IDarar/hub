@@ -38,12 +38,53 @@ func (r *ContentRepo) Update(treatise domain.Treatise) error {
 	return nil
 }
 func (r *ContentRepo) Delete(treatise domain.Treatise) error {
+	//this
 	logger.Info(treatise)
-	check := r.db.Delete(&treatise).RowsAffected
-	if check == 0 {
-		logger.Info("could not delete")
 
-		return errors.New("could not delete")
+	err := r.db.Where("target_id = ?", treatise.ID).Delete(&domain.Proposition{TargetID: treatise.ID}).Error
+	if err != nil {
+		logger.Error("deleting treatise's props", err)
+	}
+
+	parts := []*domain.Part{}
+
+	props := []*domain.Proposition{}
+
+	propsToDel := []*domain.Proposition{}
+
+	err = r.db.Model(&treatise).Association("Parts").Find(&parts)
+
+	for i := 0; i < len(parts); i++ {
+		err = r.db.Model(&parts[i]).Association("Propositions").Find(&props)
+		for i := 0; i < len(props); i++ {
+			propsToDel = append(propsToDel, props[i])
+			logger.Info("PROPS  ", props[i].ID)
+		}
+	}
+	logger.Info("propsToDel", propsToDel)
+	for i := 0; i < len(props); i++ {
+		logger.Info("PROPS  ", props[i].ID)
+	}
+	//logger.Info("PROPS  ", props)
+
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	err = r.db.Where("target_id = ?", treatise.ID).Delete(&domain.Proposition{TargetID: treatise.ID}).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	logger.Info("PARTS ", parts)
+	r.db.Delete(&propsToDel)
+	r.db.Delete(&parts)
+	result := r.db.Delete(&treatise).RowsAffected
+	if result == 0 {
+		logger.Error("not deleted ", result)
+		return errors.New("not deleted proposition, probably it does not exist")
 	}
 	return nil
 }

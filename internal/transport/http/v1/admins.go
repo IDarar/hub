@@ -24,16 +24,15 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 			content.PUT("/:id", h.updateTreatise)
 			content.DELETE("/:id", h.deleteTreatise)
 			content.POST("/:id/parts", h.createPart)
-			//For treatises without parts division
-			content.POST("/:id/proposition", h.createProposition)
+			content.POST("/:id/proposition", h.createProposition) //For treatises without parts division
 
 		}
 		parts := admins.Group("/parts")
 		{
 			parts.POST("/:id")
 			parts.PUT("/:id", h.updatePart)
-			//For treatises divided into parts
-			parts.POST("/:id/proposition", h.createProposition)
+			parts.DELETE("/:id", h.deletePart)
+			parts.POST("/:id/proposition", h.createProposition) //For treatises divided into parts
 		}
 		propositions := admins.Group("/propositions")
 		{
@@ -318,6 +317,50 @@ func (h *Handler) updatePart(c *gin.Context) {
 		DeleteLiterature: inp.DeleteLiterature,
 	},
 		userID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+type partDeleteInput struct {
+	Fullname string `json:"fullname" binding:"required"`
+}
+
+// @Summary	admin deletePart
+// @Security AdminAuth
+// @Tags parts
+// @Description deletePart
+// @ModuleID deletePart
+// @Accept  json
+// @Produce  json
+// @Param input body partDeleteInput true "part info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/part/{id} [delete]
+func (h *Handler) deletePart(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+
+	idParam := c.Param("id")
+
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+
+	var inp partDeleteInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.services.Part.Delete(idParam, userID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
