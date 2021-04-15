@@ -1,9 +1,12 @@
 package app
 
 import (
+	"context"
+
 	"github.com/IDarar/hub/internal/config"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
+	"github.com/IDarar/hub/internal/repository/redisdb"
 	"github.com/IDarar/hub/internal/server"
 	"github.com/IDarar/hub/internal/service"
 	"github.com/IDarar/hub/internal/transport/http"
@@ -11,6 +14,8 @@ import (
 	"github.com/IDarar/hub/pkg/hash"
 	"github.com/IDarar/hub/pkg/logger"
 )
+
+var ctx = context.Background()
 
 // @title Hub
 // @version 0.001
@@ -27,11 +32,13 @@ import (
 // @in header
 // @name Authorization
 func Run(configPath string) {
+
 	cfg, err := config.Init(configPath)
 	if err != nil {
 		logger.Error(err)
 		return
 	}
+
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
@@ -42,15 +49,18 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
-
+	logger.Info("connected to postgres")
+	rdb, err := redisdb.NewRedisDB(cfg)
 	if err != nil {
 		logger.Error(err)
 		return
-
 	}
+	rdb.Ping(ctx)
+	logger.Info("connected to redis")
+
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
-	repos := repository.NewRepositories(db)
+	repos := repository.NewRepositories(db, rdb, cfg)
 
 	services := service.NewServices(service.Deps{
 		Repos:           repos,
@@ -67,7 +77,22 @@ func Run(configPath string) {
 }
 
 /*
+	start := time.Now()
+	end := time.Now().Add(cfg.Auth.JWT.RefreshTokenTTL)
 
+	difference := end.Sub(start)
+	logger.Info(difference)
+rdb := redis.NewClient(&redis.Options{
+		//TODO config
+		Addr:     cfg.Redis.Addr,
+		Password: cfg.Redis.Password,
+		DB:       cfg.Redis.DB,
+	})
+	ctx := context.Background()
+	err = rdb.Set(ctx, "key", "value", 0).Err()
+	if err != nil {
+		panic(err)
+	}
 	createReferences := []string{"Third", "SECOND"}
 	deleteReferences := []string{"EGQ", "LPE"}
 	if len(createReferences) != 0 {

@@ -22,6 +22,7 @@ func NewPartsService(repo repository.Parts, users User) *PartsService {
 }
 func (s *PartsService) Create(id, TargetID, name, fullname, description string, roles interface{}) error {
 	roles, err := s.users.GetRoleById(roles.(int))
+
 	if err != nil {
 		logger.Error(err)
 		return err

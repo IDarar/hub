@@ -34,6 +34,7 @@ type Tokens struct {
 type User interface {
 	SignUp(ctx context.Context, input SignUpInput) error
 	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
+	RefreshTokens(refreshToken string) (Tokens, error)
 	GetRoleById(id int) ([]string, error)
 	CreateMark(domain.UserProposition, [3]interface{}) error
 }
@@ -106,7 +107,7 @@ type Deps struct {
 
 //TODO 39.47
 func NewServices(deps Deps) *Services {
-	userService := NewUsersService(deps.Repos.Users, deps.Hasher,
+	userService := NewUsersService(deps.Repos.Users, deps.Repos.Sessions, deps.Hasher,
 		deps.TokenManager, deps.AccessTokenTTL, deps.RefreshTokenTTL, deps.VerificationCodeLength)
 	adminService := NewAdminsService(deps.Repos.Admins, userService)
 	contentService := NewContentService(deps.Repos.Content, userService)

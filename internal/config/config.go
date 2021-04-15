@@ -24,6 +24,7 @@ const (
 type (
 	Config struct {
 		Postgres PostgresConfig
+		Redis    RedisConfig
 		HTTP     HTTPConfig
 		Auth     AuthConfig
 		CacheTTL time.Duration `mapstructure:"ttl"`
@@ -42,6 +43,11 @@ type (
 		User     string
 		Password string
 		Sslmode  string
+	}
+	RedisConfig struct {
+		Addr     string
+		Password string
+		DB       int
 	}
 	TestPostgresConfig struct {
 		URL string
@@ -77,6 +83,7 @@ func Init(path string) (*Config, error) {
 
 	setFromEnv(&cfg)
 	fmt.Println(cfg.Postgres)
+	fmt.Println("REDIS", cfg.Redis)
 	return &cfg, nil
 }
 
@@ -120,6 +127,9 @@ func parseEnv() error {
 	if err := parsePostgresEnvVariables(); err != nil {
 		return err
 	}
+	if err := parseRedisEnvVariables(); err != nil {
+		return err
+	}
 	if err := parseJWTFromEnv(); err != nil {
 		return err
 	}
@@ -130,6 +140,10 @@ func setFromEnv(cfg *Config) {
 	cfg.Postgres.User = viper.GetString("user")
 	cfg.Postgres.Password = viper.GetString("password")
 	cfg.Postgres.Sslmode = viper.GetString("sslmode")
+	cfg.Redis.DB = viper.GetInt("db")
+	cfg.Redis.Addr = viper.GetString("addr")
+	cfg.Redis.Password = viper.GetString("redispassword")
+
 	cfg.TestPostgresConfig.URL = viper.GetString("url")
 
 	cfg.Auth.PasswordSalt = viper.GetString("salt")
@@ -168,6 +182,28 @@ func parsePostgresEnvVariables() error {
 	if err := viper.BindEnv("url"); err != nil {
 		return err
 	}
+	return nil
+
+}
+func parseRedisEnvVariables() error {
+
+	os.Setenv("REDIS_ADDR", "localhost:6379")
+	os.Setenv("REDIS_PASSWORD", "")
+
+	os.Setenv("REDIS_DB", "0")
+
+	viper.SetEnvPrefix("redis")
+	if err := viper.BindEnv("addr"); err != nil {
+		return err
+	}
+
+	if err := viper.BindEnv("redispassword"); err != nil {
+		return err
+	}
+	if err := viper.BindEnv("db"); err != nil {
+		return err
+	}
+
 	return nil
 
 }

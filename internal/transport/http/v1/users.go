@@ -12,7 +12,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 	{
 		users.POST("/sign-up", h.userSignUp)
 		users.POST("/sign-in", h.userSignIn)
-
+		users.POST("/auth/refresh", h.userRefresh)
 	}
 }
 
@@ -102,6 +102,36 @@ func (h *Handler) userSignIn(c *gin.Context) {
 
 type refreshInput struct {
 	Token string `json:"token" binding:"required"`
+}
+
+// @Summary User Refresh Tokens
+// @Tags students-auth
+// @Description users refresh tokens
+// @Accept  json
+// @Produce  json
+// @Param input body refreshInput true "token info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/auth/refresh [post]
+func (h *Handler) userRefresh(c *gin.Context) {
+	var inp refreshInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	res, err := h.services.User.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.JSON(http.StatusOK, tokenResponse{
+		AccessToken:  res.AccessToken,
+		RefreshToken: res.RefreshToken,
+	})
 }
 
 /*func (h *Handler) userRefresh(c *gin.Context) {

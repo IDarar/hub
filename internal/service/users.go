@@ -16,6 +16,7 @@ import (
 //39.58
 type UserService struct {
 	repo         repository.Users
+	sessions     repository.Sessions
 	hasher       hash.PasswordHasher
 	tokenManager auth.TokenManager
 
@@ -24,11 +25,12 @@ type UserService struct {
 	verificationCodeLength int
 }
 
-func NewUsersService(repo repository.Users, hasher hash.PasswordHasher,
+func NewUsersService(repo repository.Users, sessions repository.Sessions, hasher hash.PasswordHasher,
 	tokenManager auth.TokenManager, accessTTL, refreshTTL time.Duration,
 	verificationCodeLength int) *UserService {
 	return &UserService{
 		repo:                   repo,
+		sessions:               sessions,
 		hasher:                 hasher,
 		verificationCodeLength: verificationCodeLength,
 		tokenManager:           tokenManager,
@@ -64,6 +66,15 @@ func (s *UserService) SignIn(ctx context.Context, input SignInInput) (Tokens, er
 
 	return s.createSession(user.ID)
 }
+func (s *UserService) RefreshTokens(refreshToken string) (Tokens, error) {
+	student, err := s.sessions.GetByRefreshToken(ctx, schoolId, refreshToken)
+	if err != nil {
+		return Tokens{}, err
+	}
+
+	return s.createSession(ctx, student.ID)
+}
+
 func (s *UserService) CreateMark(domain.UserProposition, [3]interface{}) error {
 
 	return nil
@@ -89,7 +100,7 @@ func (s *UserService) createSession(userId int) (Tokens, error) {
 		ExpiresAt:    time.Now().Add(s.refreshTokenTTL),
 	}
 
-	err = s.repo.SetSession(userId, session)
+	err = s.sessions.SetSession(userId, session)
 	return res, err
 }
 func (s *UserService) GetRoleById(Userid int) ([]string, error) {

@@ -9,7 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//44.41
 type UsersRepo struct {
 	db *gorm.DB
 }
