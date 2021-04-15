@@ -30,9 +30,8 @@ func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
 		}
 		parts := admins.Group("/parts")
 		{
-			/*parts.POST("/:id")
-			parts.PUT("/:id")
-			parts.PUT("/:id")*/
+			parts.POST("/:id")
+			parts.PUT("/:id", h.updatePart)
 			//For treatises divided into parts
 			parts.POST("/:id/proposition", h.createProposition)
 		}
@@ -270,6 +269,63 @@ func (h *Handler) createPart(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
+type partUpdateInput struct {
+	Name             string   `json:"name,omitempty"`
+	FullName         string   `json:"full_name,omitempty"`
+	TargetID         string   `json:"target_id,omitempty"`
+	Description      string   `json:"description,omitempty"`
+	CreateLiterature []string `json:"create_literature,omitempty"`
+	DeleteLiterature []string `json:"delete_literature,omitempty"`
+}
+
+// @Summary	admin updatePart
+// @Security AdminAuth
+// @Tags parts
+// @Description updatePart
+// @ModuleID updatePart
+// @Accept  json
+// @Produce  json
+// @Param input body partUpdateInput true "part update info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admins/parts/:id [put]
+func (h *Handler) updatePart(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	idParam := c.Param("id")
+
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+	var inp partUpdateInput
+
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.services.Part.Update(service.PartUpdateInput{
+		ID:               idParam,
+		Name:             inp.Name,
+		FullName:         inp.FullName,
+		TargetID:         inp.TargetID,
+		Description:      inp.Description,
+		CreateLiterature: inp.CreateLiterature,
+		DeleteLiterature: inp.DeleteLiterature,
+	},
+		userID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
 type createPropositionInput struct {
 	ID          string `json:"id"  binding:"required"`
 	TargetID    string
@@ -384,3 +440,6 @@ func (h *Handler) updateProposition(c *gin.Context) {
 
 	c.Status(http.StatusOK)
 }
+
+//swag init -g internal/app/app.go
+//export PATH=$(go env GOPATH)/bin:$PATH

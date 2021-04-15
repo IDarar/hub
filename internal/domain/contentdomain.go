@@ -8,18 +8,9 @@ import (
 
 type Hub struct {
 	Treatises []*Treatise
-	Master    *Master
+	//Master    *Master
 }
-type Master struct {
-	Name        string
-	Description string
-	LifeSpans   []*Part
-	Literature  []string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	Articles    []*Article
-	Comments    []*Comment
-}
+
 type Treatise struct {
 	ID           string `gorm:"primaryKey"` //E (Ethics), L (letters), TTP (Tractatus Theologico-Politicus) etc
 	Title        string
@@ -30,6 +21,7 @@ type Treatise struct {
 	Parts        []Part        `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
 	Propositions []Proposition `gorm:"many2many:treatise_propositions;constraint:OnDelete:CASCADE"`
 
+	//TODO maybe not to add it to treatises
 	Literature []*Literature `gorm:"-"` //`gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
 
 	Difficulty    int `gorm:"-"`
@@ -53,7 +45,7 @@ type Part struct {
 	FullName     string
 	Description  string
 	Propositions []Proposition `gorm:"many2many:part_propositions;constraint:OnDelete:CASCADE"`
-	Literature   []Literature  `gorm:"-"`
+	Literature   []Literature  `gorm:"foreignKey:TargetID;constraint:OnDelete:CASCADE"`
 
 	Difficulty    int `gorm:"-"`
 	Importance    int `gorm:"-"`
@@ -85,7 +77,7 @@ type Proposition struct {
 }
 type Literature struct {
 	TargetID string `gorm:"primaryKey"`
-	Title    string
+	Title    string //article or book
 }
 type Note struct {
 	ID          string

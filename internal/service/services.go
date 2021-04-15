@@ -59,10 +59,19 @@ type Content interface {
 	Delete(id string, roles interface{}) error
 	Update(inp TreatiseUpdateInput, roles interface{}) error
 }
-
+type PartUpdateInput struct {
+	ID               string
+	Name             string
+	FullName         string
+	TargetID         string
+	Description      string
+	CreateLiterature []string
+	DeleteLiterature []string
+}
 type Part interface {
 	Create(id, TargetID, name, fullname, description string, roles interface{}) error
 	Delete(id string, roles interface{}) error
+	Update(inp PartUpdateInput, roles interface{}) error
 }
 type CreateProposition struct {
 	ID          string

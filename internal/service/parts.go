@@ -41,6 +41,34 @@ func (s *PartsService) Create(id, TargetID, name, fullname, description string, 
 	return nil
 
 }
+func (s *PartsService) Update(inp PartUpdateInput, roles interface{}) error {
+	roles, err := s.users.GetRoleById(roles.(int))
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	if err := checkRigths(roles, "admin"); err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	part := domain.Part{
+		ID:          inp.ID,
+		TargetID:    strings.ToUpper(inp.TargetID),
+		Name:        inp.Name,
+		FullName:    inp.FullName,
+		Description: inp.Description,
+	}
+
+	if err := s.repo.Update(part, inp.CreateLiterature, inp.DeleteLiterature); err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	return nil
+}
+
 func (s *PartsService) Delete(id string, roles interface{}) error {
 	return nil
 }

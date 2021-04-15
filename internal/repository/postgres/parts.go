@@ -36,6 +36,56 @@ func (r *PartsRepo) Create(part domain.Part) error {
 
 	return nil
 }
+func (r *PartsRepo) Update(part domain.Part, createLiterature, deleteLiterature []string) error {
+	logger.Info(part)
+
+	err := r.db.Model(&part).Updates(&part).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	if len(createLiterature) != 0 {
+
+		for _, v := range createLiterature {
+			lit := domain.Literature{}
+			err = r.db.Where(&domain.Literature{TargetID: part.ID, Title: v}).First(&lit).Error
+			if err == nil {
+				logger.Error("literature already exists")
+				return errors.New("literature already exists")
+			}
+			lit.TargetID = part.ID
+			lit.Title = v
+
+			err = r.db.Create(&lit).Error
+			if err != nil {
+				logger.Error(err)
+				return errors.New("could not create")
+			}
+		}
+	}
+	if len(deleteLiterature) != 0 {
+
+		for _, v := range deleteLiterature {
+			lit := domain.Literature{}
+			err = r.db.Where(&domain.Literature{TargetID: part.ID, Title: v}).First(&lit).Error
+			if err != nil {
+				logger.Error("literature don't exist")
+				return errors.New("literature don't exist")
+			}
+			lit.TargetID = part.ID
+			lit.Title = v
+
+			count := r.db.Delete(&lit).RowsAffected
+			if count == 0 {
+				logger.Error("could not delete")
+				return errors.New("could not delete")
+			}
+		}
+	}
+	return nil
+}
+
 func (r *PartsRepo) Delete(part domain.Part) error {
 	logger.Info(part)
 	check := r.db.Delete(&part).RowsAffected

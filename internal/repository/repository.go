@@ -33,11 +33,12 @@ type Content interface {
 }
 type Parts interface {
 	Create(part domain.Part) error
+	Update(part domain.Part, createLiterature, deleteLiterature []string) error
 	Delete(part domain.Part) error
 }
 type Propositions interface {
 	Create(proposition domain.Proposition) error
-	Update(treatise domain.Proposition, createReferences, deleteReferences []string) error
+	Update(proposition domain.Proposition, createReferences, deleteReferences []string) error
 	Delete(proposition domain.Proposition) error
 	GetByID(id string) (domain.Proposition, error)
 }
