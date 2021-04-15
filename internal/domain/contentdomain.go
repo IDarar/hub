@@ -76,7 +76,8 @@ type Proposition struct {
 	Comments []*Comment `gorm:"-"`
 }
 type Literature struct {
-	TargetID string `gorm:"primaryKey"`
+	ID       int `gorm:"primaryKey"`
+	TargetID string
 	Title    string //article or book
 }
 type Note struct {
