@@ -105,7 +105,7 @@ type refreshInput struct {
 }
 
 // @Summary User Refresh Tokens
-// @Tags students-auth
+// @Tags user-auth
 // @Description users refresh tokens
 // @Accept  json
 // @Produce  json
@@ -122,7 +122,7 @@ func (h *Handler) userRefresh(c *gin.Context) {
 		return
 	}
 
-	res, err := h.services.User.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
+	res, err := h.services.User.RefreshTokens(inp.Token)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
@@ -133,22 +133,3 @@ func (h *Handler) userRefresh(c *gin.Context) {
 		RefreshToken: res.RefreshToken,
 	})
 }
-
-/*func (h *Handler) userRefresh(c *gin.Context) {
-	var inp refreshInput
-	if err := c.BindJSON(&inp); err != nil {
-		newResponse(c, http.StatusBadRequest, "invalid input body")
-		return
-	}
-
-	res, err := h.services.User.RefreshTokens(c.Request.Context(), school.ID, inp.Token)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	c.JSON(http.StatusOK, tokenResponse{
-		AccessToken:  res.AccessToken,
-		RefreshToken: res.RefreshToken,
-	})
-}*/

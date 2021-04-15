@@ -57,7 +57,6 @@ func Run(configPath string) {
 	}
 	rdb.Ping(ctx)
 	logger.Info("connected to redis")
-
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
 	repos := repository.NewRepositories(db, rdb, cfg)
@@ -77,6 +76,12 @@ func Run(configPath string) {
 }
 
 /*
+	uID, err := rdb.Get(ctx, "b8a10154151251254fba95c7777b9e054fa9106d1baa6946fe5c5becf39972d468edc10a3e4").Result()
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	logger.Info("USER ID ", uID)
 	start := time.Now()
 	end := time.Now().Add(cfg.Auth.JWT.RefreshTokenTTL)
 

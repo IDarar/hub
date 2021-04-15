@@ -64,22 +64,23 @@ func (s *UserService) SignIn(ctx context.Context, input SignInInput) (Tokens, er
 		return Tokens{}, err
 	}
 
-	return s.createSession(user.ID)
+	return s.createSession(user.ID, "")
 }
 func (s *UserService) RefreshTokens(refreshToken string) (Tokens, error) {
-	student, err := s.sessions.GetByRefreshToken(ctx, schoolId, refreshToken)
+	//check if token exists and then pass it to delete and set new
+	uID, err := s.sessions.GetIDByRefreshToken(refreshToken)
 	if err != nil {
 		return Tokens{}, err
 	}
 
-	return s.createSession(ctx, student.ID)
+	return s.createSession(uID, refreshToken)
 }
 
 func (s *UserService) CreateMark(domain.UserProposition, [3]interface{}) error {
 
 	return nil
 }
-func (s *UserService) createSession(userId int) (Tokens, error) {
+func (s *UserService) createSession(userId int, revoketoken string) (Tokens, error) {
 	var (
 		res Tokens
 		err error
@@ -100,7 +101,7 @@ func (s *UserService) createSession(userId int) (Tokens, error) {
 		ExpiresAt:    time.Now().Add(s.refreshTokenTTL),
 	}
 
-	err = s.sessions.SetSession(userId, session)
+	err = s.sessions.SetSession(userId, session, revoketoken)
 	return res, err
 }
 func (s *UserService) GetRoleById(Userid int) ([]string, error) {

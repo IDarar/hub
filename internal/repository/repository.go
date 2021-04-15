@@ -42,7 +42,9 @@ type Propositions interface {
 	GetByID(id string) (domain.Proposition, error)
 }
 type Sessions interface {
-	SetSession(userId int, session domain.Session) error
+	SetSession(userId int, session domain.Session, revoketoken string) error
+	GetIDByRefreshToken(refreshToken string) (int, error)
+	GetAllUserSessions(uID int) ([]string, error)
 }
 type Repositories struct {
 	Users        Users

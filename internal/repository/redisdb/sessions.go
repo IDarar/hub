@@ -2,6 +2,7 @@ package redisdb
 
 import (
 	"context"
+	"strconv"
 	"time"
 
 	"github.com/IDarar/hub/internal/config"
@@ -13,7 +14,6 @@ import (
 type SessionsRepo struct {
 	rdb *redis.Client
 	cfg *config.Config
-	ctx context.Context
 }
 
 func NewSessionRepo(rdb *redis.Client, cfg *config.Config) *SessionsRepo {
@@ -23,7 +23,8 @@ func NewSessionRepo(rdb *redis.Client, cfg *config.Config) *SessionsRepo {
 	}
 }
 
-func (r *SessionsRepo) SetSession(userId int, session domain.Session) error {
+func (r *SessionsRepo) SetSession(userId int, session domain.Session, revoketoken string) error {
+	logger.Info("u id ", userId)
 	ctx := context.Background()
 	start := time.Now()
 	end := time.Now().Add(r.cfg.Auth.JWT.RefreshTokenTTL)
@@ -35,18 +36,32 @@ func (r *SessionsRepo) SetSession(userId int, session domain.Session) error {
 		return err.Err()
 	}
 
-	return nil
-}
-func (r *StudentsRepo) GetByRefreshToken(ctx context.Context, schoolId primitive.ObjectID, refreshToken string) (domain.Student, error) {
-	var student domain.Student
-	if err := r.db.FindOne(ctx, bson.M{"session.refreshToken": refreshToken, "schoolId": schoolId,
-		"session.expiresAt": bson.M{"$gt": time.Now()}}).Decode(&student); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return domain.Student{}, ErrUserNotFound
-		}
-
-		return domain.Student{}, err
+	if revoketoken != "" {
+		r.rdb.Del(ctx, revoketoken)
 	}
 
-	return student, nil
+	logger.Info("new session ", session.RefreshToken)
+
+	return nil
+}
+func (r *SessionsRepo) GetIDByRefreshToken(refreshToken string) (int, error) {
+	logger.Info("refresh token to check ", refreshToken)
+
+	ctx := context.Background()
+	uIDstr, err := r.rdb.Get(ctx, refreshToken).Result()
+
+	if err != nil {
+		logger.Error(err)
+		return 0, err
+	}
+	uID, _ := strconv.Atoi(uIDstr)
+	logger.Info("u id ", uID)
+
+	return int(uID), nil
+}
+
+//TODO in long future
+//Add map of slices with user's sessions info
+func (r *SessionsRepo) GetAllUserSessions(uID int) ([]string, error) {
+	return nil, nil
 }
