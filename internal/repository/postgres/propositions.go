@@ -79,7 +79,9 @@ func (r *PropositionsRepo) GetByID(id string) (domain.Proposition, error) {
 
 	return pr, nil
 }
-func (r *PropositionsRepo) Update(prop domain.Proposition, createReferences, deleteReferences []string) error {
+func (r *PropositionsRepo) Update(prop domain.Proposition,
+	createReferences, deleteReferences []string,
+	createNotes, deleteNotes []domain.Note) error {
 	logger.Info(prop)
 
 	err := r.db.Model(&prop).Updates(&prop).Error
@@ -119,6 +121,44 @@ func (r *PropositionsRepo) Update(prop domain.Proposition, createReferences, del
 			ref.TargetProposition = v
 
 			count := r.db.Delete(&ref).RowsAffected
+			if count == 0 {
+				logger.Error("could not delete")
+				return errors.New("could not delete")
+			}
+		}
+	}
+	if len(createNotes) != 0 {
+
+		for _, v := range createNotes {
+			note := domain.Note{}
+			err = r.db.Where(&domain.Note{Target: prop.ID, TreatiseID: prop.TargetID}).First(&note).Error
+			if err == nil {
+				logger.Error("note already exists")
+				return errors.New("note already exists")
+			}
+			note.Target = prop.ID
+			note.TreatiseID = prop.TargetID
+			note.Text = v.Text
+			note.Type = v.Type
+			err = r.db.Create(&note).Error
+			if err != nil {
+				logger.Error(err)
+				return errors.New("could not create")
+			}
+		}
+	}
+	if len(deleteNotes) != 0 {
+
+		for range deleteNotes {
+			note := domain.Note{}
+			err = r.db.Where(&domain.Note{Target: prop.ID, TreatiseID: prop.TargetID}).First(&note).Error
+			if err != nil {
+				logger.Error("note don't exist")
+				return errors.New("note don't exist")
+			}
+			note.Target = prop.ID
+
+			count := r.db.Delete(&note).RowsAffected
 			if count == 0 {
 				logger.Error("could not delete")
 				return errors.New("could not delete")

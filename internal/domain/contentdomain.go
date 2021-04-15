@@ -63,9 +63,9 @@ type Proposition struct {
 	Name        string
 	Description string
 	Text        string
-
 	Explanation string
 
+	Notes      []*Note      `gorm:"foreignKey:Target;constraint:OnDelete:CASCADE"`
 	References []*Reference `gorm:"foreignKey:Target;constraint:OnDelete:CASCADE"`
 
 	Difficulty    int `gorm:"-"`
@@ -81,12 +81,12 @@ type Literature struct {
 	Title    string //article or book
 }
 type Note struct {
-	ID          string
-	Treatise    *Treatise
-	Proposition *Proposition
+	ID         int    `gorm:"primaryKey"`
+	TreatiseID string `json:"treatise_id,omitempty"` //will be taken through prop/part-prop target
+	Target     string `json:"target"`                //to which belongs
 
-	Type string //original, publisher, my etc
-	Text string
+	Type string `json:"type"` //original, publisher, my etc
+	Text string `json:"text,omitempty"`
 }
 type Reference struct {
 	ID                int    `gorm:"primaryKey"`

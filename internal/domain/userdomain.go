@@ -6,6 +6,13 @@ import (
 	_ "gorm.io/gorm"
 )
 
+/*user prop
+status prop
+mark of prop
+rate of props
+add to favs
+underlines, notes*/
+
 type User struct {
 	//TODO last proposition opened
 	ID           int    `gorm:"primaryKey"`

@@ -38,7 +38,7 @@ type Parts interface {
 }
 type Propositions interface {
 	Create(proposition domain.Proposition) error
-	Update(proposition domain.Proposition, createReferences, deleteReferences []string) error
+	Update(proposition domain.Proposition, createReferences, deleteReferences []string, createNotes, deleteNotes []domain.Note) error
 	Delete(proposition domain.Proposition) error
 	GetByID(id string) (domain.Proposition, error)
 }

@@ -1,5 +1,21 @@
 basePath: /api/v1/
 definitions:
+  domain.Note:
+    properties:
+      id:
+        type: integer
+      target:
+        description: to which belongs
+        type: string
+      text:
+        type: string
+      treatise_id:
+        description: will be taken through prop/part-prop target
+        type: string
+      type:
+        description: original, publisher, my etc
+        type: string
+    type: object
   v1.RoleInput:
     properties:
       role:
@@ -48,6 +64,13 @@ definitions:
     - id
     - name
     - text
+    type: object
+  v1.partDeleteInput:
+    properties:
+      fullname:
+        type: string
+    required:
+    - fullname
     type: object
   v1.partUpdateInput:
     properties:
@@ -144,9 +167,17 @@ definitions:
     type: object
   v1.updatePropositionInput:
     properties:
+      create_notes:
+        items:
+          $ref: '#/definitions/domain.Note'
+        type: array
       create_references:
         items:
           type: string
+        type: array
+      delete_notes:
+        items:
+          $ref: '#/definitions/domain.Note'
         type: array
       delete_references:
         items:
@@ -371,6 +402,46 @@ paths:
       summary: admin createProposition
       tags:
       - propositions
+  /admins/part/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: deletePart
+      parameters:
+      - description: part info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.partDeleteInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.tokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - AdminAuth: []
+      summary: admin deletePart
+      tags:
+      - parts
   /admins/parts/:id:
     put:
       consumes:

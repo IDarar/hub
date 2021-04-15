@@ -68,7 +68,7 @@ func (s *PropositionsService) Update(inp UpdatePropositionInput, roles interface
 		Text:        inp.Text,
 	}
 
-	if err := s.repo.Update(proposition, inp.CreateReferences, inp.DeleteReferences); err != nil {
+	if err := s.repo.Update(proposition, inp.CreateReferences, inp.DeleteReferences, inp.CreateNotes, inp.DeleteNotes); err != nil {
 		logger.Error(err)
 		return err
 	}

@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 
+	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/service"
 	"github.com/IDarar/hub/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -427,13 +428,15 @@ func (h *Handler) createProposition(c *gin.Context) {
 
 type updatePropositionInput struct {
 	ID               string
-	TargetID         string   `json:"target_id"`
-	Name             string   `json:"name,omitempty"`
-	Description      string   `json:"description,omitempty"`
-	Explanation      string   `json:"explanation,omitempty"`
-	Text             string   `json:"text,omitempty"`
-	CreateReferences []string `json:"create_references"`
-	DeleteReferences []string `json:"delete_references"`
+	TargetID         string        `json:"target_id"`
+	Name             string        `json:"name,omitempty"`
+	Description      string        `json:"description,omitempty"`
+	Explanation      string        `json:"explanation,omitempty"`
+	Text             string        `json:"text,omitempty"`
+	CreateReferences []string      `json:"create_references,omitempty"`
+	DeleteReferences []string      `json:"delete_references,omitempty"`
+	CreateNotes      []domain.Note `json:"create_notes,omitempty"`
+	DeleteNotes      []domain.Note `json:"delete_notes,omitempty"`
 }
 
 // @Summary	admin updateProposition
@@ -473,7 +476,10 @@ func (h *Handler) updateProposition(c *gin.Context) {
 		Explanation:      inp.Explanation,
 		Text:             inp.Text,
 		CreateReferences: inp.CreateReferences,
-		DeleteReferences: inp.DeleteReferences},
+		DeleteReferences: inp.DeleteReferences,
+		CreateNotes:      inp.CreateNotes,
+		DeleteNotes:      inp.DeleteNotes,
+	},
 		userID)
 
 	if err != nil {

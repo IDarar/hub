@@ -90,6 +90,8 @@ type UpdatePropositionInput struct {
 	Text             string
 	CreateReferences []string
 	DeleteReferences []string
+	CreateNotes      []domain.Note
+	DeleteNotes      []domain.Note
 }
 type Propositions interface {
 	Create(prop CreateProposition, roles interface{}) error
