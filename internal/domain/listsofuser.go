@@ -21,24 +21,24 @@ type UserTreatise struct {
 	UserID int `gorm:"primaryKey"`
 
 	TargetTreatise string `gorm:"primaryKey"` //E (Ethics), L (letters), TTP (Tractatus Theologico-Politicus) etc
-	Status         string
+	//TODO types of status
+	Status string
 
 	DifficultyRate    int
 	ImportanceRate    int
 	InconsistencyRate int
 
 	Progress    int
-	IsCompleted bool
+	IsCompleted *bool
 }
 
 type UserPart struct {
-	ID     int `gorm:"primaryKey"`
-	UserID int
+	UserID int `gorm:"primaryKey"`
 
-	TargetPart string //EV (Ethics 5 part), TPI (Tractatus Politicus, First chapter) etc
+	TargetPart string `gorm:"primaryKey"` //EV (Ethics 5 part), TPI (Tractatus Politicus, First chapter) etc
 
 	Status      string
-	IsCompleted bool
+	IsCompleted *bool
 
 	DifficultyRate    int
 	ImportanceRate    int
@@ -47,26 +47,26 @@ type UserPart struct {
 	Progress int //all props of part / completed
 }
 
+//has different fkeys beacause of notes
 type UserProposition struct {
-	ID int `gorm:"primaryKey"`
-
-	UserID int
+	UserID int `gorm:"primaryKey"`
 
 	LocalText         string  //with notes, underlines etc
-	Marks             []*Mark `gorm:"-"` //first two are indexes, third is format type
-	TargetProposition string  //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
+	Marks             []*Mark `gorm:"-"`          //first two are indexes, third is format type
+	TargetProposition string  `gorm:"primaryKey"` //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
 	Status            string  //complete, unknow, in proccess etc
-	IsCompleted       bool
+	IsCompleted       *bool
 	//Difficulty, Importance, Inconsistency
 	//There can be only 3 rates (one for one type)  foreignKey:Refer;joinForeignKey:UserReferID;
 	DifficultyRate    int
 	ImportanceRate    int
 	InconsistencyRate int
-	UserNotes         []*UserNote `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
+	UserNotes         []*UserNote `gorm:"-"`
 }
 
 //on get append it to original prop's notes
 type UserNote struct {
+	//TODO because of FKeys restrictions should check ex of target
 	ID     int `gorm:"primaryKey"`
 	UserID int
 

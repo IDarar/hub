@@ -22,10 +22,9 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 			{
 				userContent.POST("", h.addUserTreatise)
 				//TODO change handlers
-				userContent.PUT("/:id", h.updateTreatise)
+				userContent.PUT("/:id", h.updateUserTreatise)
 				userContent.DELETE("/:id", h.deleteTreatise)
 				userContent.POST("/:id/parts", h.createPart)
-				userContent.POST("/:id/proposition", h.createProposition) //For treatises without parts division
 
 			}
 			userParts := useractions.Group("/parts")
@@ -33,11 +32,11 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 				userParts.POST("/:id")
 				userParts.PUT("/:id", h.updatePart)
 				userParts.DELETE("/:id", h.deletePart)
-				userParts.POST("/:id/proposition", h.createProposition) //For treatises divided into parts
 			}
 			userPropositions := useractions.Group("/propositions")
 			{
-				userPropositions.PUT("/:id", h.updateProposition)
+				userPropositions.POST("", h.addUserProposition)
+				userPropositions.PUT("/:id", h.updateUserProposition)
 			}
 
 		}
@@ -203,16 +202,155 @@ func (h *Handler) addUserTreatise(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
-type updateTreatise struct {
-	UserID int
+type updateUserTreatise struct {
+	TargetTreatise string `json:"target_treatise,omitempty" binding:"required"`
+	Status         string `json:"status,omitempty"`
 
-	TargetTreatise string
-	Status         string
+	IsCompleted *bool `json:"is_completed,omitempty"`
+}
 
-	DifficultyRate    int
-	ImportanceRate    int
-	InconsistencyRate int
+// @Summary	user updateUserTreatise
+// @Security UsersAuth
+// @Tags UserContent
+// @Description updateUserTreatise
+// @ModuleID user
+// @Accept  json
+// @Produce  json
+// @Param input body updateUserTreatise true "content info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/content/{id} [put]
+func (h *Handler) updateUserTreatise(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	idParam := c.Param("id")
 
-	Progress    int
-	IsCompleted bool
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+
+	var inp updateUserTreatise
+
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	if inp.IsCompleted == nil {
+		logger.Info("is nil")
+	}
+	if inp.Status == "" && inp.IsCompleted == nil {
+		newResponse(c, http.StatusBadRequest, "nil values, nothing to update")
+		return
+	}
+
+	err := h.services.User.UpdateTreatise(service.UpdateUserTreatise{TargetTreatise: inp.TargetTreatise,
+		Status:      inp.Status,
+		IsCompleted: inp.IsCompleted},
+		userID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+type addPropositionInput struct {
+	TargetProposition string `json:"target_proposition,omitempty" binding:"required"`
+}
+
+// @Summary	user addUserProposition
+// @Security UsersAuth
+// @Tags UserContent
+// @Description addUserProposition
+// @ModuleID user
+// @Accept  json
+// @Produce  json
+// @Param input body addPropositionInput true "prop info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/propositions/ [post]
+func (h *Handler) addUserProposition(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+
+	var inp addPropositionInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.services.User.AddProposition(service.AddPropositionInput{
+		TargetProposition: inp.TargetProposition,
+	}, userID)
+
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+type updateUserProposition struct {
+	TargetTreatise string `json:"target_treatise,omitempty" binding:"required"`
+	Status         string `json:"status,omitempty"`
+
+	IsCompleted *bool `json:"is_completed,omitempty"`
+}
+
+// @Summary	user updateUserProposition
+// @Security UsersAuth
+// @Tags UserContent
+// @Description updateUserProposition
+// @ModuleID user
+// @Accept  json
+// @Produce  json
+// @Param input body updateUserProposition true "prop info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/propositions/{id} [put]
+func (h *Handler) updateUserProposition(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	idParam := c.Param("id")
+
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+
+	var inp updateUserProposition
+
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	if inp.IsCompleted == nil {
+		logger.Info("is nil")
+	}
+	if inp.Status == "" && inp.IsCompleted == nil {
+		newResponse(c, http.StatusBadRequest, "nil values, nothing to update")
+		return
+	}
+
+	err := h.services.User.UpdateProposition(service.UpdateUserProposition{TargetTreatise: inp.TargetTreatise,
+		Status:      inp.Status,
+		IsCompleted: inp.IsCompleted},
+		userID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
 }

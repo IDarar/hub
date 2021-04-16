@@ -21,6 +21,9 @@ type Users interface {
 	SetSession(userId int, session domain.Session) error
 
 	AddTreatise(tr domain.UserTreatise) error
+	UpdateTreatise(tr domain.UserTreatise) error
+	AddProposition(pr domain.UserProposition) error
+	UpdateProposition(pr domain.UserProposition) error
 }
 type Admins interface {
 	GrantRole(name, role string) error

@@ -76,6 +76,14 @@ func (s *UserService) RefreshTokens(refreshToken string) (Tokens, error) {
 	return s.createSession(uID, refreshToken)
 }
 
+func (s *UserService) GetRoleById(Userid int) ([]string, error) {
+	roles, err := s.repo.GetRoleByID(Userid)
+	if err != nil {
+		return roles, errors.New("dont have enough rights")
+	}
+	return roles, nil
+}
+
 func (s *UserService) CreateMark(domain.UserProposition, [3]interface{}) error {
 
 	return nil
@@ -118,11 +126,44 @@ func (s *UserService) AddTreatise(inp AddTreatiseInput, userID interface{}) erro
 	return nil
 
 }
-
-func (s *UserService) GetRoleById(Userid int) ([]string, error) {
-	roles, err := s.repo.GetRoleByID(Userid)
-	if err != nil {
-		return roles, errors.New("dont have enough rights")
+func (s *UserService) UpdateTreatise(inp UpdateUserTreatise, userID interface{}) error {
+	if inp.IsCompleted == nil {
+		logger.Info("is nil")
 	}
-	return roles, nil
+	treatise := domain.UserTreatise{TargetTreatise: inp.TargetTreatise,
+		Status:      inp.Status,
+		UserID:      userID.(int),
+		IsCompleted: inp.IsCompleted}
+	if err := s.repo.UpdateTreatise(treatise); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+func (s *UserService) AddProposition(inp AddPropositionInput, userID interface{}) error {
+	logger.Info("userID ", userID)
+
+	prop := domain.UserProposition{TargetProposition: inp.TargetProposition, UserID: userID.(int), Status: "In progress"}
+	logger.Info(prop)
+
+	if err := s.repo.AddProposition(prop); err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	return nil
+}
+func (s *UserService) UpdateProposition(inp UpdateUserProposition, userID interface{}) error {
+	if inp.IsCompleted == nil {
+		logger.Info("is nil")
+	}
+	prop := domain.UserProposition{TargetProposition: inp.TargetTreatise,
+		Status:      inp.Status,
+		UserID:      userID.(int),
+		IsCompleted: inp.IsCompleted}
+	if err := s.repo.UpdateProposition(prop); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
 }

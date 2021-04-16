@@ -76,15 +76,47 @@ func (r *UsersRepo) GetRoleByID(userId int) ([]string, error) {
 //It also don't check the target of object
 //Target should exist from input
 func (r *UsersRepo) AddTreatise(tr domain.UserTreatise) error {
-	logger.Info("BEFORE", tr)
 
-	err := r.db.Model(tr).First(&tr).Error
+	tr.Status = "In progress"
+	return r.db.Create(&tr).Error
+}
+func (r *UsersRepo) UpdateTreatise(tr domain.UserTreatise) error {
 	logger.Info(tr)
+	if tr.IsCompleted == nil {
+		logger.Info("is nil")
+	}
+
+	err := r.db.Model(&tr).Updates(&tr).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	return nil
+}
+func (r *UsersRepo) AddProposition(pr domain.UserProposition) error {
+
+	err := r.db.Model(pr).First(&pr).Error
+	logger.Info(pr)
 	if err == nil {
 		logger.Error("found")
 		return errors.New("already added")
 	}
-	return r.db.Create(&tr).Error
+	return r.db.Create(&pr).Error
+}
+func (r *UsersRepo) UpdateProposition(pr domain.UserProposition) error {
+	logger.Info(pr)
+	if pr.IsCompleted == nil {
+		logger.Info("is nil")
+	}
+
+	err := r.db.Model(&pr).Updates(&pr).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	return nil
 }
 
 /* TODO func (u *UsersRepo) CreateMark(domain.UserProposition, [3]interface{}) error {

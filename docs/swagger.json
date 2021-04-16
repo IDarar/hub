@@ -695,6 +695,195 @@
                 }
             }
         },
+        "/users/content/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
+                "description": "updateUserTreatise",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserContent"
+                ],
+                "summary": "user updateUserTreatise",
+                "parameters": [
+                    {
+                        "description": "content info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.updateUserTreatise"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/propositions/": {
+            "post": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
+                "description": "addUserProposition",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserContent"
+                ],
+                "summary": "user addUserProposition",
+                "parameters": [
+                    {
+                        "description": "prop info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.addPropositionInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/propositions/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
+                "description": "updateUserProposition",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserContent"
+                ],
+                "summary": "user updateUserProposition",
+                "parameters": [
+                    {
+                        "description": "prop info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.updateUserProposition"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/users/sign-in": {
             "post": {
                 "description": "user sign in",
@@ -851,6 +1040,17 @@
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.addPropositionInput": {
+            "type": "object",
+            "required": [
+                "target_proposition"
+            ],
+            "properties": {
+                "target_proposition": {
                     "type": "string"
                 }
             }
@@ -1117,6 +1317,40 @@
                     "type": "string"
                 },
                 "text": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.updateUserProposition": {
+            "type": "object",
+            "required": [
+                "target_treatise"
+            ],
+            "properties": {
+                "is_completed": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "target_treatise": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.updateUserTreatise": {
+            "type": "object",
+            "required": [
+                "target_treatise"
+            ],
+            "properties": {
+                "is_completed": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "target_treatise": {
                     "type": "string"
                 }
             }

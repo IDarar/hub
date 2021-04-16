@@ -33,6 +33,20 @@ type Tokens struct {
 type AddTreatiseInput struct {
 	TargetTreatise string
 }
+type UpdateUserTreatise struct {
+	TargetTreatise string
+	Status         string
+	IsCompleted    *bool
+}
+type AddPropositionInput struct {
+	TargetProposition string
+}
+type UpdateUserProposition struct {
+	TargetTreatise string
+	Status         string
+
+	IsCompleted *bool
+}
 type User interface {
 	SignUp(ctx context.Context, input SignUpInput) error
 	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
@@ -40,6 +54,9 @@ type User interface {
 	GetRoleById(id int) ([]string, error)
 	CreateMark(domain.UserProposition, [3]interface{}) error
 	AddTreatise(inp AddTreatiseInput, userID interface{}) error
+	UpdateTreatise(inp UpdateUserTreatise, userID interface{}) error
+	AddProposition(inp AddPropositionInput, userID interface{}) error
+	UpdateProposition(inp UpdateUserProposition, userID interface{}) error
 }
 
 type RoleInput struct {

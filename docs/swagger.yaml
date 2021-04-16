@@ -29,6 +29,13 @@ definitions:
     - role
     - username
     type: object
+  v1.addPropositionInput:
+    properties:
+      target_proposition:
+        type: string
+    required:
+    - target_proposition
+    type: object
   v1.addTreatiseInput:
     properties:
       target_treatise:
@@ -205,6 +212,28 @@ definitions:
         type: string
       text:
         type: string
+    type: object
+  v1.updateUserProposition:
+    properties:
+      is_completed:
+        type: boolean
+      status:
+        type: string
+      target_treatise:
+        type: string
+    required:
+    - target_treatise
+    type: object
+  v1.updateUserTreatise:
+    properties:
+      is_completed:
+        type: boolean
+      status:
+        type: string
+      target_treatise:
+        type: string
+    required:
+    - target_treatise
     type: object
 host: localhost:8080
 info:
@@ -648,6 +677,126 @@ paths:
       security:
       - UsersAuth: []
       summary: user addUserTreatise
+      tags:
+      - UserContent
+  /users/content/{id}:
+    put:
+      consumes:
+      - application/json
+      description: updateUserTreatise
+      parameters:
+      - description: content info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateUserTreatise'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user updateUserTreatise
+      tags:
+      - UserContent
+  /users/propositions/:
+    post:
+      consumes:
+      - application/json
+      description: addUserProposition
+      parameters:
+      - description: prop info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.addPropositionInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user addUserProposition
+      tags:
+      - UserContent
+  /users/propositions/{id}:
+    put:
+      consumes:
+      - application/json
+      description: updateUserProposition
+      parameters:
+      - description: prop info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateUserProposition'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user updateUserProposition
       tags:
       - UserContent
   /users/sign-in:

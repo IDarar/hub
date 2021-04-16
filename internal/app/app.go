@@ -33,7 +33,6 @@ var ctx = context.Background()
 // @in header
 // @name Authorization
 func Run(configPath string) {
-
 	cfg, err := config.Init(configPath)
 	if err != nil {
 		logger.Error(err)
