@@ -118,6 +118,29 @@ func (r *UsersRepo) UpdateProposition(pr domain.UserProposition) error {
 
 	return nil
 }
+func (r *UsersRepo) AddPart(part domain.UserPart) error {
+	err := r.db.Model(part).First(&part).Error
+	logger.Info(part)
+	if err == nil {
+		logger.Error("found")
+		return errors.New("already added")
+	}
+	return r.db.Create(&part).Error
+}
+func (r *UsersRepo) UpdatePart(part domain.UserPart) error {
+	logger.Info(part)
+	if part.IsCompleted == nil {
+		logger.Info("is nil")
+	}
+
+	err := r.db.Model(&part).Updates(&part).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	return nil
+}
 
 /* TODO func (u *UsersRepo) CreateMark(domain.UserProposition, [3]interface{}) error {
 

@@ -21,17 +21,12 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 			userContent := useractions.Group("/content")
 			{
 				userContent.POST("", h.addUserTreatise)
-				//TODO change handlers
 				userContent.PUT("/:id", h.updateUserTreatise)
-				userContent.DELETE("/:id", h.deleteTreatise)
-				userContent.POST("/:id/parts", h.createPart)
-
 			}
 			userParts := useractions.Group("/parts")
 			{
-				userParts.POST("/:id")
+				userParts.POST("", h.addUserPart)
 				userParts.PUT("/:id", h.updatePart)
-				userParts.DELETE("/:id", h.deletePart)
 			}
 			userPropositions := useractions.Group("/propositions")
 			{
@@ -298,8 +293,8 @@ func (h *Handler) addUserProposition(c *gin.Context) {
 }
 
 type updateUserProposition struct {
-	TargetTreatise string `json:"target_treatise,omitempty" binding:"required"`
-	Status         string `json:"status,omitempty"`
+	TargetProposition string `json:"target_proposition,omitempty" binding:"required"`
+	Status            string `json:"status,omitempty"`
 
 	IsCompleted *bool `json:"is_completed,omitempty"`
 }
@@ -343,10 +338,37 @@ func (h *Handler) updateUserProposition(c *gin.Context) {
 		return
 	}
 
-	err := h.services.User.UpdateProposition(service.UpdateUserProposition{TargetTreatise: inp.TargetTreatise,
+	err := h.services.User.UpdateProposition(service.UpdateUserProposition{TargetProposition: inp.TargetProposition,
 		Status:      inp.Status,
 		IsCompleted: inp.IsCompleted},
 		userID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+type addPartInput struct {
+	TargetPart string `json:"target_part,omitempty" binding:"required"`
+}
+
+func (h *Handler) addUserPart(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
+
+	var inp addPartInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	logger.Info("USERID ", userID)
+
+	err := h.services.User.AddPart(service.AddPartInput{
+		TargetPart: inp.TargetPart,
+	}, userID)
+
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

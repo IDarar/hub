@@ -157,11 +157,38 @@ func (s *UserService) UpdateProposition(inp UpdateUserProposition, userID interf
 	if inp.IsCompleted == nil {
 		logger.Info("is nil")
 	}
-	prop := domain.UserProposition{TargetProposition: inp.TargetTreatise,
+	prop := domain.UserProposition{TargetProposition: inp.TargetProposition,
 		Status:      inp.Status,
 		UserID:      userID.(int),
 		IsCompleted: inp.IsCompleted}
 	if err := s.repo.UpdateProposition(prop); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+func (s *UserService) AddPart(inp AddPartInput, userID interface{}) error {
+	logger.Info("userID ", userID)
+
+	part := domain.UserPart{TargetPart: inp.TargetPart, UserID: userID.(int)}
+	logger.Info(part)
+
+	if err := s.repo.AddPart(part); err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	return nil
+}
+func (s *UserService) UpdatePart(inp UpdatePartProposition, userID interface{}) error {
+	if inp.IsCompleted == nil {
+		logger.Info("is nil")
+	}
+	part := domain.UserPart{TargetPart: inp.TargetPart,
+		Status:      inp.Status,
+		UserID:      userID.(int),
+		IsCompleted: inp.IsCompleted}
+	if err := s.repo.UpdatePart(part); err != nil {
 		logger.Error(err)
 		return err
 	}

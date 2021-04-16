@@ -42,9 +42,16 @@ type AddPropositionInput struct {
 	TargetProposition string
 }
 type UpdateUserProposition struct {
-	TargetTreatise string
-	Status         string
-
+	TargetProposition string
+	Status            string
+	IsCompleted       *bool
+}
+type AddPartInput struct {
+	TargetPart string
+}
+type UpdatePartProposition struct {
+	TargetPart  string
+	Status      string
 	IsCompleted *bool
 }
 type User interface {
@@ -57,6 +64,8 @@ type User interface {
 	UpdateTreatise(inp UpdateUserTreatise, userID interface{}) error
 	AddProposition(inp AddPropositionInput, userID interface{}) error
 	UpdateProposition(inp UpdateUserProposition, userID interface{}) error
+	AddPart(inp AddPartInput, userID interface{}) error
+	UpdatePart(inp UpdatePartProposition, userID interface{}) error
 }
 
 type RoleInput struct {
