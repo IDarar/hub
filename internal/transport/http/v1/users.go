@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/IDarar/hub/internal/service"
+	"github.com/IDarar/hub/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +14,34 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 		users.POST("/sign-up", h.userSignUp)
 		users.POST("/sign-in", h.userSignIn)
 		users.POST("/auth/refresh", h.userRefresh)
+
+		useractions := users.Group("/", h.userIdentity)
+
+		{
+			userContent := useractions.Group("/content")
+			{
+				userContent.POST("", h.addUserTreatise)
+				//TODO change handlers
+				userContent.PUT("/:id", h.updateTreatise)
+				userContent.DELETE("/:id", h.deleteTreatise)
+				userContent.POST("/:id/parts", h.createPart)
+				userContent.POST("/:id/proposition", h.createProposition) //For treatises without parts division
+
+			}
+			userParts := useractions.Group("/parts")
+			{
+				userParts.POST("/:id")
+				userParts.PUT("/:id", h.updatePart)
+				userParts.DELETE("/:id", h.deletePart)
+				userParts.POST("/:id/proposition", h.createProposition) //For treatises divided into parts
+			}
+			userPropositions := useractions.Group("/propositions")
+			{
+				userPropositions.PUT("/:id", h.updateProposition)
+			}
+
+		}
+
 	}
 }
 
@@ -132,4 +161,58 @@ func (h *Handler) userRefresh(c *gin.Context) {
 		AccessToken:  res.AccessToken,
 		RefreshToken: res.RefreshToken,
 	})
+}
+
+type addTreatiseInput struct {
+	UserID int `json:"user_id" binding:"required"`
+
+	TargetTreatise string `json:"target_treatise" binding:"required"`
+}
+
+func (h *Handler) addUserTreatise(c *gin.Context) {
+	idParam := c.Param("id")
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+
+	var inp addTreatiseInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.services.User.AddTreatise(service.AddTreatiseInput{
+		ID:          inp.ID,
+		TargetID:    idParam,
+		Name:        inp.Name,
+		Description: inp.Description,
+		Explanation: inp.Explanation,
+		Text:        inp.Text},
+		userID)
+
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+type updateTreatise struct {
+	UserID int
+
+	TargetTreatise string
+	Status         string
+
+	DifficultyRate    int
+	ImportanceRate    int
+	InconsistencyRate int
+
+	Progress    int
+	IsCompleted bool
 }

@@ -47,6 +47,7 @@ func InitialiseTables(db *gorm.DB) {
 	if err != nil {
 		return
 	}
+
 	logger.Info("migrated succsessfully")
 
 }

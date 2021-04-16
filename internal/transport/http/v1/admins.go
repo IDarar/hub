@@ -11,7 +11,7 @@ import (
 
 //35.10
 func (h *Handler) initAdminsRoutes(api *gin.RouterGroup) {
-	admins := api.Group("/admins", h.adminIdentity)
+	admins := api.Group("/admins", h.userIdentity)
 	{
 		roles := admins.Group("/roles")
 		{

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/IDarar/hub/internal/config"
+	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/repository/redisdb"
@@ -57,6 +58,8 @@ func Run(configPath string) {
 	}
 	rdb.Ping(ctx)
 
+	rate := &domain.Rate{ID: 1}
+	db.Delete(rate)
 	logger.Info("connected to redis")
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
@@ -189,3 +192,4 @@ role2 := domain.Role{Role: "ForumModerator"}
 db.Create(&role)
 db.Create(&role2)
 */
+//sudo docker start hub-redis

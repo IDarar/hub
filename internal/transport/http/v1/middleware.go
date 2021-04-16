@@ -15,7 +15,7 @@ const (
 	userCtx             = "userId"
 )
 
-func (h *Handler) adminIdentity(c *gin.Context) {
+func (h *Handler) userIdentity(c *gin.Context) {
 	idStr, err := h.parseAuthHeader(c)
 	if err != nil {
 		newResponse(c, http.StatusUnauthorized, err.Error())
