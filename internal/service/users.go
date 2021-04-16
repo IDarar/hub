@@ -104,6 +104,21 @@ func (s *UserService) createSession(userId int, revoketoken string) (Tokens, err
 	err = s.sessions.SetSession(userId, session, revoketoken)
 	return res, err
 }
+func (s *UserService) AddTreatise(inp AddTreatiseInput, userID interface{}) error {
+	logger.Info("userID ", userID)
+
+	treatise := domain.UserTreatise{TargetTreatise: inp.TargetTreatise, UserID: userID.(int)}
+	logger.Info(treatise)
+
+	if err := s.repo.AddTreatise(treatise); err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	return nil
+
+}
+
 func (s *UserService) GetRoleById(Userid int) ([]string, error) {
 	roles, err := s.repo.GetRoleByID(Userid)
 	if err != nil {

@@ -18,11 +18,9 @@ type UserLists struct {
 //db searches target in db and changes values
 
 type UserTreatise struct {
-	ID int `gorm:"primaryKey"`
+	UserID int `gorm:"primaryKey"`
 
-	UserID int
-
-	TargetTreatise string //E (Ethics), L (letters), TTP (Tractatus Theologico-Politicus) etc
+	TargetTreatise string `gorm:"primaryKey"` //E (Ethics), L (letters), TTP (Tractatus Theologico-Politicus) etc
 	Status         string
 
 	DifficultyRate    int

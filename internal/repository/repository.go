@@ -19,6 +19,8 @@ type Users interface {
 	GetRoleByID(id int) ([]string, error)
 	GetByCredentials(ctx context.Context, name, password string) (domain.User, error)
 	SetSession(userId int, session domain.Session) error
+
+	AddTreatise(tr domain.UserTreatise) error
 }
 type Admins interface {
 	GrantRole(name, role string) error

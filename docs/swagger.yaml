@@ -29,6 +29,13 @@ definitions:
     - role
     - username
     type: object
+  v1.addTreatiseInput:
+    properties:
+      target_treatise:
+        type: string
+    required:
+    - target_treatise
+    type: object
   v1.createPartInput:
     properties:
       description:
@@ -202,7 +209,7 @@ definitions:
 host: localhost:8080
 info:
   contact: {}
-  description: Hub for specified topics
+  description: Hub
   title: Hub
   version: "0.001"
 paths:
@@ -603,6 +610,46 @@ paths:
       summary: User Refresh Tokens
       tags:
       - user-auth
+  /users/content:
+    post:
+      consumes:
+      - application/json
+      description: addUserTreatise
+      parameters:
+      - description: content info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.addTreatiseInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user addUserTreatise
+      tags:
+      - UserContent
   /users/sign-in:
     post:
       consumes:
@@ -684,7 +731,7 @@ securityDefinitions:
     in: header
     name: Authorization
     type: apiKey
-  StudentsAuth:
+  UsersAuth:
     in: header
     name: Authorization
     type: apiKey

@@ -20,7 +20,7 @@ var ctx = context.Background()
 
 // @title Hub
 // @version 0.001
-// @description Hub for specified topics
+// @description Hub
 
 // @host localhost:8080
 // @BasePath /api/v1/
@@ -29,7 +29,7 @@ var ctx = context.Background()
 // @in header
 // @name Authorization
 
-// @securityDefinitions.apikey StudentsAuth
+// @securityDefinitions.apikey UsersAuth
 // @in header
 // @name Authorization
 func Run(configPath string) {

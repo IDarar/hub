@@ -164,36 +164,36 @@ func (h *Handler) userRefresh(c *gin.Context) {
 }
 
 type addTreatiseInput struct {
-	UserID int `json:"user_id" binding:"required"`
-
-	TargetTreatise string `json:"target_treatise" binding:"required"`
+	TargetTreatise string `json:"target_treatise,omitempty" binding:"required"`
 }
 
+// @Summary	user addUserTreatise
+// @Security UsersAuth
+// @Tags UserContent
+// @Description addUserTreatise
+// @ModuleID user
+// @Accept  json
+// @Produce  json
+// @Param input body addTreatiseInput true "content info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/content [post]
 func (h *Handler) addUserTreatise(c *gin.Context) {
-	idParam := c.Param("id")
 	userID, _ := c.Get(userCtx)
 	logger.Info(userID)
-	if idParam == "" {
-		newResponse(c, http.StatusBadRequest, "empty id param")
-		logger.Info(idParam)
-
-		return
-	}
 
 	var inp addTreatiseInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
+	logger.Info("USERID ", userID)
 
 	err := h.services.User.AddTreatise(service.AddTreatiseInput{
-		ID:          inp.ID,
-		TargetID:    idParam,
-		Name:        inp.Name,
-		Description: inp.Description,
-		Explanation: inp.Explanation,
-		Text:        inp.Text},
-		userID)
+		TargetTreatise: inp.TargetTreatise,
+	}, userID)
 
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())

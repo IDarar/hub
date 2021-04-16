@@ -30,13 +30,16 @@ type Tokens struct {
 }
 
 //all interfaces there are described
-
+type AddTreatiseInput struct {
+	TargetTreatise string
+}
 type User interface {
 	SignUp(ctx context.Context, input SignUpInput) error
 	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
 	RefreshTokens(refreshToken string) (Tokens, error)
 	GetRoleById(id int) ([]string, error)
 	CreateMark(domain.UserProposition, [3]interface{}) error
+	AddTreatise(inp AddTreatiseInput, userID interface{}) error
 }
 
 type RoleInput struct {

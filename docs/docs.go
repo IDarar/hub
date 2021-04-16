@@ -647,6 +647,69 @@ var doc = `{
                 }
             }
         },
+        "/users/content": {
+            "post": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
+                "description": "addUserTreatise",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserContent"
+                ],
+                "summary": "user addUserTreatise",
+                "parameters": [
+                    {
+                        "description": "content info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.addTreatiseInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/users/sign-in": {
             "post": {
                 "description": "user sign in",
@@ -803,6 +866,17 @@ var doc = `{
                     "type": "string"
                 },
                 "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.addTreatiseInput": {
+            "type": "object",
+            "required": [
+                "target_treatise"
+            ],
+            "properties": {
+                "target_treatise": {
                     "type": "string"
                 }
             }
@@ -1069,7 +1143,7 @@ var doc = `{
             "name": "Authorization",
             "in": "header"
         },
-        "StudentsAuth": {
+        "UsersAuth": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -1093,7 +1167,7 @@ var SwaggerInfo = swaggerInfo{
 	BasePath:    "/api/v1/",
 	Schemes:     []string{},
 	Title:       "Hub",
-	Description: "Hub for specified topics",
+	Description: "Hub",
 }
 
 type s struct{}

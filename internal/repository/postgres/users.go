@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 
 	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/pkg/logger"
@@ -69,6 +70,21 @@ func (r *UsersRepo) GetRoleByID(userId int) ([]string, error) {
 
 	logger.Info(roles, " from slice")
 	return roles, err
+}
+
+//There are no foreign keys for target
+//It also don't check the target of object
+//Target should exist from input
+func (r *UsersRepo) AddTreatise(tr domain.UserTreatise) error {
+	logger.Info("BEFORE", tr)
+
+	err := r.db.Model(tr).First(&tr).Error
+	logger.Info(tr)
+	if err == nil {
+		logger.Error("found")
+		return errors.New("already added")
+	}
+	return r.db.Create(&tr).Error
 }
 
 /* TODO func (u *UsersRepo) CreateMark(domain.UserProposition, [3]interface{}) error {
