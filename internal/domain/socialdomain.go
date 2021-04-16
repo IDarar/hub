@@ -1,8 +1,8 @@
 package domain
 
 type Rate struct {
-	ID int `gorm:"primaryKey"`
-	//UserID int
+	ID       int `gorm:"primaryKey"`
+	UserID   int
 	TargetID string
 	Type     string
 	Value    int

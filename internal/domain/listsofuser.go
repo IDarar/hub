@@ -25,10 +25,9 @@ type UserTreatise struct {
 	TargetTreatise string //E (Ethics), L (letters), TTP (Tractatus Theologico-Politicus) etc
 	Status         string
 
-	DifficultyRate    Rate `gorm:"-"` //`gorm:"many2many:usertreatise_rates;constraint:OnDelete:CASCADE"`
-	ImportanceRate    Rate `gorm:"-"` //`gorm:"many2many:usertreatise_rates;constraint:OnDelete:CASCADE"`
-	InconsistencyRate Rate `gorm:"-"` //`gorm:"many2many:usertreatise_rates;constraint:OnDelete:CASCADE"`
-	Progress          int
+	Rates []*Rate `gorm:"many2many:usertreatise_rates;joinForeignKey:UserID;constraint:OnDelete:CASCADE"`
+
+	Progress int
 }
 
 type UserPart struct {
@@ -37,10 +36,9 @@ type UserPart struct {
 
 	TargetPart string //EV (Ethics 5 part), TPI (Tractatus Politicus, First chapter) etc
 
-	Status            string
-	DifficultyRate    Rate `gorm:"-"` //`gorm:"many2many:userpart_rates;constraint:OnDelete:CASCADE"`
-	ImportanceRate    Rate `gorm:"-"` //`gorm:"many2many:userpart_rates;constraint:OnDelete:CASCADE"`
-	InconsistencyRate Rate `gorm:"-"` //`gorm:"many2many:userpart_rates;constraint:OnDelete:CASCADE"`
+	Status string
+
+	Rates []*Rate `gorm:"many2many:userpart_rates;joinForeignKey:UserID;constraint:OnDelete:CASCADE"`
 
 	Progress int //all props of part / completed
 }
@@ -50,13 +48,14 @@ type UserProposition struct {
 
 	UserID int
 
-	LocalText string //with notes, underlines etc
-	//Marks             [3]interface{} //first two are indexes, third is format type
-	TargetProposition string //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
-	Status            string //complete, unknow, in proccess etc
-	DifficultyRate    Rate   `gorm:"-"` //`gorm:"many2many:userproposition_rates;constraint:OnDelete:CASCADE"`
-	ImportanceRate    Rate   `gorm:"-"` //`gorm:"many2many:userproposition_rates;constraint:OnDelete:CASCADE"`
-	InconsistencyRate Rate   `gorm:"-"` //`gorm:"many2many:userproposition_rates;constraint:OnDelete:CASCADE"`
+	LocalText         string  //with notes, underlines etc
+	Marks             []*Mark `gorm:"-"` //first two are indexes, third is format type
+	TargetProposition string  //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
+	Status            string  //complete, unknow, in proccess etc
+
+	//Difficulty, Importance, Inconsistency
+	//There can be only 3 rates (one for one type)
+	Rates []*Rate `gorm:"many2many:userproposition_rates;joinForeignKey:UserID;constraint:OnDelete:CASCADE"`
 
 	UserNotes []*UserNote `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE"`
 }
@@ -71,4 +70,8 @@ type UserNote struct {
 	Text   string
 	Type   string `json:"type"` //usertype only. or later not only
 
+}
+
+//TODO
+type Mark struct {
 }
