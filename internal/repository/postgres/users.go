@@ -142,6 +142,113 @@ func (r *UsersRepo) UpdatePart(part domain.UserPart) error {
 	return nil
 }
 
+//IT does not check if usertr exists so the proper value should be sent
+func (r *UsersRepo) RateTreatise(tr domain.UserTreatise, rate domain.Rate) error {
+	logger.Info("RATE ", rate)
+
+	err := r.db.Where("user_id = ? AND type = ? AND target_id = ?",
+		rate.UserID,
+		rate.Type,
+		rate.TargetID).First(&rate).Error
+
+	if err == nil {
+		logger.Info("exists ", rate)
+		logger.Error(err)
+		return errors.New("rate already exists")
+	}
+	logger.Info("RATE ", rate)
+
+	err = r.db.Model(&domain.Treatise{ID: rate.TargetID}).Association("Rates").Append(&rate)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	err = r.db.Model(&domain.UserLists{UserID: tr.UserID}).Association("Rates").Append(&rate)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	err = r.db.Model(&tr).Updates(&tr).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+
+//IT does not check if userpart exists so the proper value should be sent
+func (r *UsersRepo) RatePart(part domain.UserPart, rate domain.Rate) error {
+	logger.Info("RATE ", rate)
+
+	err := r.db.Where("user_id = ? AND type = ? AND target_id = ?",
+		rate.UserID,
+		rate.Type,
+		rate.TargetID).First(&rate).Error
+
+	if err == nil {
+		logger.Info("exists ", rate)
+		logger.Error(err)
+		return errors.New("rate already exists")
+	}
+	logger.Info("RATE ", rate)
+
+	err = r.db.Model(&domain.Part{ID: rate.TargetID}).Association("Rates").Append(&rate)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	err = r.db.Model(&domain.UserLists{UserID: part.UserID}).Association("Rates").Append(&rate)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	err = r.db.Model(&part).Updates(&part).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+func (r *UsersRepo) RateProposition(pr domain.UserProposition, rate domain.Rate) error {
+	logger.Info("RATE ", rate)
+
+	err := r.db.Where("user_id = ? AND type = ? AND target_id = ?",
+		rate.UserID,
+		rate.Type,
+		rate.TargetID).First(&rate).Error
+
+	if err == nil {
+		logger.Info("exists ", rate)
+		logger.Error(err)
+		return errors.New("rate already exists")
+	}
+	logger.Info("RATE ", rate)
+
+	err = r.db.Model(&domain.Proposition{ID: rate.TargetID}).Association("Rates").Append(&rate)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	err = r.db.Model(&domain.UserLists{UserID: pr.UserID}).Association("Rates").Append(&rate)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+
+	err = r.db.Model(&pr).Updates(&pr).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+
+}
+
 /* TODO func (u *UsersRepo) CreateMark(domain.UserProposition, [3]interface{}) error {
 
 	return nil

@@ -26,6 +26,9 @@ type Users interface {
 	UpdateProposition(pr domain.UserProposition) error
 	AddPart(part domain.UserPart) error
 	UpdatePart(part domain.UserPart) error
+	RateTreatise(tr domain.UserTreatise, rate domain.Rate) error
+	RatePart(part domain.UserPart, rate domain.Rate) error
+	RateProposition(pr domain.UserProposition, rate domain.Rate) error
 }
 type Admins interface {
 	GrantRole(name, role string) error

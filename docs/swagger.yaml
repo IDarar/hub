@@ -115,6 +115,19 @@ definitions:
       target_id:
         type: string
     type: object
+  v1.rateInput:
+    properties:
+      target:
+        type: string
+      type:
+        type: string
+      value:
+        type: integer
+    required:
+    - target
+    - type
+    - value
+    type: object
   v1.refreshInput:
     properties:
       token:
@@ -737,6 +750,46 @@ paths:
       summary: user updateUserTreatise
       tags:
       - UserContent
+  /users/content/rate:
+    post:
+      consumes:
+      - application/json
+      description: rateTreatise
+      parameters:
+      - description: rate info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.rateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user rateTreatise
+      tags:
+      - Rates
   /users/parts/:
     post:
       consumes:
@@ -817,6 +870,46 @@ paths:
       summary: user updateUserPart
       tags:
       - UserContent
+  /users/parts/rate:
+    post:
+      consumes:
+      - application/json
+      description: ratePart
+      parameters:
+      - description: rate info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.rateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user ratePart
+      tags:
+      - Rates
   /users/propositions/:
     post:
       consumes:
@@ -897,6 +990,46 @@ paths:
       summary: user updateUserProposition
       tags:
       - UserContent
+  /users/propositions/rate:
+    post:
+      consumes:
+      - application/json
+      description: rateProposition
+      parameters:
+      - description: rate info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.rateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user rateProposition
+      tags:
+      - Rates
   /users/sign-in:
     post:
       consumes:

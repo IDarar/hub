@@ -22,16 +22,21 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 			{
 				userContent.POST("", h.addUserTreatise)
 				userContent.PUT("/:id", h.updateUserTreatise)
+				userContent.POST("/rate", h.rateTreatise)
 			}
 			userParts := useractions.Group("/parts")
 			{
 				userParts.POST("", h.addUserPart)
 				userParts.PUT("/:id", h.updateUserPart)
+				userParts.POST("/rate", h.ratePart)
+
 			}
 			userPropositions := useractions.Group("/propositions")
 			{
 				userPropositions.POST("", h.addUserProposition)
 				userPropositions.PUT("/:id", h.updateUserProposition)
+				userPropositions.POST("/rate", h.rateProposition)
+
 			}
 
 		}
@@ -436,6 +441,126 @@ func (h *Handler) updateUserPart(c *gin.Context) {
 		Status:      inp.Status,
 		IsCompleted: inp.IsCompleted},
 		userID)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+type rateInput struct {
+	Target string `json:"target,omitempty" binding:"required"`
+	Type   string `json:"type,omitempty" binding:"required"`
+	Value  int    `json:"value,omitempty" binding:"required"`
+}
+
+// @Summary	user rateTreatise
+// @Security UsersAuth
+// @Tags Rates
+// @Description rateTreatise
+// @ModuleID Rates
+// @Accept  json
+// @Produce  json
+// @Param input body rateInput true "rate info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/content/rate [post]
+func (h *Handler) rateTreatise(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
+
+	var inp rateInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	logger.Info("USERID ", userID)
+
+	err := h.services.User.RateTreatise(service.RateInput{
+		Target: inp.Target,
+		Value:  inp.Value,
+		Type:   inp.Type,
+	}, userID)
+
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+// @Summary	user ratePart
+// @Security UsersAuth
+// @Tags Rates
+// @Description ratePart
+// @ModuleID Rates
+// @Accept  json
+// @Produce  json
+// @Param input body rateInput true "rate info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/parts/rate [post]
+func (h *Handler) ratePart(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
+
+	var inp rateInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	logger.Info("USERID ", userID)
+
+	err := h.services.User.RatePart(service.RateInput{
+		Target: inp.Target,
+		Value:  inp.Value,
+		Type:   inp.Type,
+	}, userID)
+
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+// @Summary	user rateProposition
+// @Security UsersAuth
+// @Tags Rates
+// @Description rateProposition
+// @ModuleID Rates
+// @Accept  json
+// @Produce  json
+// @Param input body rateInput true "rate info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/propositions/rate [post]
+func (h *Handler) rateProposition(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
+
+	var inp rateInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	logger.Info("USERID ", userID)
+
+	err := h.services.User.RateProposition(service.RateInput{
+		Target: inp.Target,
+		Value:  inp.Value,
+		Type:   inp.Type,
+	}, userID)
+
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

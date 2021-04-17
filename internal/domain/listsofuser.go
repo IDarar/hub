@@ -47,17 +47,14 @@ type UserPart struct {
 	Progress int //all props of part / completed
 }
 
-//has different fkeys beacause of notes
 type UserProposition struct {
 	UserID int `gorm:"primaryKey"`
 
-	LocalText         string  //with notes, underlines etc
-	Marks             []*Mark `gorm:"-"`          //first two are indexes, third is format type
-	TargetProposition string  `gorm:"primaryKey"` //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
-	Status            string  //complete, unknow, in proccess etc
+	LocalText         string //with notes, underlines etc
+	TargetProposition string `gorm:"primaryKey"` //EVIX (... 9 proposition), TPIVII (... 7 statement) etc
+	Status            string //complete, unknow, in proccess etc
 	IsCompleted       *bool
-	//Difficulty, Importance, Inconsistency
-	//There can be only 3 rates (one for one type)  foreignKey:Refer;joinForeignKey:UserReferID;
+
 	DifficultyRate    int
 	ImportanceRate    int
 	InconsistencyRate int
@@ -74,9 +71,4 @@ type UserNote struct {
 	Target string //to user prop
 	Text   string
 	Type   string `json:"type"` //usertype only. or later not only
-
-}
-
-//TODO
-type Mark struct {
 }

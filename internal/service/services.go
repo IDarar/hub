@@ -54,6 +54,11 @@ type UpdateUserPart struct {
 	Status      string
 	IsCompleted *bool
 }
+type RateInput struct {
+	Target string
+	Type   string
+	Value  int
+}
 type User interface {
 	SignUp(ctx context.Context, input SignUpInput) error
 	SignIn(ctx context.Context, input SignInInput) (Tokens, error)
@@ -66,6 +71,9 @@ type User interface {
 	UpdateProposition(inp UpdateUserProposition, userID interface{}) error
 	AddPart(inp AddPartInput, userID interface{}) error
 	UpdatePart(inp UpdateUserPart, userID interface{}) error
+	RateTreatise(rate RateInput, userID interface{}) error
+	RatePart(rate RateInput, userID interface{}) error
+	RateProposition(rate RateInput, userID interface{}) error
 }
 
 type RoleInput struct {

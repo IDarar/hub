@@ -125,7 +125,6 @@ func (s *UserService) AddTreatise(inp AddTreatiseInput, userID interface{}) erro
 		logger.Error(err)
 		return err
 	}
-
 	return nil
 
 }
@@ -157,7 +156,6 @@ func (s *UserService) AddProposition(inp AddPropositionInput, userID interface{}
 		logger.Error(err)
 		return err
 	}
-
 	return nil
 }
 func (s *UserService) UpdateProposition(inp UpdateUserProposition, userID interface{}) error {
@@ -184,7 +182,6 @@ func (s *UserService) AddPart(inp AddPartInput, userID interface{}) error {
 		logger.Error(err)
 		return err
 	}
-
 	return nil
 }
 func (s *UserService) UpdatePart(inp UpdateUserPart, userID interface{}) error {
@@ -200,4 +197,131 @@ func (s *UserService) UpdatePart(inp UpdateUserPart, userID interface{}) error {
 		return err
 	}
 	return nil
+}
+func (s *UserService) RateTreatise(rateinp RateInput, userID interface{}) error {
+	logger.Info("userID ", userID)
+
+	treatise, err := checkContentRateType(rateinp)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	treatise.UserID = userID.(int)
+	treatise.TargetTreatise = rateinp.Target
+
+	rate := domain.Rate{
+		TargetID: treatise.TargetTreatise,
+		UserID:   treatise.UserID,
+		Value:    rateinp.Value,
+		Type:     rateinp.Type,
+	}
+	logger.Info(treatise)
+
+	if err := s.repo.RateTreatise(treatise, rate); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (s *UserService) RatePart(rateinp RateInput, userID interface{}) error {
+	logger.Info("userID ", userID)
+
+	part, err := checkPartRateType(rateinp)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	part.UserID = userID.(int)
+	part.TargetPart = rateinp.Target
+
+	rate := domain.Rate{
+		TargetID: part.TargetPart,
+		UserID:   part.UserID,
+		Value:    rateinp.Value,
+		Type:     rateinp.Type,
+	}
+	logger.Info(part)
+
+	if err := s.repo.RatePart(part, rate); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+func (s *UserService) RateProposition(rateinp RateInput, userID interface{}) error {
+	logger.Info("userID ", userID)
+
+	pr, err := checkPropositionRateType(rateinp)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	pr.UserID = userID.(int)
+	pr.TargetProposition = rateinp.Target
+
+	rate := domain.Rate{
+		TargetID: pr.TargetProposition,
+		UserID:   pr.UserID,
+		Value:    rateinp.Value,
+		Type:     rateinp.Type,
+	}
+	logger.Info(pr)
+
+	if err := s.repo.RateProposition(pr, rate); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+func checkContentRateType(rate RateInput) (domain.UserTreatise, error) {
+	treatise := domain.UserTreatise{}
+
+	switch rate.Type {
+	case "difficulty":
+		treatise.DifficultyRate = rate.Value
+		return treatise, nil
+	case "importance":
+		treatise.ImportanceRate = rate.Value
+		return treatise, nil
+	case "inconsistency":
+		treatise.InconsistencyRate = rate.Value
+		return treatise, nil
+	default:
+		return treatise, errors.New("invalid rate type")
+	}
+}
+func checkPartRateType(rate RateInput) (domain.UserPart, error) {
+	part := domain.UserPart{}
+
+	switch rate.Type {
+	case "difficulty":
+		part.DifficultyRate = rate.Value
+		return part, nil
+	case "importance":
+		part.ImportanceRate = rate.Value
+		return part, nil
+	case "inconsistency":
+		part.InconsistencyRate = rate.Value
+		return part, nil
+	default:
+		return part, errors.New("invalid rate type")
+	}
+}
+func checkPropositionRateType(rate RateInput) (domain.UserProposition, error) {
+	part := domain.UserProposition{}
+
+	switch rate.Type {
+	case "difficulty":
+		part.DifficultyRate = rate.Value
+		return part, nil
+	case "importance":
+		part.ImportanceRate = rate.Value
+		return part, nil
+	case "inconsistency":
+		part.InconsistencyRate = rate.Value
+		return part, nil
+	default:
+		return part, errors.New("invalid rate type")
+	}
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/IDarar/hub/internal/config"
-	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/repository/redisdb"
@@ -55,11 +54,10 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
-	rdb.Ping(ctx)
 
-	rate := &domain.Rate{ID: 1}
-	db.Delete(rate)
+	rdb.Ping(ctx)
 	logger.Info("connected to redis")
+
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
 
 	repos := repository.NewRepositories(db, rdb, cfg)
@@ -79,6 +77,13 @@ func Run(configPath string) {
 }
 
 /*
+rate := domain.Rate{UserID: 1, Type: "1211111111"}
+	err = db.Where("user_id = ? AND type = ?", rate.UserID, rate.Type).First(&rate).Error
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	logger.Info("RATE ", rate)
 	uID, err := rdb.Get(ctx, "b8a10154151251254fba95c7777b9e054fa9106d1baa6946fe5c5becf39972d468edc10a3e4").Result()
 	if err != nil {
 		logger.Error(err)
