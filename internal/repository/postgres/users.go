@@ -154,7 +154,17 @@ func (r *UsersRepo) RateTreatise(tr domain.UserTreatise, rate domain.Rate) error
 	if err == nil {
 		logger.Info("exists ", rate)
 		logger.Error(err)
-		return errors.New("rate already exists")
+		err = r.db.Model(&tr).Updates(&tr).Error
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		err = r.db.Model(&rate).Updates(&rate).Error
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		return nil
 	}
 	logger.Info("RATE ", rate)
 
@@ -190,7 +200,17 @@ func (r *UsersRepo) RatePart(part domain.UserPart, rate domain.Rate) error {
 	if err == nil {
 		logger.Info("exists ", rate)
 		logger.Error(err)
-		return errors.New("rate already exists")
+		err = r.db.Model(&part).Updates(&part).Error
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		err = r.db.Model(&rate).Updates(&rate).Error
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		return nil
 	}
 	logger.Info("RATE ", rate)
 
@@ -224,7 +244,17 @@ func (r *UsersRepo) RateProposition(pr domain.UserProposition, rate domain.Rate)
 	if err == nil {
 		logger.Info("exists ", rate)
 		logger.Error(err)
-		return errors.New("rate already exists")
+		err = r.db.Model(&pr).Updates(&pr).Error
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		err = r.db.Model(&rate).Updates(&rate).Error
+		if err != nil {
+			logger.Error(err)
+			return err
+		}
+		return nil
 	}
 	logger.Info("RATE ", rate)
 
