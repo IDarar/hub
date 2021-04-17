@@ -26,7 +26,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 			userParts := useractions.Group("/parts")
 			{
 				userParts.POST("", h.addUserPart)
-				userParts.PUT("/:id", h.updatePart)
+				userParts.PUT("/:id", h.updateUserPart)
 			}
 			userPropositions := useractions.Group("/propositions")
 			{
@@ -200,8 +200,7 @@ func (h *Handler) addUserTreatise(c *gin.Context) {
 type updateUserTreatise struct {
 	TargetTreatise string `json:"target_treatise,omitempty" binding:"required"`
 	Status         string `json:"status,omitempty"`
-
-	IsCompleted *bool `json:"is_completed,omitempty"`
+	IsCompleted    *bool  `json:"is_completed,omitempty"`
 }
 
 // @Summary	user updateUserTreatise
@@ -295,8 +294,7 @@ func (h *Handler) addUserProposition(c *gin.Context) {
 type updateUserProposition struct {
 	TargetProposition string `json:"target_proposition,omitempty" binding:"required"`
 	Status            string `json:"status,omitempty"`
-
-	IsCompleted *bool `json:"is_completed,omitempty"`
+	IsCompleted       *bool  `json:"is_completed,omitempty"`
 }
 
 // @Summary	user updateUserProposition
@@ -354,6 +352,19 @@ type addPartInput struct {
 	TargetPart string `json:"target_part,omitempty" binding:"required"`
 }
 
+// @Summary	user addUserPart
+// @Security UsersAuth
+// @Tags UserContent
+// @Description addUserPart
+// @ModuleID user
+// @Accept  json
+// @Produce  json
+// @Param input body addPartInput true "part info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/parts/ [post]
 func (h *Handler) addUserPart(c *gin.Context) {
 	userID, _ := c.Get(userCtx)
 	logger.Info(userID)
@@ -369,6 +380,62 @@ func (h *Handler) addUserPart(c *gin.Context) {
 		TargetPart: inp.TargetPart,
 	}, userID)
 
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+type updateUserPart struct {
+	TargetPart  string `json:"target_part,omitempty" binding:"required"`
+	Status      string `json:"status,omitempty"`
+	IsCompleted *bool  `json:"is_completed,omitempty"`
+}
+
+// @Summary	user updateUserPart
+// @Security UsersAuth
+// @Tags UserContent
+// @Description updateUserPart
+// @ModuleID user
+// @Accept  json
+// @Produce  json
+// @Param input body updateUserPart true "part info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/parts/{id} [put]
+func (h *Handler) updateUserPart(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	idParam := c.Param("id")
+
+	if idParam == "" {
+		newResponse(c, http.StatusBadRequest, "empty id param")
+		logger.Info(idParam)
+
+		return
+	}
+
+	var inp updateUserPart
+
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	if inp.IsCompleted == nil {
+		logger.Info("is nil")
+	}
+	if inp.Status == "" && inp.IsCompleted == nil {
+		newResponse(c, http.StatusBadRequest, "nil values, nothing to update")
+		return
+	}
+
+	err := h.services.User.UpdatePart(service.UpdateUserPart{TargetPart: inp.TargetPart,
+		Status:      inp.Status,
+		IsCompleted: inp.IsCompleted},
+		userID)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return

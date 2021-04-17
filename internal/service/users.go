@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/IDarar/hub/internal/domain"
@@ -115,7 +116,9 @@ func (s *UserService) createSession(userId int, revoketoken string) (Tokens, err
 func (s *UserService) AddTreatise(inp AddTreatiseInput, userID interface{}) error {
 	logger.Info("userID ", userID)
 
-	treatise := domain.UserTreatise{TargetTreatise: inp.TargetTreatise, UserID: userID.(int)}
+	treatise := domain.UserTreatise{
+		TargetTreatise: strings.ToUpper(inp.TargetTreatise),
+		UserID:         userID.(int)}
 	logger.Info(treatise)
 
 	if err := s.repo.AddTreatise(treatise); err != nil {
@@ -130,10 +133,11 @@ func (s *UserService) UpdateTreatise(inp UpdateUserTreatise, userID interface{})
 	if inp.IsCompleted == nil {
 		logger.Info("is nil")
 	}
-	treatise := domain.UserTreatise{TargetTreatise: inp.TargetTreatise,
-		Status:      inp.Status,
-		UserID:      userID.(int),
-		IsCompleted: inp.IsCompleted}
+	treatise := domain.UserTreatise{
+		TargetTreatise: strings.ToUpper(inp.TargetTreatise),
+		Status:         inp.Status,
+		UserID:         userID.(int),
+		IsCompleted:    inp.IsCompleted}
 	if err := s.repo.UpdateTreatise(treatise); err != nil {
 		logger.Error(err)
 		return err
@@ -143,7 +147,10 @@ func (s *UserService) UpdateTreatise(inp UpdateUserTreatise, userID interface{})
 func (s *UserService) AddProposition(inp AddPropositionInput, userID interface{}) error {
 	logger.Info("userID ", userID)
 
-	prop := domain.UserProposition{TargetProposition: inp.TargetProposition, UserID: userID.(int), Status: "In progress"}
+	prop := domain.UserProposition{
+		TargetProposition: strings.ToUpper(inp.TargetProposition),
+		UserID:            userID.(int),
+		Status:            "In progress"}
 	logger.Info(prop)
 
 	if err := s.repo.AddProposition(prop); err != nil {
@@ -157,7 +164,7 @@ func (s *UserService) UpdateProposition(inp UpdateUserProposition, userID interf
 	if inp.IsCompleted == nil {
 		logger.Info("is nil")
 	}
-	prop := domain.UserProposition{TargetProposition: inp.TargetProposition,
+	prop := domain.UserProposition{TargetProposition: strings.ToUpper(inp.TargetProposition),
 		Status:      inp.Status,
 		UserID:      userID.(int),
 		IsCompleted: inp.IsCompleted}
@@ -170,7 +177,7 @@ func (s *UserService) UpdateProposition(inp UpdateUserProposition, userID interf
 func (s *UserService) AddPart(inp AddPartInput, userID interface{}) error {
 	logger.Info("userID ", userID)
 
-	part := domain.UserPart{TargetPart: inp.TargetPart, UserID: userID.(int)}
+	part := domain.UserPart{TargetPart: strings.ToUpper(inp.TargetPart), UserID: userID.(int)}
 	logger.Info(part)
 
 	if err := s.repo.AddPart(part); err != nil {
@@ -180,11 +187,11 @@ func (s *UserService) AddPart(inp AddPartInput, userID interface{}) error {
 
 	return nil
 }
-func (s *UserService) UpdatePart(inp UpdatePartProposition, userID interface{}) error {
+func (s *UserService) UpdatePart(inp UpdateUserPart, userID interface{}) error {
 	if inp.IsCompleted == nil {
 		logger.Info("is nil")
 	}
-	part := domain.UserPart{TargetPart: inp.TargetPart,
+	part := domain.UserPart{TargetPart: strings.ToUpper(inp.TargetPart),
 		Status:      inp.Status,
 		UserID:      userID.(int),
 		IsCompleted: inp.IsCompleted}

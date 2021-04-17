@@ -773,6 +773,132 @@ var doc = `{
                 }
             }
         },
+        "/users/parts/": {
+            "post": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
+                "description": "addUserPart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserContent"
+                ],
+                "summary": "user addUserPart",
+                "parameters": [
+                    {
+                        "description": "part info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.addPartInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/parts/{id}": {
+            "put": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
+                "description": "updateUserPart",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "UserContent"
+                ],
+                "summary": "user updateUserPart",
+                "parameters": [
+                    {
+                        "description": "part info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.updateUserPart"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
         "/users/propositions/": {
             "post": {
                 "security": [
@@ -1059,6 +1185,17 @@ var doc = `{
                 }
             }
         },
+        "v1.addPartInput": {
+            "type": "object",
+            "required": [
+                "target_part"
+            ],
+            "properties": {
+                "target_part": {
+                    "type": "string"
+                }
+            }
+        },
         "v1.addPropositionInput": {
             "type": "object",
             "required": [
@@ -1336,10 +1473,10 @@ var doc = `{
                 }
             }
         },
-        "v1.updateUserProposition": {
+        "v1.updateUserPart": {
             "type": "object",
             "required": [
-                "target_treatise"
+                "target_part"
             ],
             "properties": {
                 "is_completed": {
@@ -1348,7 +1485,24 @@ var doc = `{
                 "status": {
                     "type": "string"
                 },
-                "target_treatise": {
+                "target_part": {
+                    "type": "string"
+                }
+            }
+        },
+        "v1.updateUserProposition": {
+            "type": "object",
+            "required": [
+                "target_proposition"
+            ],
+            "properties": {
+                "is_completed": {
+                    "type": "boolean"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "target_proposition": {
                     "type": "string"
                 }
             }

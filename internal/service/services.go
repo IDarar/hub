@@ -49,7 +49,7 @@ type UpdateUserProposition struct {
 type AddPartInput struct {
 	TargetPart string
 }
-type UpdatePartProposition struct {
+type UpdateUserPart struct {
 	TargetPart  string
 	Status      string
 	IsCompleted *bool
@@ -65,7 +65,7 @@ type User interface {
 	AddProposition(inp AddPropositionInput, userID interface{}) error
 	UpdateProposition(inp UpdateUserProposition, userID interface{}) error
 	AddPart(inp AddPartInput, userID interface{}) error
-	UpdatePart(inp UpdatePartProposition, userID interface{}) error
+	UpdatePart(inp UpdateUserPart, userID interface{}) error
 }
 
 type RoleInput struct {

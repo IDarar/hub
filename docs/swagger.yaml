@@ -29,6 +29,13 @@ definitions:
     - role
     - username
     type: object
+  v1.addPartInput:
+    properties:
+      target_part:
+        type: string
+    required:
+    - target_part
+    type: object
   v1.addPropositionInput:
     properties:
       target_proposition:
@@ -213,16 +220,27 @@ definitions:
       text:
         type: string
     type: object
+  v1.updateUserPart:
+    properties:
+      is_completed:
+        type: boolean
+      status:
+        type: string
+      target_part:
+        type: string
+    required:
+    - target_part
+    type: object
   v1.updateUserProposition:
     properties:
       is_completed:
         type: boolean
       status:
         type: string
-      target_treatise:
+      target_proposition:
         type: string
     required:
-    - target_treatise
+    - target_proposition
     type: object
   v1.updateUserTreatise:
     properties:
@@ -717,6 +735,86 @@ paths:
       security:
       - UsersAuth: []
       summary: user updateUserTreatise
+      tags:
+      - UserContent
+  /users/parts/:
+    post:
+      consumes:
+      - application/json
+      description: addUserPart
+      parameters:
+      - description: part info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.addPartInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user addUserPart
+      tags:
+      - UserContent
+  /users/parts/{id}:
+    put:
+      consumes:
+      - application/json
+      description: updateUserPart
+      parameters:
+      - description: part info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.updateUserPart'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user updateUserPart
       tags:
       - UserContent
   /users/propositions/:
