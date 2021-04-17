@@ -490,5 +490,8 @@ func (h *Handler) updateProposition(c *gin.Context) {
 	c.Status(http.StatusOK)
 }
 
+/*
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjEyNzc0NzgsInN1YiI6IjEifQ.wJr4DxU0DUW-7P2yyefKDG5OlpL-_95CbEZv7iat2qY
+*/
 //swag init -g internal/app/app.go
 //export PATH=$(go env GOPATH)/bin:$PATH

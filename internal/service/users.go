@@ -325,3 +325,54 @@ func checkPropositionRateType(rate RateInput) (domain.UserProposition, error) {
 		return part, errors.New("invalid rate type")
 	}
 }
+func checkContentRateTypeDelete(rate RateInput) (domain.UserTreatise, error) {
+	tr := domain.UserTreatise{}
+
+	switch rate.Type {
+	case "difficulty":
+		tr.DifficultyRate = rate.Value
+		return tr, nil
+	case "importance":
+		tr.ImportanceRate = rate.Value
+		return tr, nil
+	case "inconsistency":
+		tr.InconsistencyRate = rate.Value
+		return tr, nil
+	default:
+		return tr, errors.New("invalid rate type")
+	}
+}
+func (s *UserService) DeleteRateTreatise(rateinp RateInput, userID interface{}) error {
+	logger.Info("userID ", userID)
+
+	tr, err := checkContentRateTypeDelete(rateinp)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	tr.UserID = userID.(int)
+	tr.TargetTreatise = rateinp.Target
+
+	rate := domain.Rate{
+		TargetID: tr.TargetTreatise,
+		UserID:   tr.UserID,
+		Value:    rateinp.Value,
+		Type:     rateinp.Type,
+	}
+	logger.Info(tr)
+
+	if err := s.repo.DeleteRateTreatise(tr, rate); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+
+func (s *UserService) DeleteRatePart(rateinp RateInput, userID interface{}) error {
+	return nil
+}
+
+func (s *UserService) DeleteRateProposition(rateinp RateInput, userID interface{}) error {
+	return nil
+
+}

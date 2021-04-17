@@ -278,8 +278,52 @@ func (r *UsersRepo) RateProposition(pr domain.UserProposition, rate domain.Rate)
 	return nil
 
 }
-
-/* TODO func (u *UsersRepo) CreateMark(domain.UserProposition, [3]interface{}) error {
-
+func (r *UsersRepo) DeleteRateTreatise(tr domain.UserTreatise, rate domain.Rate) error {
+	logger.Info("RATE ", rate)
+	logger.Warn("TRU ", tr)
+	err := r.db.Where("user_id = ? AND type = ? AND target_id = ?",
+		rate.UserID,
+		rate.Type,
+		rate.TargetID).First(&rate).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	check := r.db.Delete(rate).RowsAffected
+	if check == 0 {
+		logger.Error(errors.New("not deleted, probably object does not exist"))
+		return errors.New("not deleted, probably object does not exist")
+	}
+	logger.Info("TR ", tr.ImportanceRate)
+	rateToDel := chekCType(&tr)
+	err = r.db.Model(&tr).Select(rateToDel).Updates(&tr).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
 	return nil
-}*/
+
+}
+func (r *UsersRepo) DeleteRatePart(part domain.UserPart, rate domain.Rate) error {
+	return nil
+
+}
+func (r *UsersRepo) DeleteRateProposition(pr domain.UserProposition, rate domain.Rate) error {
+	return nil
+
+}
+func chekCType(tr *domain.UserTreatise) string {
+	if tr.DifficultyRate != 0 {
+		tr.DifficultyRate = 0
+		return "difficulty_rate"
+	}
+	if tr.ImportanceRate != 0 {
+		tr.ImportanceRate = 0
+		return "importance_rate"
+	}
+	if tr.InconsistencyRate != 0 {
+		tr.InconsistencyRate = 0
+		return "inconsistency_rate"
+	}
+	return "invalid type"
+}

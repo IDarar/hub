@@ -751,6 +751,45 @@ paths:
       tags:
       - UserContent
   /users/content/rate:
+    delete:
+      consumes:
+      - application/json
+      description: deleteRateTreatise
+      parameters:
+      - description: rate info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.rateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user deleteRateTreatise
+      tags:
+      - Rates
     post:
       consumes:
       - application/json

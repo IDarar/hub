@@ -74,6 +74,9 @@ type User interface {
 	RateTreatise(rate RateInput, userID interface{}) error
 	RatePart(rate RateInput, userID interface{}) error
 	RateProposition(rate RateInput, userID interface{}) error
+	DeleteRateTreatise(rate RateInput, userID interface{}) error
+	DeleteRatePart(rate RateInput, userID interface{}) error
+	DeleteRateProposition(rate RateInput, userID interface{}) error
 }
 
 type RoleInput struct {

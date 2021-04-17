@@ -23,12 +23,15 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 				userContent.POST("", h.addUserTreatise)
 				userContent.PUT("/:id", h.updateUserTreatise)
 				userContent.POST("/rate", h.rateTreatise)
+				userContent.DELETE("/rate", h.deleteRateTreatise)
+
 			}
 			userParts := useractions.Group("/parts")
 			{
 				userParts.POST("", h.addUserPart)
 				userParts.PUT("/:id", h.updateUserPart)
 				userParts.POST("/rate", h.ratePart)
+				userParts.DELETE("/rate", h.deelteRatePart)
 
 			}
 			userPropositions := useractions.Group("/propositions")
@@ -36,6 +39,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 				userPropositions.POST("", h.addUserProposition)
 				userPropositions.PUT("/:id", h.updateUserProposition)
 				userPropositions.POST("/rate", h.rateProposition)
+				userPropositions.DELETE("/rate", h.deleteRateProposition)
 
 			}
 
@@ -567,4 +571,48 @@ func (h *Handler) rateProposition(c *gin.Context) {
 	}
 
 	c.Status(http.StatusCreated)
+}
+
+// @Summary	user deleteRateTreatise
+// @Security UsersAuth
+// @Tags Rates
+// @Description deleteRateTreatise
+// @ModuleID Rates
+// @Accept  json
+// @Produce  json
+// @Param input body rateInput true "rate info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/content/rate [delete]
+func (h *Handler) deleteRateTreatise(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
+
+	var inp rateInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	logger.Info("USERID ", userID)
+
+	err := h.services.User.DeleteRateTreatise(service.RateInput{
+		Target: inp.Target,
+		Value:  inp.Value,
+		Type:   inp.Type,
+	}, userID)
+
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+func (h *Handler) deelteRatePart(c *gin.Context) {
+
+}
+func (h *Handler) deleteRateProposition(c *gin.Context) {
+
 }
