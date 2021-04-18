@@ -44,16 +44,27 @@ type Content interface {
 	Delete(treatise domain.Treatise) error
 	GetByID(id string) (domain.Treatise, error)
 }
+
+//Another way of implemntation
+type Favourite interface {
+	AddToFavourite(domain.Favourite) error
+	RemoveFromFavourite(domain.Favourite) error
+}
+
 type Parts interface {
 	Create(part domain.Part) error
 	Update(part domain.Part, createLiterature, deleteLiterature []string) error
 	Delete(part domain.Part) error
+	AddToFavourite(domain.Favourite) error
+	RemoveFromFavourite(domain.Favourite) error
 }
 type Propositions interface {
 	Create(proposition domain.Proposition) error
 	Update(proposition domain.Proposition, createReferences, deleteReferences []string, createNotes, deleteNotes []domain.Note) error
 	Delete(proposition domain.Proposition) error
 	GetByID(id string) (domain.Proposition, error)
+	AddToFavourite(domain.Favourite) error
+	RemoveFromFavourite(domain.Favourite) error
 }
 type Sessions interface {
 	SetSession(userId int, session domain.Session, revoketoken string) error

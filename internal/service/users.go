@@ -379,7 +379,7 @@ func checkPropositionRateTypeDelete(rate RateInput) (domain.UserProposition, err
 func (s *UserService) DeleteRateTreatise(rateinp RateInput, userID interface{}) error {
 	logger.Info("userID ", userID)
 
-	tr, err := checkContentRateType(rateinp)
+	tr, err := checkContentRateTypeDelete(rateinp)
 	if err != nil {
 		logger.Error(err)
 		return err

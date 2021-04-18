@@ -102,3 +102,24 @@ func (r *PartsRepo) Delete(part domain.Part) error {
 
 	return nil
 }
+func (r *PartsRepo) AddToFavourite(part domain.Favourite) error {
+	partType := part.(domain.UserProposition)
+
+	err := r.db.Updates(partType).Error
+	if err != nil {
+		logger.Info(err)
+		return err
+	}
+	return nil
+}
+func (r *PartsRepo) RemoveFromFavourite(part domain.Favourite) error {
+	partType := part.(domain.UserPart)
+
+	err := r.db.Select("favourite").Updates(partType).Error
+	if err != nil {
+		logger.Info(err)
+		return err
+	}
+	return nil
+
+}

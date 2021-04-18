@@ -38,6 +38,7 @@ func (s *PartsService) Create(id, TargetID, name, fullname, description string, 
 		logger.Error(err)
 		return err
 	}
+
 	return nil
 
 }
@@ -82,6 +83,22 @@ func (s *PartsService) Delete(id string, roles interface{}) error {
 	}
 	part := domain.Part{ID: strings.ToUpper(id)}
 	if err := s.repo.Delete(part); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+func (s *PartsService) AddToFavourite(fav domain.Favourite) error {
+	err := s.repo.AddToFavourite(fav)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+func (s *PartsService) RemoveFromFavourite(fav domain.Favourite) error {
+	err := s.repo.AddToFavourite(fav)
+	if err != nil {
 		logger.Error(err)
 		return err
 	}

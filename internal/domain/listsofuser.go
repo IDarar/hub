@@ -42,6 +42,7 @@ type UserPart struct {
 	DifficultyRate    int
 	ImportanceRate    int
 	InconsistencyRate int
+	Favourite         bool
 
 	Progress int //all props of part / completed
 }
@@ -57,7 +58,9 @@ type UserProposition struct {
 	DifficultyRate    int
 	ImportanceRate    int
 	InconsistencyRate int
-	UserNotes         []*UserNote `gorm:"-"`
+	Favourite         bool
+
+	UserNotes []*UserNote `gorm:"-"`
 }
 
 //on get append it to original prop's notes
@@ -70,4 +73,16 @@ type UserNote struct {
 	Target string //to user prop
 	Text   string
 	Type   string `json:"type"` //usertype only. or later not only
+}
+
+//Another way of implemntation. Just for interest
+type Favourite interface {
+	AddToFavourite(Favourite) error
+}
+
+func (e UserPart) AddToFavourite(Favourite) error {
+	return nil
+}
+func (e UserProposition) AddToFavourite(Favourite) error {
+	return nil
 }

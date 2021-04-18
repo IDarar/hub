@@ -42,8 +42,26 @@ func (s *PropositionsService) Create(prop CreateProposition, roles interface{}) 
 		logger.Error(err)
 		return err
 	}
+
 	return nil
 
+}
+func (s *PropositionsService) AddToFavourite(fav domain.Favourite) error {
+	logger.Info(fav)
+	err := s.repo.AddToFavourite(fav)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
+}
+func (s *PropositionsService) RemoveFromFavourite(fav domain.Favourite) error {
+	err := s.repo.AddToFavourite(fav)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
 }
 func (s *PropositionsService) Delete(id string, roles interface{}) error {
 	return nil

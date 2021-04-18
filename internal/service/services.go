@@ -112,6 +112,8 @@ type Part interface {
 	Create(id, TargetID, name, fullname, description string, roles interface{}) error
 	Delete(id string, roles interface{}) error
 	Update(inp PartUpdateInput, roles interface{}) error
+	AddToFavourite(fav domain.Favourite) error
+	RemoveFromFavourite(fav domain.Favourite) error
 }
 type CreateProposition struct {
 	ID          string
@@ -137,6 +139,13 @@ type Propositions interface {
 	Create(prop CreateProposition, roles interface{}) error
 	Delete(id string, roles interface{}) error
 	Update(inp UpdatePropositionInput, roles interface{}) error
+	AddToFavourite(fav domain.Favourite) error
+	RemoveFromFavourite(fav domain.Favourite) error
+}
+
+//Another way of implemntation
+func Favourite(ID string, fav repository.Favourite) {
+	fav.AddToFavourite(fav)
 }
 
 type Services struct {

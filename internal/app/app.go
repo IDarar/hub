@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/IDarar/hub/internal/config"
+	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/repository/redisdb"
@@ -59,7 +60,8 @@ func Run(configPath string) {
 	logger.Info("connected to redis")
 
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
-
+	p := domain.UserProposition{TargetProposition: "123"}
+	p.AddToFavourite(p)
 	repos := repository.NewRepositories(db, rdb, cfg)
 
 	services := service.NewServices(service.Deps{

@@ -24,6 +24,7 @@ if err != nil {
 	return err
 
 }*/
+
 func (r *PropositionsRepo) Create(proposition domain.Proposition) error {
 	err := r.db.Model(proposition).First(&proposition).Error
 	if err == nil {
@@ -164,6 +165,28 @@ func (r *PropositionsRepo) Update(prop domain.Proposition,
 				return errors.New("could not delete")
 			}
 		}
+	}
+	return nil
+}
+
+//Another way of implemntation
+func (r *PropositionsRepo) AddToFavourite(pr domain.Favourite) error {
+	prType := pr.(domain.UserProposition)
+	logger.Info(prType)
+	err := r.db.Select("favourite").Updates(prType).Error
+	if err != nil {
+		logger.Info(err)
+		return err
+	}
+	return nil
+}
+func (r *PropositionsRepo) RemoveFromFavourite(pr domain.Favourite) error {
+	prType := pr.(domain.UserProposition)
+
+	err := r.db.Select("favourite").Updates(prType).Error
+	if err != nil {
+		logger.Info(err)
+		return err
 	}
 	return nil
 }

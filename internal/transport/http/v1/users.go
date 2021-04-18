@@ -3,6 +3,7 @@ package v1
 import (
 	"net/http"
 
+	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/service"
 	"github.com/IDarar/hub/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -32,6 +33,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 				userParts.PUT("/:id", h.updateUserPart)
 				userParts.POST("/rate", h.ratePart)
 				userParts.DELETE("/rate", h.deelteRatePart)
+				userParts.POST("/fav", h.addParttoFavs)
 
 			}
 			userPropositions := useractions.Group("/propositions")
@@ -40,6 +42,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 				userPropositions.PUT("/:id", h.updateUserProposition)
 				userPropositions.POST("/rate", h.rateProposition)
 				userPropositions.DELETE("/rate", h.deleteRateProposition)
+				userPropositions.POST("/fav", h.addProptoFavs)
 
 			}
 
@@ -669,6 +672,80 @@ func (h *Handler) deleteRateProposition(c *gin.Context) {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
+	c.Status(http.StatusCreated)
+}
+
+type Favs struct {
+	Target    string `json:"target,omitempty" binding:"required"`
+	Favourite bool   `json:"favourite,omitempty"`
+}
+
+// @Summary	user addProptoFavs
+// @Security UsersAuth
+// @Tags Fav
+// @Description addProptoFavs
+// @ModuleID Fav
+// @Accept  json
+// @Produce  json
+// @Param input body Favs true "fav info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/propositions/fav [post]
+func (h *Handler) addProptoFavs(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+
+	var inp Favs
+
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	pr := domain.UserProposition{UserID: userID.(int),
+		TargetProposition: inp.Target,
+		Favourite:         inp.Favourite}
+	logger.Info(pr)
+	err := h.services.Propositions.AddToFavourite(pr)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	c.Status(http.StatusCreated)
+}
+
+// @Summary	user addParttoFavs
+// @Security UsersAuth
+// @Tags Fav
+// @Description addParttoFavs
+// @ModuleID Fav
+// @Accept  json
+// @Produce  json
+// @Param input body Favs true "fav info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/parts/fav [post]
+func (h *Handler) addParttoFavs(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+
+	var inp Favs
+
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+	part := domain.UserProposition{UserID: userID.(int),
+		TargetProposition: inp.Target,
+		Favourite:         inp.Favourite}
+	err := h.services.Part.AddToFavourite(part)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+
 	c.Status(http.StatusCreated)
 }
 
