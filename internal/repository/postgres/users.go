@@ -295,8 +295,9 @@ func (r *UsersRepo) DeleteRateTreatise(tr domain.UserTreatise, rate domain.Rate)
 		return errors.New("not deleted, probably object does not exist")
 	}
 	logger.Info("TR ", tr.ImportanceRate)
-	rateToDel := chekCType(&tr)
-	err = r.db.Model(&tr).Select(rateToDel).Updates(&tr).Error
+	rateToDel, ent := chekType(tr)
+	logger.Info(ent)
+	err = r.db.Model(&tr).Select(rateToDel).Updates(ent).Error
 	if err != nil {
 		logger.Error(err)
 		return err
@@ -305,25 +306,99 @@ func (r *UsersRepo) DeleteRateTreatise(tr domain.UserTreatise, rate domain.Rate)
 
 }
 func (r *UsersRepo) DeleteRatePart(part domain.UserPart, rate domain.Rate) error {
+	logger.Info("RATE ", rate)
+	logger.Warn("TRU ", part)
+	err := r.db.Where("user_id = ? AND type = ? AND target_id = ?",
+		rate.UserID,
+		rate.Type,
+		rate.TargetID).First(&rate).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	check := r.db.Delete(rate).RowsAffected
+	if check == 0 {
+		logger.Error(errors.New("not deleted, probably object does not exist"))
+		return errors.New("not deleted, probably object does not exist")
+	}
+	logger.Info("TR ", part.ImportanceRate)
+	rateToDel, ent := chekType(part)
+	logger.Info(ent)
+	err = r.db.Model(&part).Select(rateToDel).Updates(ent).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
 	return nil
-
 }
 func (r *UsersRepo) DeleteRateProposition(pr domain.UserProposition, rate domain.Rate) error {
+	logger.Info("RATE ", rate)
+	logger.Warn("TRU ", pr)
+	err := r.db.Where("user_id = ? AND type = ? AND target_id = ?",
+		rate.UserID,
+		rate.Type,
+		rate.TargetID).First(&rate).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	check := r.db.Delete(rate).RowsAffected
+	if check == 0 {
+		logger.Error(errors.New("not deleted, probably object does not exist"))
+		return errors.New("not deleted, probably object does not exist")
+	}
+	logger.Info("TR ", pr.ImportanceRate)
+	rateToDel, ent := chekType(pr)
+	logger.Info(ent)
+	err = r.db.Model(&pr).Select(rateToDel).Updates(ent).Error
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
 	return nil
-
 }
-func chekCType(tr *domain.UserTreatise) string {
-	if tr.DifficultyRate != 0 {
-		tr.DifficultyRate = 0
-		return "difficulty_rate"
+func chekType(ent interface{}) (string, interface{}) {
+	if part, ok := ent.(domain.UserPart); ok {
+		if part.DifficultyRate != 0 {
+			part.DifficultyRate = 0
+			return "difficulty_rate", part
+		}
+		if part.ImportanceRate != 0 {
+			part.ImportanceRate = 0
+			return "importance_rate", part
+		}
+		if part.InconsistencyRate != 0 {
+			part.InconsistencyRate = 0
+			return "inconsistency_rate", part
+		}
 	}
-	if tr.ImportanceRate != 0 {
-		tr.ImportanceRate = 0
-		return "importance_rate"
+	if tr, ok := ent.(domain.UserTreatise); ok {
+		if tr.DifficultyRate != 0 {
+			tr.DifficultyRate = 0
+			return "difficulty_rate", tr
+		}
+		if tr.ImportanceRate != 0 {
+			tr.ImportanceRate = 0
+			return "importance_rate", tr
+		}
+		if tr.InconsistencyRate != 0 {
+			tr.InconsistencyRate = 0
+			return "inconsistency_rate", tr
+		}
 	}
-	if tr.InconsistencyRate != 0 {
-		tr.InconsistencyRate = 0
-		return "inconsistency_rate"
+	if pr, ok := ent.(domain.UserProposition); ok {
+		if pr.DifficultyRate != 0 {
+			pr.DifficultyRate = 0
+			return "difficulty_rate", pr
+		}
+		if pr.ImportanceRate != 0 {
+			pr.ImportanceRate = 0
+			return "importance_rate", pr
+		}
+		if pr.InconsistencyRate != 0 {
+			pr.InconsistencyRate = 0
+			return "inconsistency_rate", pr
+		}
 	}
-	return "invalid type"
+	return "invalid type", ent
 }

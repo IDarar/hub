@@ -342,10 +342,44 @@ func checkContentRateTypeDelete(rate RateInput) (domain.UserTreatise, error) {
 		return tr, errors.New("invalid rate type")
 	}
 }
+func checkPartRateTypeDelete(rate RateInput) (domain.UserPart, error) {
+	part := domain.UserPart{}
+
+	switch rate.Type {
+	case "difficulty":
+		part.DifficultyRate = rate.Value
+		return part, nil
+	case "importance":
+		part.ImportanceRate = rate.Value
+		return part, nil
+	case "inconsistency":
+		part.InconsistencyRate = rate.Value
+		return part, nil
+	default:
+		return part, errors.New("invalid rate type")
+	}
+}
+func checkPropositionRateTypeDelete(rate RateInput) (domain.UserProposition, error) {
+	pr := domain.UserProposition{}
+
+	switch rate.Type {
+	case "difficulty":
+		pr.DifficultyRate = rate.Value
+		return pr, nil
+	case "importance":
+		pr.ImportanceRate = rate.Value
+		return pr, nil
+	case "inconsistency":
+		pr.InconsistencyRate = rate.Value
+		return pr, nil
+	default:
+		return pr, errors.New("invalid rate type")
+	}
+}
 func (s *UserService) DeleteRateTreatise(rateinp RateInput, userID interface{}) error {
 	logger.Info("userID ", userID)
 
-	tr, err := checkContentRateTypeDelete(rateinp)
+	tr, err := checkContentRateType(rateinp)
 	if err != nil {
 		logger.Error(err)
 		return err
@@ -369,10 +403,53 @@ func (s *UserService) DeleteRateTreatise(rateinp RateInput, userID interface{}) 
 }
 
 func (s *UserService) DeleteRatePart(rateinp RateInput, userID interface{}) error {
+	logger.Info("userID ", userID)
+
+	part, err := checkPartRateTypeDelete(rateinp)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	part.UserID = userID.(int)
+	part.TargetPart = rateinp.Target
+
+	rate := domain.Rate{
+		TargetID: part.TargetPart,
+		UserID:   part.UserID,
+		Value:    rateinp.Value,
+		Type:     rateinp.Type,
+	}
+	logger.Info(part)
+
+	if err := s.repo.DeleteRatePart(part, rate); err != nil {
+		logger.Error(err)
+		return err
+	}
 	return nil
 }
 
 func (s *UserService) DeleteRateProposition(rateinp RateInput, userID interface{}) error {
-	return nil
+	logger.Info("userID ", userID)
 
+	pr, err := checkPropositionRateTypeDelete(rateinp)
+	if err != nil {
+		logger.Error(err)
+		return err
+	}
+	pr.UserID = userID.(int)
+	pr.TargetProposition = rateinp.Target
+
+	rate := domain.Rate{
+		TargetID: pr.TargetProposition,
+		UserID:   pr.UserID,
+		Value:    rateinp.Value,
+		Type:     rateinp.Type,
+	}
+	logger.Info(pr)
+
+	if err := s.repo.DeleteRateProposition(pr, rate); err != nil {
+		logger.Error(err)
+		return err
+	}
+	return nil
 }

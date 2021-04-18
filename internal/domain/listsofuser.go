@@ -15,8 +15,7 @@ type UserLists struct {
 
 //how will it work
 //user sends request with his ID and target of req
-//db searches target in db and changes values
-
+//db searches target in db and changes value
 type UserTreatise struct {
 	UserID int `gorm:"primaryKey"`
 

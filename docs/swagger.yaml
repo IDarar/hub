@@ -910,6 +910,45 @@ paths:
       tags:
       - UserContent
   /users/parts/rate:
+    delete:
+      consumes:
+      - application/json
+      description: deelteRatePart
+      parameters:
+      - description: rate info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.rateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user deelteRatePart
+      tags:
+      - Rates
     post:
       consumes:
       - application/json
@@ -1030,6 +1069,45 @@ paths:
       tags:
       - UserContent
   /users/propositions/rate:
+    delete:
+      consumes:
+      - application/json
+      description: deleteRateProposition
+      parameters:
+      - description: rate info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.rateInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: user deleteRateProposition
+      tags:
+      - Rates
     post:
       consumes:
       - application/json

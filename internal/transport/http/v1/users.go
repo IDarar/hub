@@ -185,14 +185,12 @@ type addTreatiseInput struct {
 // @Router /users/content [post]
 func (h *Handler) addUserTreatise(c *gin.Context) {
 	userID, _ := c.Get(userCtx)
-	logger.Info(userID)
 
 	var inp addTreatiseInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	logger.Info("USERID ", userID)
 
 	err := h.services.User.AddTreatise(service.AddTreatiseInput{
 		TargetTreatise: inp.TargetTreatise,
@@ -376,14 +374,12 @@ type addPartInput struct {
 // @Router /users/parts/ [post]
 func (h *Handler) addUserPart(c *gin.Context) {
 	userID, _ := c.Get(userCtx)
-	logger.Info(userID)
 
 	var inp addPartInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	logger.Info("USERID ", userID)
 
 	err := h.services.User.AddPart(service.AddPartInput{
 		TargetPart: inp.TargetPart,
@@ -474,15 +470,12 @@ type rateInput struct {
 // @Router /users/content/rate [post]
 func (h *Handler) rateTreatise(c *gin.Context) {
 	userID, _ := c.Get(userCtx)
-	logger.Info(userID)
 
 	var inp rateInput
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	logger.Info("USERID ", userID)
-
 	err := h.services.User.RateTreatise(service.RateInput{
 		Target: inp.Target,
 		Value:  inp.Value,
@@ -519,8 +512,6 @@ func (h *Handler) ratePart(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	logger.Info("USERID ", userID)
-
 	err := h.services.User.RatePart(service.RateInput{
 		Target: inp.Target,
 		Value:  inp.Value,
@@ -557,7 +548,6 @@ func (h *Handler) rateProposition(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	logger.Info("USERID ", userID)
 
 	err := h.services.User.RateProposition(service.RateInput{
 		Target: inp.Target,
@@ -595,7 +585,6 @@ func (h *Handler) deleteRateTreatise(c *gin.Context) {
 		newResponse(c, http.StatusBadRequest, "invalid input body")
 		return
 	}
-	logger.Info("USERID ", userID)
 
 	err := h.services.User.DeleteRateTreatise(service.RateInput{
 		Target: inp.Target,
@@ -610,9 +599,81 @@ func (h *Handler) deleteRateTreatise(c *gin.Context) {
 
 	c.Status(http.StatusCreated)
 }
+
+// @Summary	user deelteRatePart
+// @Security UsersAuth
+// @Tags Rates
+// @Description deelteRatePart
+// @ModuleID Rates
+// @Accept  json
+// @Produce  json
+// @Param input body rateInput true "rate info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/parts/rate [delete]
 func (h *Handler) deelteRatePart(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
 
+	var inp rateInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.services.User.DeleteRatePart(service.RateInput{
+		Target: inp.Target,
+		Value:  inp.Value,
+		Type:   inp.Type,
+	}, userID)
+
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Status(http.StatusCreated)
 }
+
+// @Summary	user deleteRateProposition
+// @Security UsersAuth
+// @Tags Rates
+// @Description deleteRateProposition
+// @ModuleID Rates
+// @Accept  json
+// @Produce  json
+// @Param input body rateInput true "rate info"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/propositions/rate [delete]
 func (h *Handler) deleteRateProposition(c *gin.Context) {
+	userID, _ := c.Get(userCtx)
+	logger.Info(userID)
 
+	var inp rateInput
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, "invalid input body")
+		return
+	}
+
+	err := h.services.User.DeleteRateProposition(service.RateInput{
+		Target: inp.Target,
+		Value:  inp.Value,
+		Type:   inp.Type,
+	}, userID)
+
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+		return
+	}
+	c.Status(http.StatusCreated)
 }
+
+/*
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjEyNzc0NzgsInN1YiI6IjEifQ.wJr4DxU0DUW-7P2yyefKDG5OlpL-_95CbEZv7iat2qY
+*/
+//swag init -g internal/app/app.go
+//export PATH=$(go env GOPATH)/bin:$PATH
