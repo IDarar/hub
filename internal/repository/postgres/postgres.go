@@ -18,8 +18,7 @@ type PostgresConfig struct {
 }
 
 func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
-	fmt.Println("user=" + cfg.Postgres.User + " " + "dbname=" + cfg.Postgres.DBname + " " + "password=" + cfg.Postgres.Password + " " + "sslmode=" + cfg.Postgres.Sslmode)
-	db, err := gorm.Open(postgres.Open("user="+cfg.Postgres.User+" "+"dbname="+cfg.Postgres.DBname+" "+"password="+cfg.Postgres.Password+" "+"sslmode="+cfg.Postgres.Sslmode), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open("host=localhost "+"user="+cfg.Postgres.User+" "+"dbname="+cfg.Postgres.DBname+" "+"password="+cfg.Postgres.Password+" port=5432"), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

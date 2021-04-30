@@ -154,10 +154,10 @@ func setFromEnv(cfg *Config) {
 }
 func parsePostgresEnvVariables() error {
 
-	os.Setenv("POSTGRES_USER", "postgres")
-	os.Setenv("POSTGRES_DBNAME", "hub")
+	os.Setenv("POSTGRES_USER", "root")
+	os.Setenv("POSTGRES_DBNAME", "root")
 
-	os.Setenv("POSTGRES_PASSWORD", "123")
+	os.Setenv("POSTGRES_PASSWORD", "secret")
 
 	os.Setenv("POSTGRES_SSLMODE", "disabled")
 
@@ -174,7 +174,6 @@ func parsePostgresEnvVariables() error {
 	if err := viper.BindEnv("password"); err != nil {
 		return err
 	}
-	fmt.Println(os.Getenv("POSTGRES_PASSWORD"), "111111111111")
 
 	viper.BindEnv("sslmode")
 
