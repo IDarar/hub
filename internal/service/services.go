@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	grpcv1 "github.com/IDarar/hub/internal/transport/grpc/v1"
 	_ "github.com/golang/mock/mockgen/model"
 
 	"github.com/IDarar/hub/internal/domain"
@@ -149,20 +150,23 @@ func Favourite(ID string, fav repository.Favourite) {
 }
 
 type Services struct {
-	User         User
-	Admin        Admin
-	Content      Content
-	Part         Part
-	Propositions Propositions
+	User                   User
+	Admin                  Admin
+	Content                Content
+	Part                   Part
+	Propositions           Propositions
+	NotificationGrpcClient grpcv1.NotificationClient //maybe add as dependency to each particular service, there e.g to forum service, but there will be also common service such as logger
+
 }
 type Deps struct {
-	Repos                  *repository.Repositories
-	Hasher                 hash.PasswordHasher
-	TokenManager           auth.TokenManager
-	AccessTokenTTL         time.Duration
-	RefreshTokenTTL        time.Duration
-	CacheTTL               int64
+	Repos           *repository.Repositories
+	Hasher          hash.PasswordHasher
+	TokenManager    auth.TokenManager
+	AccessTokenTTL  time.Duration
+	RefreshTokenTTL time.Duration
+	//CacheTTL               int64
 	VerificationCodeLength int
+	NotificationGrpcClient grpcv1.NotificationClient
 }
 
 //TODO 39.47
@@ -174,9 +178,11 @@ func NewServices(deps Deps) *Services {
 	partsService := NewPartsService(deps.Repos.Parts, userService)
 	propositionsService := NewPropositionsService(deps.Repos.Propositions, userService)
 	return &Services{
-		User:         userService,
-		Admin:        adminService,
-		Content:      contentService,
-		Part:         partsService,
-		Propositions: propositionsService}
+		User:                   userService,
+		Admin:                  adminService,
+		Content:                contentService,
+		Part:                   partsService,
+		Propositions:           propositionsService,
+		NotificationGrpcClient: deps.NotificationGrpcClient,
+	}
 }

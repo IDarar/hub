@@ -8,12 +8,10 @@ import (
 	"github.com/IDarar/hub/internal/config"
 )
 
-//30.27 another
 type Server struct {
 	httpServer *http.Server
 }
 
-//TODO make config to server 29.51 another
 func NewServer(cfg *config.Config, handler http.Handler) *Server {
 	fmt.Println(cfg.HTTP.Port, "15215")
 	return &Server{
@@ -27,7 +25,6 @@ func NewServer(cfg *config.Config, handler http.Handler) *Server {
 	}
 }
 func (s *Server) Run() error {
-	//TODO err
 	err := s.httpServer.ListenAndServe()
 	if err != nil {
 		log.Fatal("Could not start server ... ", err)

@@ -1,11 +1,11 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/IDarar/hub/pkg/logger"
 	"github.com/spf13/viper"
 )
 
@@ -29,8 +29,16 @@ type (
 		Auth     AuthConfig
 		CacheTTL time.Duration `mapstructure:"ttl"`
 		TestPostgresConfig
+		GRPC GRPCConfig
 	}
-
+	GRPCConfig struct {
+		Port             string `mapstructure:"port"`
+		ServerCertFile   string `mapstructure:"servercertfile"`
+		ServerKeyFile    string `mapstructure:"serverkeyfile"`
+		ClientCACertFile string `mapstructure:"clientcacertfile"`
+		ClientKeyFile    string `mapstructure:"clinetkeyfile"`
+		ClientCertFile   string `mapstructure:"clinetcertfile"`
+	}
 	HTTPConfig struct {
 		Host               string        `mapstructure:"host"`
 		Port               string        `mapstructure:"port"`
@@ -39,29 +47,30 @@ type (
 		MaxHeaderMegabytes int           `mapstructure:"maxHeaderBytes"`
 	}
 	PostgresConfig struct {
-		DBname   string
-		User     string
-		Password string
-		Sslmode  string
+		Host     string `mapstructure:"POSTGRES_HOST"`
+		Port     string `mapstructure:"POSTGRES_PORT"`
+		DBname   string `mapstructure:"POSTGRES_DBNAME"`
+		User     string `mapstructure:"POSTGRES_USER"`
+		Password string `mapstructure:"POSTGRES_PASSWORD"`
 	}
 	RedisConfig struct {
-		Addr     string
-		Password string
-		DB       int
+		Addr     string `mapstructure:"REDIS_ADDR"`
+		Password string `mapstructure:"REDIS_PASSWORD"`
+		DB       int    `mapstructure:"REDIS_DB"`
 	}
 	TestPostgresConfig struct {
 		URL string
 	}
 	AuthConfig struct {
 		JWT                    JWTConfig
-		PasswordSalt           string
-		VerificationCodeLength int `mapstructure:"verificationCodeLength"`
+		PasswordSalt           string `mapstructure:"PASSWORD_SALT"`
+		VerificationCodeLength int    `mapstructure:"verificationCodeLength"`
 	}
 
 	JWTConfig struct {
 		AccessTokenTTL  time.Duration `mapstructure:"accessTokenTTL"`
 		RefreshTokenTTL time.Duration `mapstructure:"refreshTokenTTL"`
-		SigningKey      string
+		SigningKey      string        `mapstructure:"JWT_SIGNINGKEY"`
 	}
 )
 
@@ -82,8 +91,8 @@ func Init(path string) (*Config, error) {
 	}
 
 	setFromEnv(&cfg)
-	fmt.Println(cfg.Postgres)
-	fmt.Println("REDIS", cfg.Redis)
+	logger.Info("Postgres ", cfg.Postgres)
+	logger.Info("Redis ", cfg.Redis)
 	return &cfg, nil
 }
 
@@ -135,11 +144,15 @@ func parseEnv() error {
 	}
 	return parsePasswordFromEnv()
 }
+
+//TODO
+//Are set in docker compose with .env
 func setFromEnv(cfg *Config) {
+	cfg.Postgres.Host = viper.GetString("host")
+	cfg.Postgres.Port = viper.GetString("port")
 	cfg.Postgres.DBname = viper.GetString("dbname")
 	cfg.Postgres.User = viper.GetString("user")
 	cfg.Postgres.Password = viper.GetString("password")
-	cfg.Postgres.Sslmode = viper.GetString("sslmode")
 	cfg.Redis.DB = viper.GetInt("db")
 	cfg.Redis.Addr = viper.GetString("addr")
 	cfg.Redis.Password = viper.GetString("redispassword")
@@ -149,19 +162,18 @@ func setFromEnv(cfg *Config) {
 	cfg.Auth.PasswordSalt = viper.GetString("salt")
 	cfg.Auth.JWT.SigningKey = viper.GetString("signingkey")
 
-	fmt.Println(cfg.Postgres)
-
 }
 func parsePostgresEnvVariables() error {
+	os.Setenv("POSTGRES_PORT", "5432")
+	os.Setenv("POSTGRES_HOST", "localhost")
 
 	os.Setenv("POSTGRES_USER", "root")
 	os.Setenv("POSTGRES_DBNAME", "root")
 
 	os.Setenv("POSTGRES_PASSWORD", "secret")
 
-	os.Setenv("POSTGRES_SSLMODE", "disabled")
-
-	os.Setenv("DATABASE_URL", "user=postgres dbname=hub_tests password=123 sslmode=disabled")
+	//TODO env for test db
+	//os.Setenv("DATABASE_URL", "user=postgres dbname=hub_tests password=123 sslmode=disabled")
 
 	viper.SetEnvPrefix("postgres")
 	if err := viper.BindEnv("user"); err != nil {
@@ -174,8 +186,12 @@ func parsePostgresEnvVariables() error {
 	if err := viper.BindEnv("password"); err != nil {
 		return err
 	}
-
-	viper.BindEnv("sslmode")
+	if err := viper.BindEnv("port"); err != nil {
+		return err
+	}
+	if err := viper.BindEnv("host"); err != nil {
+		return err
+	}
 
 	viper.SetEnvPrefix("database")
 	if err := viper.BindEnv("url"); err != nil {
@@ -185,12 +201,10 @@ func parsePostgresEnvVariables() error {
 
 }
 func parseRedisEnvVariables() error {
-
 	os.Setenv("REDIS_ADDR", "localhost:6379")
 	os.Setenv("REDIS_PASSWORD", "")
 
 	os.Setenv("REDIS_DB", "0")
-
 	viper.SetEnvPrefix("redis")
 	if err := viper.BindEnv("addr"); err != nil {
 		return err
@@ -208,7 +222,6 @@ func parseRedisEnvVariables() error {
 }
 func parsePasswordFromEnv() error {
 	os.Setenv("PASSWORD_SALT", "1234")
-
 	viper.SetEnvPrefix("password")
 	return viper.BindEnv("salt")
 }

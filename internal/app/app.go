@@ -2,14 +2,15 @@ package app
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/IDarar/hub/internal/config"
-	"github.com/IDarar/hub/internal/domain"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/repository/redisdb"
 	"github.com/IDarar/hub/internal/server"
 	"github.com/IDarar/hub/internal/service"
+	grpcv1 "github.com/IDarar/hub/internal/transport/grpc/v1"
 	"github.com/IDarar/hub/internal/transport/http"
 	"github.com/IDarar/hub/pkg/auth"
 	"github.com/IDarar/hub/pkg/hash"
@@ -38,7 +39,7 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
-
+	fmt.Println(cfg)
 	tokenManager, err := auth.NewManager(cfg.Auth.JWT.SigningKey)
 	if err != nil {
 		logger.Error(err)
@@ -49,29 +50,32 @@ func Run(configPath string) {
 		logger.Error(err)
 		return
 	}
+
 	logger.Info("connected to postgres")
 	rdb, err := redisdb.NewRedisDB(cfg)
 	if err != nil {
 		logger.Error(err)
 		return
 	}
+	defer rdb.Close()
 
 	rdb.Ping(ctx)
 	logger.Info("connected to redis")
 
 	hasher := hash.NewSHA1Hasher(cfg.Auth.PasswordSalt)
-	p := domain.UserProposition{TargetProposition: "123"}
-	p.AddToFavourite(p)
+
 	repos := repository.NewRepositories(db, rdb, cfg)
 
-	services := service.NewServices(service.Deps{
-		Repos:           repos,
-		Hasher:          hasher,
-		AccessTokenTTL:  cfg.Auth.JWT.AccessTokenTTL,
-		RefreshTokenTTL: cfg.Auth.JWT.RefreshTokenTTL,
-		TokenManager:    tokenManager,
-	})
+	notCl := grpcv1.InitNotificationServiceClient(cfg)
 
+	services := service.NewServices(service.Deps{
+		Repos:                  repos,
+		Hasher:                 hasher,
+		AccessTokenTTL:         cfg.Auth.JWT.AccessTokenTTL,
+		RefreshTokenTTL:        cfg.Auth.JWT.RefreshTokenTTL,
+		TokenManager:           tokenManager,
+		NotificationGrpcClient: *notCl,
+	})
 	handlers := http.NewHandler(services, tokenManager)
 	srv := server.NewServer(cfg, handlers.Init())
 

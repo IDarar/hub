@@ -10,7 +10,6 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-//1.06 21.13(another)
 //Struct Hanlder takes all interfaces of service
 type Handler struct {
 	usersService   service.User

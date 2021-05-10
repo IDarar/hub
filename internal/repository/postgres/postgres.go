@@ -18,7 +18,7 @@ type PostgresConfig struct {
 }
 
 func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
-	db, err := gorm.Open(postgres.Open("host=localhost "+"user="+cfg.Postgres.User+" "+"dbname="+cfg.Postgres.DBname+" "+"password="+cfg.Postgres.Password+" port=5432"), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open("host="+cfg.Postgres.Host+" user="+cfg.Postgres.User+" dbname="+cfg.Postgres.DBname+" password="+cfg.Postgres.Password+" port="+cfg.Postgres.Port), &gorm.Config{})
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
