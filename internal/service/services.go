@@ -144,11 +144,6 @@ type Propositions interface {
 	RemoveFromFavourite(fav domain.Favourite) error
 }
 
-//Another way of implemntation
-func Favourite(ID string, fav repository.Favourite) {
-	fav.AddToFavourite(fav)
-}
-
 type Services struct {
 	User                   User
 	Admin                  Admin

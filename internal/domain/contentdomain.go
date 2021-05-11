@@ -8,7 +8,6 @@ import (
 
 type Hub struct {
 	Treatises []*Treatise
-	//Master    *Master
 }
 
 type Treatise struct {

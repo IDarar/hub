@@ -15,6 +15,7 @@ import (
 	"google.golang.org/grpc/credentials"
 )
 
+//Each service will be available
 type NotificationClient struct {
 	Client pb.NotificationsServiceClient
 }
@@ -38,8 +39,10 @@ func InitNotificationServiceClient(cfg *config.Config) *NotificationClient {
 
 func loadTLSCredentialsClient(cfg *config.Config) (credentials.TransportCredentials, error) {
 	// Load certificate of the CA who signed server's certificate
-	pemServerCA, err := ioutil.ReadFile("cert/ca-cert.pem")
+	logger.Info(cfg.GRPC)
+	pemServerCA, err := ioutil.ReadFile(cfg.GRPC.ClientCACertFile)
 	if err != nil {
+		logger.Error("err opening cert ", err)
 		return nil, err
 	}
 

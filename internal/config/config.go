@@ -1,7 +1,6 @@
 package config
 
 import (
-	"os"
 	"strings"
 	"time"
 
@@ -36,8 +35,8 @@ type (
 		ServerCertFile   string `mapstructure:"servercertfile"`
 		ServerKeyFile    string `mapstructure:"serverkeyfile"`
 		ClientCACertFile string `mapstructure:"clientcacertfile"`
-		ClientKeyFile    string `mapstructure:"clinetkeyfile"`
-		ClientCertFile   string `mapstructure:"clinetcertfile"`
+		ClientKeyFile    string `mapstructure:"clientkeyfile"`
+		ClientCertFile   string `mapstructure:"clientcertfile"`
 	}
 	HTTPConfig struct {
 		Host               string        `mapstructure:"host"`
@@ -107,6 +106,9 @@ func unmarshal(cfg *Config) error {
 	if err := viper.UnmarshalKey("auth", &cfg.Auth.JWT); err != nil {
 		return err
 	}
+	if err := viper.UnmarshalKey("grpc", &cfg.GRPC); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -164,16 +166,6 @@ func setFromEnv(cfg *Config) {
 
 }
 func parsePostgresEnvVariables() error {
-	os.Setenv("POSTGRES_PORT", "5432")
-	os.Setenv("POSTGRES_HOST", "localhost")
-
-	os.Setenv("POSTGRES_USER", "root")
-	os.Setenv("POSTGRES_DBNAME", "root")
-
-	os.Setenv("POSTGRES_PASSWORD", "secret")
-
-	//TODO env for test db
-	//os.Setenv("DATABASE_URL", "user=postgres dbname=hub_tests password=123 sslmode=disabled")
 
 	viper.SetEnvPrefix("postgres")
 	if err := viper.BindEnv("user"); err != nil {
@@ -201,10 +193,7 @@ func parsePostgresEnvVariables() error {
 
 }
 func parseRedisEnvVariables() error {
-	os.Setenv("REDIS_ADDR", "localhost:6379")
-	os.Setenv("REDIS_PASSWORD", "")
 
-	os.Setenv("REDIS_DB", "0")
 	viper.SetEnvPrefix("redis")
 	if err := viper.BindEnv("addr"); err != nil {
 		return err
@@ -221,13 +210,10 @@ func parseRedisEnvVariables() error {
 
 }
 func parsePasswordFromEnv() error {
-	os.Setenv("PASSWORD_SALT", "1234")
 	viper.SetEnvPrefix("password")
 	return viper.BindEnv("salt")
 }
 func parseJWTFromEnv() error {
-	os.Setenv("JWT_SIGNINGKEY", "signing_key")
-
 	viper.SetEnvPrefix("jwt")
 	return viper.BindEnv("signingkey")
 }

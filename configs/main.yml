@@ -6,15 +6,16 @@ http:
 
 cache:
   ttl: 60s
-
+grpc:
+  port: 7777
+  servercertfile: cert/server-cert.pem
+  serverkeyfile: cert/server-key.pem
+  clientcacertfile: cert/ca-cert.pem
+  clientkeyfile: cert/client-key.pem
+  clientcertfile: cert/client-cert.pem
 auth:
   accessTokenTTL: 43200m
   refreshTokenTTL: 43200m #30 days
   verificationCodeLength: 8
-grpc:
- port: 7777
- servercertfile: cert/server-cert.pem
- serverkeyfile: cert/server-key.pem
- clientcacertfile: cert/ca-cert.pem
- clinetkeyfile: cert/client-key.pem
- clinetcertfile: cert/client-cert.pem
+
+
