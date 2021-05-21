@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/IDarar/hub/internal/elasticsearch"
 	"github.com/IDarar/hub/pkg/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -31,6 +32,15 @@ func (h *Handler) userIdentity(c *gin.Context) {
 	c.Set(userCtx, id)
 }
 
+//sends req info to elasticsearch
+func (h *Handler) RequestIndexer(c *gin.Context) {
+	req := &elasticsearch.IndexedRequest{
+		Url:    c.Request.URL.String(),
+		Method: c.Request.Method,
+	}
+
+	go h.indexer.Request.Index(c, *req)
+}
 func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {
 	header := c.GetHeader(authorizationHeader)
 	if header == "" {

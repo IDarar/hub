@@ -14,7 +14,6 @@ import (
 	"github.com/IDarar/hub/pkg/logger"
 )
 
-//39.58
 type UserService struct {
 	repo         repository.Users
 	sessions     repository.Sessions

@@ -2,6 +2,7 @@ package http
 
 import (
 	_ "github.com/IDarar/hub/docs"
+	"github.com/IDarar/hub/internal/elasticsearch"
 	"github.com/IDarar/hub/internal/service"
 	v1 "github.com/IDarar/hub/internal/transport/http/v1"
 	"github.com/IDarar/hub/pkg/auth"
@@ -12,17 +13,16 @@ import (
 
 //Struct Hanlder takes all interfaces of service
 type Handler struct {
-	usersService   service.User
-	adminsService  service.Admin
-	contentService service.Content
-	services       *service.Services
-	tokenManager   auth.TokenManager
+	services     *service.Services
+	tokenManager auth.TokenManager
+	indexer      *elasticsearch.Indexers
 }
 
-func NewHandler(services *service.Services, tokenManager auth.TokenManager) *Handler {
+func NewHandler(services *service.Services, tokenManager auth.TokenManager, indexer *elasticsearch.Indexers) *Handler {
 	return &Handler{
 		services:     services,
 		tokenManager: tokenManager,
+		indexer:      indexer,
 	}
 }
 
@@ -40,7 +40,7 @@ func (h *Handler) Init() *gin.Engine {
 	return router
 }
 func (h *Handler) initAPI(router *gin.Engine) {
-	handlerV1 := v1.NewHandler(h.services, h.tokenManager)
+	handlerV1 := v1.NewHandler(h.services, h.tokenManager, h.indexer)
 	api := router.Group("/api")
 	{
 		handlerV1.Init(api)
