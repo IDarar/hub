@@ -38,7 +38,7 @@ func (h *Handler) RequestIndexer(c *gin.Context) {
 		Url:    c.Request.URL.String(),
 		Method: c.Request.Method,
 	}
-
+	logger.Info(req)
 	go h.indexer.Request.Index(c, *req)
 }
 func (h *Handler) parseAuthHeader(c *gin.Context) (string, error) {

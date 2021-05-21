@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/IDarar/hub/internal/config"
+	"github.com/IDarar/hub/internal/elasticsearch"
 	"github.com/IDarar/hub/internal/repository"
 	"github.com/IDarar/hub/internal/repository/postgres"
 	"github.com/IDarar/hub/internal/repository/redisdb"
@@ -79,7 +80,16 @@ func Run(configPath string) {
 		TokenManager:           tokenManager,
 		NotificationGrpcClient: *notCl,
 	})
-	handlers := http.NewHandler(services, tokenManager)
+	elastic, err := elasticsearch.NewElasticSearch(*cfg)
+	if err != nil {
+		logger.Error(err)
+		return
+	}
+	logger.Info("connected to elasticsearch")
+
+	indexers := elasticsearch.NewIndexer(elastic)
+	handlers := http.NewHandler(services, tokenManager, indexers)
+
 	srv := server.NewServer(cfg, handlers.Init())
 
 	srv.Run()

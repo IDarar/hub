@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"time"
 
+	"github.com/IDarar/hub/pkg/logger"
 	"github.com/google/uuid"
 
 	esv7 "github.com/elastic/go-elasticsearch/v7"
@@ -44,6 +45,7 @@ func (i *RequestIndexer) Index(ctx context.Context, req IndexedRequest) error {
 	var buf bytes.Buffer
 
 	if err := json.NewEncoder(&buf).Encode(body); err != nil {
+		logger.Error(err)
 		return err
 	}
 
@@ -56,11 +58,13 @@ func (i *RequestIndexer) Index(ctx context.Context, req IndexedRequest) error {
 
 	resp, err := eReq.Do(ctx, i.client)
 	if err != nil {
+		logger.Error(err)
 		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.IsError() {
+		logger.Error(err)
 		return err
 	}
 
