@@ -72,6 +72,12 @@ func Run(configPath string) {
 
 	notCl := grpcv1.InitNotificationServiceClient(cfg)
 
+	/*	_, err = notCl.Client.NotificationCreate(ctx, &pb.Notification{Type: "forum", To: "124", From: "8643", Where: "ERT", Content: "15", Time: timestamppb.Now()})
+		if err != nil {
+			logger.Info(err)
+			return
+		}*/
+
 	services := service.NewServices(service.Deps{
 		Repos:                  repos,
 		Hasher:                 hasher,
@@ -99,7 +105,6 @@ func Run(configPath string) {
 //that in other situations are passed to dockerfile in .env
 func envInit() {
 	e := flag.Bool("env", false, "run app local?")
-	s := flag.Bool("services", false, "run app isolated?")
 
 	flag.Parse()
 	logger.Info("deploy env is ", *e)
@@ -125,8 +130,15 @@ func envInit() {
 
 		os.Setenv("JWT_SIGNINGKEY", "signing_key")
 	}
-	if *s {
+}
 
+//TODO, how to choose which service to connect?
+func initExtService() bool {
+	e := flag.Bool("ext", false, "connect to external services?")
+	flag.Parse()
+	if *e {
+		return true
+	} else {
+		return false
 	}
-
 }
