@@ -3,18 +3,26 @@ version : "3.8"
 services:
   redis:
     image: redis
+    networks:
+      - main_app
     container_name: redis-hub
     ports:
         - 6379:6379
   postgres:
     image: postgres:12-alpine
+    networks:
+      - main_app
     container_name: postgres12  
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     env_file:
         - .env  
     ports: 
         - 5432:5432 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+    networks:
+      - main_app
     container_name: elasticsearch
     #restart: always
     environment:
@@ -32,18 +40,37 @@ services:
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
     ports:
-      - 9200:9200
-  kibana:
-    container_name: kibana
-    image: docker.elastic.co/kibana/kibana:7.4.0
-    #restart: always
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
-    ports:
-      - 5601:5601
+        - 9200:9200
+  api:
+    image: aince/hub
+    restart: always
+    networks:
+      - main_app
+    container_name: hub_main
+    env_file:
+      - .env
     depends_on:
-      - elasticsearch                                   # kibana will start when elasticsearch has started
+      - postgres
+      - redis
+      - elasticsearch
+    #restart: always
+    ports:
+      - 8000:8000
+   
+  #kibana:
+    #container_name: kibana
+    #image: docker.elastic.co/kibana/kibana:7.4.0
+    #restart: always
+    #environment:
+      #- ELASTICSEARCH_HOSTS=http://elasticsearch:9200    # address of elasticsearch docker container which kibana will connect
+   # ports:
+     # - 5601:5601
+   # depends_on:
+      #- elasticsearch                                   # kibana will start when elasticsearch has started
+networks: 
+  main_app:      
 volumes:
+  pgdata:    
+    driver: local
   elasticsearch-data:
     driver: local
-      

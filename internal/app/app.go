@@ -72,11 +72,11 @@ func Run(configPath string) {
 
 	notCl := grpcv1.InitNotificationServiceClient(cfg)
 
-	/*	_, err = notCl.Client.NotificationCreate(ctx, &pb.Notification{Type: "forum", To: "124", From: "8643", Where: "ERT", Content: "15", Time: timestamppb.Now()})
-		if err != nil {
-			logger.Info(err)
-			return
-		}*/
+	/*_, err = notCl.Client.NotificationCreate(ctx, &pb.Notification{Type: "forum", To: "124", From: "8643", Where: "ERT", Content: "15", Time: timestamppb.Now()})
+	if err != nil {
+		logger.Info(err)
+		return
+	}*/
 
 	services := service.NewServices(service.Deps{
 		Repos:                  repos,

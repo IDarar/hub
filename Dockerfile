@@ -10,7 +10,9 @@ FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /app/main .
-COPY --from=builder . .
+COPY --from=builder /app/configs configs/
+COPY --from=builder /app/cert cert/
+
 
 EXPOSE 8000
 CMD [ "/app/main" ]
