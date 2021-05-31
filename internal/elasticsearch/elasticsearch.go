@@ -10,7 +10,6 @@ import (
 // NewElasticSearch instantiates the ElasticSearch client using configuration defined in environment variables.
 func NewElasticSearch(conf config.Config) (es *esv7.Client, err error) {
 	es, err = esv7.NewDefaultClient()
-
 	if err != nil {
 		return nil, fmt.Errorf("elasticsearch.Open %w", err)
 	}

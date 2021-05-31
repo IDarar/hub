@@ -23,7 +23,7 @@ func NewHandler(services *service.Services, tokenManager auth.TokenManager, inde
 }
 
 func (h *Handler) Init(api *gin.RouterGroup) {
-	v1 := api.Group("/v1", h.RequestIndexer)
+	v1 := api.Group("/v1" /*, h.RequestIndexer*/)
 	{
 		h.initUsersRoutes(v1)
 		h.initAdminsRoutes(v1)

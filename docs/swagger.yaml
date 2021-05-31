@@ -275,7 +275,7 @@ definitions:
     required:
     - target_treatise
     type: object
-host: localhost:8080
+host: ec2-100-25-194-140.compute-1.amazonaws.com:8080
 info:
   contact: {}
   description: Hub

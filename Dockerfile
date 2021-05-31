@@ -14,5 +14,5 @@ COPY --from=builder /app/configs configs/
 COPY --from=builder /app/cert cert/
 
 
-EXPOSE 8000
+EXPOSE 8080
 CMD [ "/app/main" ]

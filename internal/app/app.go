@@ -25,7 +25,7 @@ var ctx = context.Background()
 // @version 0.001
 // @description Hub
 
-// @host localhost:8080
+// @host ec2-100-25-194-140.compute-1.amazonaws.com:8080
 // @BasePath /api/v1/
 
 // @securityDefinitions.apikey AdminAuth
@@ -89,7 +89,7 @@ func Run(configPath string) {
 	elastic, err := elasticsearch.NewElasticSearch(*cfg)
 	if err != nil {
 		logger.Error(err)
-		return
+		//return
 	}
 	logger.Info("connected to elasticsearch")
 

@@ -16,6 +16,8 @@ push:
 	sudo docker push aince/hub	
 cert:
 	cd cert; bash gen.sh; cd ..
+swag:
+	swag init -g internal/app/app.go
 genmock:
 	mockgen -source=internal/service/services.go -destination internal/service/mocks/mock.go
 .PHONY: gen clean cert
