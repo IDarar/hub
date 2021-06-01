@@ -132,6 +132,11 @@ func envInit() {
 	}
 }
 
+//docker pull 508084547447.dkr.ecr.us-west-2.amazonaws.com/hub:latest
+//aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 508084547447.dkr.ecr.region.amazonaws.com
+//508084547447.dkr.ecr.us-east-1.amazonaws.com/hub:9154f112c026a245ee9c70d814f8de2e5f843e4b
+//
+
 //TODO, how to choose which service to connect?
 func initExtService() bool {
 	e := flag.Bool("ext", false, "connect to external services?")
