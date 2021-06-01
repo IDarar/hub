@@ -90,6 +90,7 @@ func Init(path string) (*Config, error) {
 	}
 
 	setFromEnv(&cfg)
+
 	logger.Info("Postgres ", cfg.Postgres)
 	logger.Info("Redis ", cfg.Redis)
 	return &cfg, nil
