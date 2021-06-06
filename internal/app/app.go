@@ -25,7 +25,7 @@ var ctx = context.Background()
 // @version 0.001
 // @description Hub
 
-// @host ec2-100-25-194-140.compute-1.amazonaws.com:8080
+// @host subjless.space/api/
 // @BasePath /api/v1/
 
 // @securityDefinitions.apikey AdminAuth
