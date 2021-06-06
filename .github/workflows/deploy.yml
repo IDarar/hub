@@ -31,7 +31,7 @@ jobs:
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         ECR_REPOSITORY: hub
-        IMAGE_TAG:  eng:${{ steps.extract_branch.outputs.branch }}
+        IMAGE_TAG: ${{ steps.extract_branch.outputs.branch }}
 
           #${{ github.sha }}
       run: |
