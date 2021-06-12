@@ -6,7 +6,7 @@
         "contact": {},
         "version": "0.001"
     },
-    "host": "subjless.space",
+    "host": "subjless.space/hub",
     "basePath": "/api/v1/",
     "paths": {
         "/admins/content": {
