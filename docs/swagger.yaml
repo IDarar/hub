@@ -275,7 +275,7 @@ definitions:
     required:
     - target_treatise
     type: object
-host: ec2-100-25-194-140.compute-1.amazonaws.com:8080
+host: subjless.space/api/
 info:
   contact: {}
   description: Hub
