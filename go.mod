@@ -5,7 +5,6 @@ go 1.16
 require (
 	github.com/IDarar/notifications-service v0.0.0-20210510195302-0c0273d8dc84
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/elastic/go-elasticsearch/v7 v7.12.0
 	github.com/gin-gonic/gin v1.6.3
@@ -15,7 +14,6 @@ require (
 	github.com/golang/mock v1.5.0
 	github.com/google/uuid v1.2.0
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.7.2-0.20210424082423-36be6bf91f8c
 	github.com/stretchr/testify v1.7.0

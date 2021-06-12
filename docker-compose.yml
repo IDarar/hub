@@ -10,6 +10,7 @@ services:
       - "80:80"
     volumes:
       - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./cert.pem:/etc/envoy/
   redis:
     image: redis
     restart: always

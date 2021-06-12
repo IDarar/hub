@@ -10,13 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type PostgresConfig struct {
-	DBname   string
-	User     string
-	Password string
-	Sslmode  string
-}
-
 func NewPostgresDB(cfg *config.Config) (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open("host="+cfg.Postgres.Host+" user="+cfg.Postgres.User+" dbname="+cfg.Postgres.DBname+" password="+cfg.Postgres.Password+" port="+cfg.Postgres.Port), &gorm.Config{})
 	if err != nil {
