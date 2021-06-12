@@ -25,7 +25,7 @@ var ctx = context.Background()
 // @version 0.001
 // @description Hub
 
-// @host subjless.space
+// @host subjless.space/hub
 // @BasePath /api/v1/
 
 // @securityDefinitions.apikey AdminAuth
