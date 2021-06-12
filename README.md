@@ -21,3 +21,6 @@ JWT_SIGNINGKEY=signing_key
 
 PASSWORD_SALT=1234
 ```
+**API documentation**
+
+https://subjless.space/hub/swagger/index.html
