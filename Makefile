@@ -21,3 +21,4 @@ swag:
 genmock:
 	mockgen -source=internal/service/services.go -destination internal/service/mocks/mock.go
 .PHONY: gen clean cert
+

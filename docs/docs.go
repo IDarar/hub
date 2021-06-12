@@ -2082,7 +2082,7 @@ type swaggerInfo struct {
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = swaggerInfo{
 	Version:     "0.001",
-	Host:        "subjless.space/api/",
+	Host:        "subjless.space",
 	BasePath:    "/api/v1/",
 	Schemes:     []string{},
 	Title:       "Hub",

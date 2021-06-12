@@ -275,7 +275,7 @@ definitions:
     required:
     - target_treatise
     type: object
-host: subjless.space/api/
+host: subjless.space
 info:
   contact: {}
   description: Hub
